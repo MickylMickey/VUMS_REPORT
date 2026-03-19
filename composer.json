@@ -1,0 +1,16 @@
+{
+  "name": "pos/vums_report",
+  "autoload": {
+    "psr-4": {
+      "Pos\\VumsReport\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Mickyl Sumagang"
+    }
+  ],
+  "require": {
+    "vlucas/phpdotenv": "*"
+  }
+}
