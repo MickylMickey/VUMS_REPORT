@@ -47,6 +47,11 @@ CREATE TABLE `user_role` (
     PRIMARY KEY (`user_role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `user_role` (`user_role_id`, `role_name`)
+VALUES
+(1, 'Admin'),
+(2, 'User');
+
 
 
 DROP TABLE IF EXISTS `user_status`;
@@ -59,6 +64,11 @@ CREATE TABLE `user_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+INSERT INTO `user_status` (`user_status_id`, `status_name`) 
+VALUES 
+(1, 'Active'), 
+(2, 'Inactive');
+
 
 DROP TABLE IF EXISTS `status`;
 CREATE TABLE `status` (
@@ -70,10 +80,18 @@ CREATE TABLE `status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+INSERT INTO `status` (`status_id`, `status_desc`) 
+VALUES 
+(1, 'Pending'), 
+(2, 'In-Progress'), 
+(3, 'Completed'), 
+(4, 'Cancelled');
+
 
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
     `cat_id` int NOT NULL AUTO_INCREMENT,
+    `category` VARCHAR (50) NOT NULL,
     `cat_desc` TEXT NOT NULL,
     `cat_created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
     `cat_updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -81,10 +99,24 @@ CREATE TABLE `category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+INSERT INTO `category` (`cat_id`, `category`, `cat_desc`) VALUES 
+(1, 'BUG', 'Signifies a bug in the system'),
+(2, 'RBAC', 'Signifies a permission error'),
+(3, 'UXUI', 'Signifies a problem in the UI and the UX'),
+(4, 'VALID', 'Signifies a Validation or Business rule error'),
+(5, 'GAP', 'Signifies a Process and Workflow gap'),
+(6, 'DATA', 'Signifies a Data or Master data issue'),
+(7, 'PERF', 'Signifies a Performance Issue'),
+(8, 'RPT', 'Signifies a Report, Printing and Exporting error'),
+(9, 'INTG', 'Signifies an Integration error'),
+(10,'SEC', 'Signifies a Security and Access issue');
+
+
 
 DROP TABLE IF EXISTS `module`;
 CREATE TABLE `module` (
     `mod_id` int NOT NULL AUTO_INCREMENT,
+    `module` VARCHAR(50) NOT NULL,
     `mod_desc` TEXT NOT NULL,
     `mod_created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
     `mod_updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -92,10 +124,46 @@ CREATE TABLE `module` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+INSERT INTO `module` (`mod_id`, `module`, `mod_desc`) VALUES 
+(1, 'DASH', 'Dashboard Module'),
+(2, 'HR', 'HR Module'),
+(3, 'PAY', 'Payroll Module'),
+(4, 'PROC', 'Procurement Module'),
+(5, 'PR', 'Purchase Requisition Module'),
+(6, 'PO', 'Purchase Order Module'),
+(7, 'AP', 'Accounts Payable Module'),
+(8, 'AR', 'Accounts Receivable Module'),
+(9, 'FIN', 'Finance Module'),
+(10, 'INV', 'Inventory Module'),
+(11, 'PIM', 'Product Information Management Module'),
+(12, 'PPL', 'Product Price List Module'),
+(13, 'SALES', 'Sales Module'),
+(14, 'SO', 'Sales Order Module'),
+(15, 'JO', 'Job Order Module'),
+(16, 'QUO', 'Quotation Module'),
+(17, 'PROJ', 'Project Management Module'),
+(18, 'SOW', 'Scope of Work Module'),
+(19, 'BOM', 'Bills of Materials Module'),
+(20, 'BQM', 'Bills of Quantities Module'),
+(21, 'PMF', 'Pull out of Materials Module'),
+(22, 'SMF', 'Service Materials Form Module'),
+(23, 'WAE', 'Work Accomplishment Entry Module'),
+(24, 'DPR', 'Daily Progress Report Module'),
+(25, 'PORTAL', 'Client Portal Module'),
+(26, 'DOC', 'Document Control Module'),
+(27, 'ASSET', 'Assets Module'),
+(28, 'TOOLS', 'Tools and Equipment Module'),
+(29, 'MOC', 'Main Operating Cash Module'),
+(30, 'DOCASH', 'Department Operating Cash Module'),
+(31, 'GOV', 'Government Payables Module'),
+(32, 'BILL', 'Billing Module'),
+(33, 'LOGIN', 'Authentication and Login Module');
+
 
 DROP TABLE IF EXISTS `severity`;
 CREATE TABLE `severity` (
     `sev_id` int NOT NULL AUTO_INCREMENT,
+    `severity` VARCHAR(50) NOT NULL,
     `sev_desc` TEXT NOT NULL,
     `sev_created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
     `sev_updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -103,9 +171,15 @@ CREATE TABLE `severity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+INSERT INTO `severity` (`sev_id`, `severity`, `sev_desc`) VALUES
+(1, 'C', 'Critical'),
+(2, 'H', 'High'),
+(3, 'M', 'Medium'),
+(4, 'L', 'Low');
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
     `user_id` CHAR(36) NOT NULL,
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
@@ -118,6 +192,10 @@ CREATE TABLE `user` (
     CONSTRAINT `user_ibfk_1` FOREIGN KEY (`user_role_id`) REFERENCES `user_role`(`user_role_id`) ON DELETE CASCADE,
     CONSTRAINT `user_ibfk_2` FOREIGN KEY (`user_status_id`) REFERENCES `user_status`(`user_status_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `users`(`user_id`, `username`, `password`, `user_role_id`, `user_status_id`)
+VALUES
+(UUID(), 'admin', '$2y$12$9ws8..jQHFKZDdP/v6m6POZE1HGvOiNdQJpjYWNdQAaL7PMk/23om','1','1');
 
 
 DROP TABLE IF EXISTS `user_profile`;
@@ -133,6 +211,10 @@ CREATE TABLE `user_profile` (
     UNIQUE KEY `email` (`email`),
     CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `user_profile` (`user_id`, `user_first_name`, `user_middle_name`, `user_last_name`, `user_dob`,`email`)
+VALUES
+('6d19695e-2436-11f1-8119-088fc334d711', 'Mickyl','Gaytana','Sumagang','2003-06-09','test@gmail.com');
 
 
 DROP TABLE IF EXISTS `report`;
