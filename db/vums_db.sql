@@ -195,7 +195,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users`(`user_id`, `username`, `password`, `user_role_id`, `user_status_id`)
 VALUES
-(UUID(), 'admin', '$2y$12$9ws8..jQHFKZDdP/v6m6POZE1HGvOiNdQJpjYWNdQAaL7PMk/23om','1','1');
+('ecf740ae-2721-11f1-80cd-fc068c03d3f8', 'admin', '$2y$12$9ws8..jQHFKZDdP/v6m6POZE1HGvOiNdQJpjYWNdQAaL7PMk/23om','1','1'),
+('ecf74437-2721-11f1-80cd-fc068c03d3f8', 'niel', '$2y$12$bLYvFjsMo.YIAL7SrGcTMeZUeIOAX4TTQ1aNx5c6OF1JQXjyDCKCu','2','1');
+
 
 
 DROP TABLE IF EXISTS `user_profile`;
@@ -214,7 +216,8 @@ CREATE TABLE `user_profile` (
 
 INSERT INTO `user_profile` (`user_id`, `user_first_name`, `user_middle_name`, `user_last_name`, `user_dob`,`email`)
 VALUES
-('6d19695e-2436-11f1-8119-088fc334d711', 'Mickyl','Gaytana','Sumagang','2003-06-09','test@gmail.com');
+('ecf740ae-2721-11f1-80cd-fc068c03d3f8', 'Mickyl','Gaytana','Sumagang','2003-06-09','test@gmail.com'),
+('ecf74437-2721-11f1-80cd-fc068c03d3f8', 'Niel','Magsumbol','Apaitan','2003-10-21','test1@gmail.com');
 
 
 DROP TABLE IF EXISTS `report`;
