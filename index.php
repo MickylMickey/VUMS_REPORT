@@ -1,12 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VUMS reports</title>
-</head>
-<body>
-    <h1>TEST-icles</h1>
-    
-</body>
-</html>
+<?php
+require_once __DIR__ . "/helper/jwt_helper.php";
+
+if (isset($_COOKIE['auth_token'])) {
+    $decoded = JwtHelper::verifyToken($_COOKIE['auth_token']);
+
+    if ($decoded && isset($decoded->data->role)) {
+        $role = $decoded->data->role;
+
+        // Redirect based on the actual role in the token
+        if ($role === 'Admin') {
+            header("Location: /public/admin_dashboard.php");
+            exit();
+        } else {
+            // If they are a normal user, send them to the user area (or just stay here)
+            header("Location: /public/user_dashboard.php");
+            exit();
+            echo "Welcome, User. You do not have Admin access.";
+            exit();
+        }
+    }
+}
+
+// No valid token? Go to login.
+header("Location: /public/login.php");
+exit();
