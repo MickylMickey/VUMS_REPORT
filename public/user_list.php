@@ -203,6 +203,14 @@ $roleOptions = fetchRoles($conn);
     </div>
 
     <!-- Edit user -->
+    <div>
+
+    </div>
+
+    <!-- Archive user -->
+    <div>
+
+    </div>
 </body>
 
 </html>
