@@ -26,7 +26,7 @@ $roleOptions = fetchRoles($conn);
     <div
         class="bg-white border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] rounded-2xl overflow-hidden flex flex-col">
 
-        <!-- Table Scroll Wrapper -->
+        <!-- Main User List -->
         <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-gray-50/50 sticky top-0 z-10 backdrop-blur-sm">
@@ -63,54 +63,56 @@ $roleOptions = fetchRoles($conn);
                             // Assume $current_session_user_id is available from yourauth middleware
                             $isSelf = (isset($_SESSION['user_id']) && $user['user_id'] == $_SESSION['user_id']);
                             ?>
-                            <!-- Full Name + Avatar -->
-                            <td class="p-4 whitespace-nowrap">
-                                <a href="../public/user_profile.php?u=<?= htmlspecialchars($user['user_id']) ?>"
-                                    class="flex items-center gap-3 group-hover:opacity-100">
-                                    <div
-                                        class="h-8 w-8 rounded-full border border-white shadow-sm flex items-center justify-center text-xs font-bold <?= ($userImage === $defaultImagePath) ? 'bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700' : '' ?>">
-                                        <?php if ($userImage === $defaultImagePath):
-                                            echo strtoupper(substr($firstName, 0, 1));
-                                        else: ?>
-                                            <img src="<?= htmlspecialchars($userImage) ?>" alt="Profile"
-                                                class="h-full w-full rounded-full object-cover">
+                            <tr>
+                                <!-- Full Name + Avatar -->
+                                <td class="p-4 whitespace-nowrap">
+                                    <a href="../public/user_profile.php?u=<?= htmlspecialchars($user['user_id']) ?>"
+                                        class="flex items-center gap-3 group-hover:opacity-100">
+                                        <div
+                                            class="h-8 w-8 rounded-full border border-white shadow-sm flex items-center justify-center text-xs font-bold <?= ($userImage === $defaultImagePath) ? 'bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700' : '' ?>">
+                                            <?php if ($userImage === $defaultImagePath):
+                                                echo strtoupper(substr($firstName, 0, 1));
+                                            else: ?>
+                                                <img src="<?= htmlspecialchars($userImage) ?>" alt="Profile"
+                                                    class="h-full w-full rounded-full object-cover">
+                                            <?php endif; ?>
+                                        </div>
+                                        <span
+                                            class="text-sm font-bold text-gray-700 group-hover:text-purple-700 transition-colors"><?= $fullName ?></span>
+                                    </a>
+                                </td>
+                                <td class="p-4 text-center"><span
+                                        class="px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs font-mono"><?= htmlspecialchars($user['username']) ?></span>
+                                </td>
+                                <td class="p-4 text-center text-sm text-gray-600">
+                                    <?= htmlspecialchars($user['email']) ?>
+                                </td>
+                                <td class="p-4 text-center"><span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100"><?= htmlspecialchars($user['role_name']) ?></span>
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="p-4 text-center">
+                                    <div class="flex items-center justify-center gap-4">
+                                        <button
+                                            onclick="openEditUserModal('<?= $user['user_id'] ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email'] ?? '') ?>', '<?= $user['user_role_id'] ?>')"
+                                            class="text-xs font-bold uppercase tracking-wider text-cyan-600 hover:text-cyan-800 transition-colors">
+                                            Edit
+                                        </button>
+
+                                        <?php if (!$isSelf): ?>
+                                            <button onclick="openArchiveUserModal('<?= $user['user_id'] ?>')"
+                                                class="text-xs font-bold uppercase tracking-wider text-red-500 hover:text-red-700 transition-colors">
+                                                Archive
+                                            </button>
+                                        <?php else: ?>
+                                            <span
+                                                class="text-xs font-bold uppercase tracking-wider text-gray-300 cursor-not-allowed">
+                                                Archive
+                                            </span>
                                         <?php endif; ?>
                                     </div>
-                                    <span
-                                        class="text-sm font-bold text-gray-700 group-hover:text-purple-700 transition-colors"><?= $fullName ?></span>
-                                </a>
-                            </td>
-                            <td class="p-4 text-center"><span
-                                    class="px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs font-mono"><?= htmlspecialchars($user['username']) ?></span>
-                            </td>
-                            <td class="p-4 text-center text-sm text-gray-600">
-                                <?= htmlspecialchars($user['email']) ?>
-                            </td>
-                            <td class="p-4 text-center"><span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100"><?= htmlspecialchars($user['role_name']) ?></span>
-                            </td>
-
-                            <!-- Actions -->
-                            <td class="p-4 text-center">
-                                <div class="flex items-center justify-center gap-4">
-                                    <button
-                                        onclick="openEditUserModal('<?= $user['user_id'] ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email'] ?? '') ?>', '<?= $user['user_role_id'] ?>')"
-                                        class="text-xs font-bold uppercase tracking-wider text-cyan-600 hover:text-cyan-800 transition-colors">
-                                        Edit
-                                    </button>
-
-                                    <?php if (!$isSelf): ?>
-                                        <button onclick="openArchiveUserModal('<?= $user['user_id'] ?>')"
-                                            class="text-xs font-bold uppercase tracking-wider text-red-500 hover:text-red-700 transition-colors">
-                                            Archive
-                                        </button>
-                                    <?php else: ?>
-                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-300 cursor-not-allowed">
-                                            Archive
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                            </td>
+                                </td>
                             </tr>
                         <?php endforeach; else: ?>
                         <tr>
@@ -129,70 +131,78 @@ $roleOptions = fetchRoles($conn);
                         </tr>
                     <?php endif; ?>
                 </tbody>
+            </table>
+        </div>
+    </div>
 
-                <h1> User list with user addition(modal)</h1>
-                <form action="/../controllers/add_user.php" method="POST">
+    <!-- Add Modal -->
+    <h1> User list with user addition(modal)</h1>
+    <div>
+        <form action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data">
 
-                    <!-- credentials -->
-                    <div>
-                        <!-- Username -->
-                        <label for="username">Username <span class="text-red-500">*</span></label>
-                        <input type="text" name="username" id="username" placeholder="Username" required>
+            <!-- credentials -->
+            <div>
+                <!-- Username -->
+                <label for="username">Username <span class="text-red-500">*</span></label>
+                <input type="text" name="username" id="username" placeholder="Username" required>
 
-                        <!-- Password -->
-                        <label for="password">Password <span class="text-yellow-900">*</span></label>
-                        <input type="password" name="password" id="password" placeholder="******" required>
+                <!-- Password -->
+                <label for="password">Password <span class="text-yellow-900">*</span></label>
+                <input type="password" name="password" id="password" placeholder="******" required>
 
-                        <!-- Email -->
-                        <label for="email">Email<span class="text-yellow-900">*</span></label>
-                        <input type="email" name="email" id="email" placeholder="Email" required>
+                <!-- Email -->
+                <label for="email">Email<span class="text-yellow-900">*</span></label>
+                <input type="email" name="email" id="email" placeholder="Email" required>
 
-                        <!-- User Role -->
-                        <label for="user_role">User Role</label>
-                        <select name="user_role" id="user_role">
-                            <option value="" disabled selected>Select a role</option>
-                            <?php foreach ($roleOptions as $option): ?>
-                                <?php if ($option['user_role_id'] >= $_SESSION['user_role_id']): ?>
-                                    <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
-                                        <?= htmlspecialchars($option['role_name']) ?>
-                                    </option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                <!-- User Role -->
+                <label for="user_role">User Role</label>
+                <select name="user_role" id="user_role">
+                    <option value="" disabled selected>Select a role</option>
+                    <?php foreach ($roleOptions as $option): ?>
+                        <?php if ($option['user_role_id'] >= $_SESSION['user_role_id']): ?>
+                            <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
+                                <?= htmlspecialchars($option['role_name']) ?>
+                            </option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                    <!-- Personal Info -->
-                    <div>
-                        <!-- Full Name -->
-                        <div>
+            <!-- Personal Info -->
+            <div>
+                <!-- Full Name -->
+                <div>
 
-                            <!-- First Name -->
-                            <label for="first_name">First Name<span class="text-red-500">*</span></label>
-                            <input type="text" name="fname" id="fname" placeholder="First Name" required>
+                    <!-- First Name -->
+                    <label for="first_name">First Name<span class="text-red-500">*</span></label>
+                    <input type="text" name="fname" id="fname" placeholder="First Name" required>
 
-                            <!-- Middle Name -->
-                            <label for="middle_name">Middle Name</label>
-                            <input type="text" name="mname" id="mname" placeholder="Middle Name">
+                    <!-- Middle Name -->
+                    <label for="middle_name">Middle Name</label>
+                    <input type="text" name="mname" id="mname" placeholder="Middle Name">
 
-                            <!-- Last Name -->
-                            <label for="last_name">Last Name<span class="text-red-500">*</span></label>
-                            <input type="text" name="lname" id="lname" placeholder="Last Name" required>
+                    <!-- Last Name -->
+                    <label for="last_name">Last Name<span class="text-red-500">*</span></label>
+                    <input type="text" name="lname" id="lname" placeholder="Last Name" required>
 
-                            <!-- Birthday -->
-                            <label for="birthday">Birthday <span class="text-red-500">*</span></label>
-                            <input type="date" name="birthday" id="birthday" required>
+                    <!-- Birthday -->
+                    <label for="birthday">Birthday <span class="text-red-500">*</span></label>
+                    <input type="date" name="birthday" id="birthday" required>
 
-                            <!-- Profile Pic -->
-                            <label for="prof_pic">Profile Picture</label>
-                            <input type="file" name="prof_pic" id="prof_pic">
-                        </div>
+                    <!-- Profile Pic -->
+                    <label for="prof_pic">Profile Picture</label>
+                    <input type="file" name="prof_pic" id="prof_pic">
+                </div>
 
-                        <!-- Submit button -->
-                        <div>
-                            <button type="submit"> Add User</button>
-                        </div>
-                    </div>
-                </form>
+                <!-- Submit button -->
+                <div>
+                    <button type="submit"> Add User</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Edit user -->
 </body>
 
 </html>
