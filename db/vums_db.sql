@@ -184,7 +184,7 @@ CREATE TABLE `users` (
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `user_role_id` INT NOT NULL,
-    `user_status_id` INT NOT NULL,
+    `user_status_id` INT NOT NULL DEFAULT 1,
     `user_created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `user_updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`user_id`),
@@ -211,7 +211,7 @@ CREATE TABLE `user_profile` (
     `user_prof` VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `email` (`email`),
-    CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+    CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `user_profile` (`user_id`, `user_first_name`, `user_middle_name`, `user_last_name`, `user_dob`,`email`)
