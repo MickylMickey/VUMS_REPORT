@@ -82,10 +82,9 @@ CREATE TABLE `status` (
 
 INSERT INTO `status` (`status_id`, `status_desc`) 
 VALUES 
-(1, 'Pending'), 
-(2, 'In-Progress'), 
-(3, 'Completed'), 
-(4, 'Cancelled');
+(1, 'Pending'),  
+(2, 'Completed'), 
+(3, 'Cancelled');
 
 
 DROP TABLE IF EXISTS `category`;
@@ -227,14 +226,14 @@ CREATE TABLE `report` (
     `cat_id` INT NOT NULL,
     `mod_id` INT NOT NULL,
     `sev_id` INT NOT NULL,
-    `status_id` INT NOT NULL,
-    `ref_num` INT NOT NULL,
+    `status_id` INT NOT NULL DEFAULT 1,
+    `ref_num` VARCHAR(36) NOT NULL,
     `report_img` VARCHAR(255) DEFAULT NULL,
     `report_desc` TEXT NOT NULL,
     `report_created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `report_updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`report_id`),
-    CONSTRAINT `report_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
+    CONSTRAINT `report_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
     CONSTRAINT `report_ibfk_2` FOREIGN KEY (`cat_id`) REFERENCES `category`(`cat_id`) ON DELETE CASCADE,
     CONSTRAINT `report_ibfk_3` FOREIGN KEY (`mod_id`) REFERENCES `module`(`mod_id`) ON DELETE CASCADE,
     CONSTRAINT `report_ibfk_4` FOREIGN KEY (`sev_id`) REFERENCES `severity`(`sev_id`) ON DELETE CASCADE,
@@ -247,7 +246,7 @@ CREATE TABLE `user_suggestions` (
     `suggestion_id` INT NOT NULL,
     `user_id` CHAR(36) NOT NULL,
     `suggestion_desc` TEXT NOT NULL,
-    `status_id` INT NOT NULL,
+    `status_id` INT NOT NULL DEFAULT 1,
     `suggestion_img` VARCHAR(255) DEFAULT NULL,
     `suggestion_created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `suggestion_updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

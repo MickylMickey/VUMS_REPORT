@@ -3,42 +3,48 @@ require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../vendor/autoload.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $user_id = $_POST["user_id"];
     $username = $_POST["username"] ?? null;
-    $email = $_POST["email"] ?? null;
     $role = $_POST["user_role"] ?? null;
-
-    $conn->begin_transaction();
+    $password = $_POST["password"] ?? null;
 
     try {
-        // 1. Start the transaction (Crucial!)
         $conn->begin_transaction();
 
-        // 2. Update the 'users' table
-        $sql1 = "UPDATE users SET username = COALESCE(?, username), user_role_id = COALESCE(?, user_role_id) WHERE user_id = ?";
-        $stmt1 = $conn->prepare($sql1);
-        $stmt1->bind_param("sis", $username, $role, $user_id);
-        $stmt1->execute();
+        if (!empty($password)) {
+            // 🔐 Hash password ONLY if provided
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // 3. Update the 'user_profile' table (where email lives)
-        $sql2 = "UPDATE user_profile SET email = COALESCE(?, email) WHERE user_id = ?";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("ss", $email, $user_id);
-        $stmt2->execute();
+            $sql = "UPDATE users 
+                    SET username = ?, user_role_id = ?, password = ?
+                    WHERE user_id = ?";
 
-        // 4. Commit both updates at once
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("siss", $username, $role, $hashed_password, $user_id);
+
+        } else {
+
+            $sql = "UPDATE users 
+                    SET username = ?, user_role_id = ?
+                    WHERE user_id = ?";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sis", $username, $role, $user_id);
+        }
+
+        $stmt->execute();
         $conn->commit();
 
-        $stmt1->close();
-        $stmt2->close();
+        $stmt->close();
 
     } catch (Exception $e) {
-        // If either query fails, undo everything
         $conn->rollback();
         echo "User update error: " . $e->getMessage();
         exit;
     } finally {
         $conn->close();
         header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
     }
 }

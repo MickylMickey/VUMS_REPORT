@@ -3,13 +3,11 @@ const editModal = document.getElementById("editUserModal");
 const editModalContent = document.getElementById("editUserModalContent");
 const editUserId = document.getElementById("editUserId");
 const editUserName = document.getElementById("username_edit");
-const editUserEmail = document.getElementById("email_edit");
 const editUserRole = document.getElementById("user_role_edit");
 
-function openEditUserModal(id, name, email, role) {
+function openEditUserModal(id, name, role) {
   editUserId.value = id;
   editUserName.value = name;
-  editUserEmail.value = email;
   editUserRole.value = role;
 
   editModal.classList.remove("hidden");

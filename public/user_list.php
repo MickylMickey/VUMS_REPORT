@@ -207,15 +207,10 @@ $roleOptions = fetchRoles($conn);
                 <!-- Hidden to get user_id -->
                 <input type="hidden" name="user_id" id="editUserId">
                 <div>
-                    <!--Reset Password Not working for now-->
-                    <a href="">Reset Password</a>
                     <!-- Username -->
                     <a href=""></a>
                     <label for=" username_edit">Username</label>
                     <input type="text" name="username" id="username_edit" placeholder="Edit Username">
-                    <!-- Email -->
-                    <label for="email_edit">Email</label>
-                    <input type="email" name="email" id="email_edit" placeholder="*****">
                     <!-- Role -->
                     <label for="user_role_edit">User Role</label>
                     <select name="user_role" id="user_role_edit">
@@ -226,7 +221,9 @@ $roleOptions = fetchRoles($conn);
                             </option>
                         <?php endforeach; ?>
                     </select>
-
+                    <label for="password_edit">Password</label>
+                    <input type="password" name="password" id="password_edit"
+                        placeholder="Leave blank to keep current password">
                 </div>
             </form>
             <!--Submit Button-->
