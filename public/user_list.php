@@ -6,6 +6,7 @@ require_once __DIR__ . "/../functions/fetch_user_role.php";
 require_once __DIR__ . "/../functions/user_visibility.php";
 require_once __DIR__ . '/../helper/generalValidationMessage.php';
 
+session_start();
 $user = checkAuth('Admin');
 $userVisibility = new UserVisibility($conn);
 $users = $userVisibility->getVisibleUsers(20, 0);
@@ -106,10 +107,6 @@ $roleOptions = fetchRoles($conn);
                                                 Archive
                                             </button>
                                         <?php else: ?>
-                                            <span
-                                                class="text-xs font-bold uppercase tracking-wider text-gray-300 cursor-not-allowed">
-                                                Archive
-                                            </span>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -137,7 +134,7 @@ $roleOptions = fetchRoles($conn);
 
     <!-- Add Modal -->
     <h1> User list with user addition(modal)</h1>
-    <div>
+    <div class="hidden">
         <form action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data">
 
             <!-- credentials -->
@@ -159,7 +156,7 @@ $roleOptions = fetchRoles($conn);
                 <select name="user_role" id="user_role">
                     <option value="" disabled selected>Select a role</option>
                     <?php foreach ($roleOptions as $option): ?>
-                        <?php if ($option['user_role_id'] >= $_SESSION['user_role_id']): ?>
+                        <?php if ($option['user_role_id'] >= ['user_role_id']): ?>
                             <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
                                 <?= htmlspecialchars($option['role_name']) ?>
                             </option>
@@ -203,14 +200,46 @@ $roleOptions = fetchRoles($conn);
     </div>
 
     <!-- Edit user -->
-    <div>
+    <h1>Edit user</h1>
+    <div id="editUserModal" class="hidden">
+        <div id="editUserModalContent">
+            <form id="EditUserForm" action="../controllers/edit_user.php" method="POST">
+                <!-- Hidden to get user_id -->
+                <input type="hidden" name="user_id" id="editUserId">
+                <div>
+                    <!--Reset Password Not working for now-->
+                    <a href="">Reset Password</a>
+                    <!-- Username -->
+                    <a href=""></a>
+                    <label for=" username_edit">Username</label>
+                    <input type="text" name="username" id="username_edit" placeholder="Edit Username">
+                    <!-- Email -->
+                    <label for="email_edit">Email</label>
+                    <input type="email" name="email" id="email_edit" placeholder="*****">
+                    <!-- Role -->
+                    <label for="user_role_edit">User Role</label>
+                    <select name="user_role" id="user_role_edit">
+                        <option value="" disabled selected>Select a role</option>
+                        <?php foreach ($roleOptions as $option): ?>
+                            <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
+                                <?= htmlspecialchars($option['role_name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
 
+                </div>
+            </form>
+            <!--Submit Button-->
+            <button type="submit" form="EditUserForm">Update Changes</button>
+        </div>
     </div>
+
 
     <!-- Archive user -->
     <div>
 
     </div>
 </body>
+<script src="js/user_list.js"></script>
 
 </html>

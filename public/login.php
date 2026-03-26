@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
         if (trim($decoded->data->role) === 'Admin') {
             header("Location: /public/admin_dashboard.php");
             exit();
+        } else {
+            header("Location: /public/user_dashboard.php");
         }
     }
 }
