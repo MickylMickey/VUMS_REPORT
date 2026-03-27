@@ -11,33 +11,26 @@ $userData = checkAuth();
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 
-// SQL Logic: Admins see EVERYTHING, Users see only THEIR reports
-if ($user_role === 'Admin') {
-    $sql = "SELECT r.*, c.category, m.module, s.severity, st.status_name, u.username 
-            FROM report r
-            JOIN category c ON r.cat_id = c.cat_id
-            JOIN module m ON r.mod_id = m.mod_id
-            JOIN severity s ON r.sev_id = s.sev_id
-            JOIN status st ON r.status_id = st.status_id
-            JOIN user u ON r.user_id = u.user_id
-            ORDER BY r.report_created_at DESC";
-    $stmt = $conn->prepare($sql);
-} else {
-    $sql = "SELECT r.*, c.category, m.module, s.severity, st.status_name, u.username 
-            FROM report r
-            JOIN category c ON r.cat_id = c.cat_id
-            JOIN module m ON r.mod_id = m.mod_id
-            JOIN severity s ON r.sev_id = s.sev_id
-            JOIN status st ON r.status_id = st.status_id
-            JOIN user u ON r.user_id = u.user_id
-            WHERE r.user_id = ?
-            ORDER BY r.report_created_at DESC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $current_user_id);
-}
+$sql = "SELECT r.*, 
+               UPPER(c.category) AS category, 
+               UPPER(m.mod_desc) AS module, 
+               UPPER(s.sev_desc) AS severity, 
+               (st.status_desc) AS status_desc, 
+               UPPER(u.username) AS username 
+        FROM report r
+        JOIN category c ON r.cat_id = c.cat_id
+        JOIN module m ON r.mod_id = m.mod_id
+        JOIN severity s ON r.sev_id = s.sev_id
+        JOIN status st ON r.status_id = st.status_id
+        JOIN users u ON r.user_id = u.user_id
+        ORDER BY r.report_created_at ASC";
 
+$stmt = $conn->prepare($sql);
 $stmt->execute();
 $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// 2. You still have $user_role from your middleware to use in the HTML 
+// (e.g., to decide who gets to see the "Edit" or "Change Status" buttons)
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +64,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <tbody>
                     <?php foreach ($reports as $report): ?>
                         <tr class="border-b hover:bg-gray-50">
-                            <td class="px-4 py-2 font-mono text-blue-600">
+                            <td class="px-4 py-2 font-mono text-blue-600 uppercase">
                                 <?= $report['ref_num'] ?>
                             </td>
                             <td class="px-4 py-2">
@@ -87,7 +80,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <span
                                     class="px-2 py-1 rounded text-xs font-bold 
                             <?= $report['severity'] == 'Critical' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700' ?>">
-                                    <?= $report['severity'] ?>
+                                    <?= ucfirst($report['severity']) ?>
                                 </span>
                             </td>
                             <td class="px-4 py-2 text-sm max-w-xs truncate">
@@ -95,12 +88,12 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             </td>
                             <td class="px-4 py-2">
                                 <span class="italic text-gray-600">
-                                    <?= $report['status_name'] ?>
+                                    <?= $report['status_desc'] ?>
                                 </span>
                             </td>
                             <td class="px-4 py-2">
                                 <?php if ($report['report_img']): ?>
-                                    <a href="/uploads/<?= $report['report_img'] ?>" target="_blank"
+                                    <a href="uploads/<?= $report['report_img'] ?>" target="_blank"
                                         class="text-blue-500 underline text-xs">View Image</a>
                                 <?php else: ?>
                                     <span class="text-gray-400 text-xs">No Image</span>
@@ -119,7 +112,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <form action="../controllers/add_report.php" method="POST" enctype="multipart/form-data">
                 <div class="mb-4">
                     <label for="cat_id" class="block text-sm font-medium text-gray-700">Category</label>
-                    <select name="cat_id" id="cat_id" class="w-full border rounded-lg p-2">
+                    <select name="cat_id" id="cat_id" class="w-full border rounded-lg p-2" required>
                         <option value="" disabled selected>-- Select Category --</option>
                         <?php foreach ($categoryOptions as $cat): ?>
                             <option value="<?= $cat['cat_id'] ?>">
@@ -131,7 +124,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                 <div class="mb-4">
                     <label for="mod_id" class="block text-sm font-medium text-gray-700">Module</label>
-                    <select name="mod_id" id="mod_id" class="w-full border rounded-lg p-2">
+                    <select name="mod_id" id="mod_id" class="w-full border rounded-lg p-2" required>
                         <option value="" disabled selected>-- Select Module --</option>
                         <?php foreach ($moduleOptions as $mod): ?>
                             <option value="<?= $mod['mod_id'] ?>">
@@ -143,7 +136,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                 <div class="mb-4">
                     <label for="sev_id" class="block text-sm font-medium text-gray-700">Severity Level</label>
-                    <select name="sev_id" id="sev_id" class="w-full border rounded-lg p-2">
+                    <select name="sev_id" id="sev_id" class="w-full border rounded-lg p-2" required>
                         <option value="" disabled selected>-- Select Severity --</option>
                         <?php foreach ($severityOptions as $sev): ?>
                             <option value="<?= $sev['sev_id'] ?>">
@@ -154,7 +147,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
                 <div>
                     <label for="rep_desc">Describe What Happened</label>
-                    <input type="text" name="rep_desc" id="rep_desc" placeholder="Anyare?">
+                    <input type="text" name="rep_desc" id="rep_desc" placeholder="Anyare?" required>
                 </div>
                 <div>
                     <label for="rep_img">Report Image</label>

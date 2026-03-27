@@ -134,7 +134,7 @@ $roleOptions = fetchRoles($conn);
 
     <!-- Add Modal -->
     <h1> User list with user addition(modal)</h1>
-    <div class="hidden">
+    <div class="">
         <form action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data">
 
             <!-- credentials -->
@@ -156,13 +156,15 @@ $roleOptions = fetchRoles($conn);
                 <select name="user_role" id="user_role">
                     <option value="" disabled selected>Select a role</option>
                     <?php foreach ($roleOptions as $option): ?>
-                        <?php if ($option['user_role_id'] >= ['user_role_id']): ?>
-                            <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
-                                <?= htmlspecialchars($option['role_name']) ?>
-                            </option>
-                        <?php endif; ?>
+
+
+                        <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
+                            <?= htmlspecialchars($option['role_name']) ?>
+                        </option>
+
                     <?php endforeach; ?>
                 </select>
+
             </div>
 
             <!-- Personal Info -->

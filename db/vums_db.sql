@@ -243,7 +243,7 @@ CREATE TABLE `report` (
 
 DROP TABLE IF EXISTS `user_suggestions`;
 CREATE TABLE `user_suggestions` (
-    `suggestion_id` INT NOT NULL,
+    `suggestion_id` INT NOT NULL AUTO_INCREMENT,
     `user_id` CHAR(36) NOT NULL,
     `suggestion_desc` TEXT NOT NULL,
     `status_id` INT NOT NULL DEFAULT 1,
@@ -251,7 +251,7 @@ CREATE TABLE `user_suggestions` (
     `suggestion_created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `suggestion_updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`suggestion_id`),
-    CONSTRAINT `user_suggestion_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
+    CONSTRAINT `user_suggestion_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
     CONSTRAINT `user_suggestion_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `status`(`status_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
