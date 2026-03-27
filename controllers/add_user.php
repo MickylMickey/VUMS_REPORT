@@ -18,33 +18,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $roleId = isset($_POST['user_role']) ? (int) $_POST['user_role'] : null;
     $birthDate = !empty($_POST['birthday']) ? $_POST['birthday'] : null;
 
-    //handle image upload
-    $imageDirectory = "../public/img/prof_pic/";
-    $targetFilePath = "../public/img/prof_pic/default.png"; // Default to profile
+    // 1. Configuration
+    $uploadDir = __DIR__ . "/../public/img/prof_pic/"; // Use absolute path for reliability
+    $dbImageName = "default.png"; // Default filename for the database
 
-    if (isset($_FILES["prof_pic"]) && $_FILES["prof_pic"]["error"] === 0) {
-        $uniqueName = uniqid() . "_" . basename($_FILES["prof_pic"]["name"]);
-        $tempPath = $_FILES["prof_pic"]["tmp_name"];
-        $imageFileType = strtolower(pathinfo($uniqueName, PATHINFO_EXTENSION));
-        $allowedTypes = ["jpg", "jpeg", "png", "gif"];
+    // 2. Ensure directory exists
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
 
-        if (!in_array($imageFileType, $allowedTypes)) {
-            $_SESSION["error"] =
-                "Invalid image type. Allowed types: JPG, JPEG, PNG, GIF.";
+    // 3. Process Upload
+    if (isset($_FILES["prof_pic"]) && $_FILES["prof_pic"]["error"] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES["prof_pic"]["tmp_name"];
+        $fileName = $_FILES["prof_pic"]["name"];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        // Validation
+        $allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+
+        if (!in_array($fileExtension, $allowedExtensions)) {
+            $_SESSION["error"] = "Invalid image type. Use JPG, PNG, or GIF.";
             header("Location: ../public/user_list.php");
             exit();
         }
 
-        $newFilePath = $imageDirectory . $uniqueName;
-        if (!move_uploaded_file($tempPath, $newFilePath)) {
-            $_SESSION["error"] = "Failed to save uploaded image.";
+        // Create a clean, unique filename (e.g., 65e1f2a3b4c5d.png)
+        $newFileName = uniqid() . "." . $fileExtension;
+        $destPath = $uploadDir . $newFileName;
+
+        if (move_uploaded_file($fileTmpPath, $destPath)) {
+            $dbImageName = $newFileName; // Success! This is what you save to the DB
+        } else {
+            $_SESSION["error"] = "Server Error: Could not move uploaded file.";
             header("Location: ../public/register.php");
             exit();
         }
-
-        $targetFilePath = $newFilePath; // Set only if upload is successful
     }
 
+    // 4. Database Step
+// Use $dbImageName in your SQL: INSERT INTO users (profile_img) VALUES ('$dbImageName')
     //Start Transaction
     $conn->begin_transaction();
 
@@ -79,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $lastName,
             $birthDate,
             $email,
-            $targetFilePath
+            $dbImageName
         );
         if ($stmt2->execute()) {
             error_log("DEBUG: User profile inserted successfully. user_id: $userId, first_name: $firstName, last_name: $lastName");
@@ -100,8 +112,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->rollback();
 
         // Delete uploaded file if an error happened
-        if (file_exists($targetFilePath)) {
-            unlink($targetFilePath);
+        if (file_exists($dbImageName)) {
+            unlink($dbImageName);
         }
 
         // Log the error

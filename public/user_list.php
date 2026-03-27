@@ -12,6 +12,7 @@ $userVisibility = new UserVisibility($conn);
 $users = $userVisibility->getVisibleUsers(20, 0);
 $roleOptions = fetchRoles($conn);
 
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,8 +60,21 @@ $roleOptions = fetchRoles($conn);
                             }
                             $lastName = !empty($user['user_last_name']) ? ucfirst($user['user_last_name']) : '';
                             $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName"));
-                            $defaultImagePath = '../public/img/prof_pic/default.png';
-                            $userImage = $user['profile_image'] ?? $defaultImagePath;
+                            $uploadDir = 'img/prof_pic/';
+
+                            // 2. Check if the image exists in the database. 
+// NOTE: Use 'user_prof' if that's the column name in your user_profile table.
+                            $dbImage = !empty($user['user_prof']) ? $user['user_prof'] : '';
+
+                            // 3. Construct the full path
+                            if (!empty($dbImage) && $dbImage !== 'default.png') {
+                                $userImage = $uploadDir . $dbImage;
+                            } else {
+                                $userImage = $uploadDir . 'default.png';
+                            }
+
+                            // 4. Set a flag for the "Initial" fallback
+                            $isDefault = (strpos($userImage, 'default.png') !== false);
                             // Assume $current_session_user_id is available from yourauth middleware
                             $isSelf = (isset($_SESSION['user_id']) && $user['user_id'] == $_SESSION['user_id']);
                             ?>
@@ -68,18 +82,24 @@ $roleOptions = fetchRoles($conn);
                                 <!-- Full Name + Avatar -->
                                 <td class="p-4 whitespace-nowrap">
                                     <a href="../public/user_profile.php?u=<?= htmlspecialchars($user['user_id']) ?>"
-                                        class="flex items-center gap-3 group-hover:opacity-100">
+                                        class="flex items-center gap-3 group">
+
                                         <div
-                                            class="h-8 w-8 rounded-full border border-white shadow-sm flex items-center justify-center text-xs font-bold <?= ($userImage === $defaultImagePath) ? 'bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700' : '' ?>">
-                                            <?php if ($userImage === $defaultImagePath):
-                                                echo strtoupper(substr($firstName, 0, 1));
-                                            else: ?>
+                                            class="h-8 w-8 rounded-full border border-white shadow-sm flex items-center justify-center text-xs font-bold 
+                                            <?= $isDefault ? 'bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700' : '' ?>">
+
+                                            <?php if ($isDefault): ?>
+                                                <?= strtoupper(substr($firstName, 0, 1)); ?>
+                                            <?php else: ?>
                                                 <img src="<?= htmlspecialchars($userImage) ?>" alt="Profile"
                                                     class="h-full w-full rounded-full object-cover">
                                             <?php endif; ?>
                                         </div>
+
                                         <span
-                                            class="text-sm font-bold text-gray-700 group-hover:text-purple-700 transition-colors"><?= $fullName ?></span>
+                                            class="text-sm font-bold text-gray-700 group-hover:text-purple-700 transition-colors">
+                                            <?= $fullName ?>
+                                        </span>
                                     </a>
                                 </td>
                                 <td class="p-4 text-center"><span
