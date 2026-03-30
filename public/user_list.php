@@ -1,19 +1,40 @@
 <?php
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../middleware/auth_middleware.php";
-//require_once __DIR__ . "/../functions/auth_admin.php";
-require_once __DIR__ . "/../functions/fetch_user_role.php";
-require_once __DIR__ . "/../functions/user_visibility.php";
-require_once __DIR__ . '/../helper/generalValidationMessage.php';
+require_once __DIR__ . "/../init.php";
 
+ob_start();
 session_start();
+
 $user = checkAuth('Admin');
+$isAdmin = RoleHelper::isAdmin($role);
+$isUser = RoleHelper::isUser($role);
+
+
+
+$where = "u.user_status_id != ?";
+$params = [0]; // Example: exclude deleted users
+$types = "i";
+// Pagination
+$pagination = getPaginationData(
+    $conn,
+    "users u INNER JOIN user_profile up ON u.user_id = up.user_id",
+    $_GET['limit'] ?? 10,
+    $_GET['page'] ?? 1,
+    $where,
+    $params,
+    $types
+);
+// Extract pagination values
+$offset = $pagination['offset'];
+$limit = $pagination['limit'];
+$totalPages = $pagination['totalPages'];
+$totalRecords = $pagination['totalRecords'];
+$page = $pagination['page'];
+
 $userVisibility = new UserVisibility($conn);
 $users = $userVisibility->getVisibleUsers(20, 0);
 $roleOptions = fetchRoles($conn);
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

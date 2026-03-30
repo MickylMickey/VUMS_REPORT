@@ -1,8 +1,8 @@
 <?php
+require_once __DIR__ . "/../init.php";
+
+ob_start();
 session_start();
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../middleware/auth_middleware.php";
-require_once __DIR__ . "/../functions/fetch_report_options.php";
 
 $userData = checkAuth();
 $current_user_id = $userData->user_id;

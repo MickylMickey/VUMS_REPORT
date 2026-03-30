@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../vendor/autoload.php";
+require_once __DIR__ . "/../init.php";
 
+ob_start();
+session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $user_id = $_POST["user_id"];

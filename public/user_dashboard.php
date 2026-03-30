@@ -1,7 +1,8 @@
 <?php
-// 1. Include the middleware and helpers
-require_once __DIR__ . '/../middleware/auth_middleware.php';
-require_once __DIR__ . '/../helper/generalValidationMessage.php';
+require_once __DIR__ . "/../init.php";
+
+ob_start();
+session_start();
 
 /**
  * 2. Use checkAuth() instead of session_start()
