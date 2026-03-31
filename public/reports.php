@@ -4,30 +4,16 @@ require_once __DIR__ . "/../init.php";
 ob_start();
 session_start();
 
+$userData = checkAuth();
 $categoryOptions = fetchAllFromTable($conn, 'category');
 $moduleOptions = fetchAllFromTable($conn, 'module');
 $severityOptions = fetchAllFromTable($conn, 'severity');
-$userData = checkAuth();
+$visibility = new BugVisibility($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 
-$sql = "SELECT r.*, 
-               UPPER(c.category) AS category, 
-               UPPER(m.mod_desc) AS module, 
-               UPPER(s.sev_desc) AS severity, 
-               (st.status_desc) AS status_desc, 
-               UPPER(u.username) AS username 
-        FROM report r
-        JOIN category c ON r.cat_id = c.cat_id
-        JOIN module m ON r.mod_id = m.mod_id
-        JOIN severity s ON r.sev_id = s.sev_id
-        JOIN status st ON r.status_id = st.status_id
-        JOIN users u ON r.user_id = u.user_id
-        ORDER BY r.report_created_at ASC";
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+// (Check if your object uses 'user_id' or 'id', and 'role' or 'role_id')
+$reports = $visibility->getVisibleReports($current_user_id, $user_role);
 
 // 2. You still have $user_role from your middleware to use in the HTML 
 // (e.g., to decide who gets to see the "Edit" or "Change Status" buttons)
@@ -73,9 +59,9 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             </td>
                             <td class="px-4 py-2">
                                 <span class="text-xs text-gray-500 block">
-                                    <?= $report['category'] ?>
+                                    <?= $report['cat_desc'] ?>
                                 </span>
-                                <?= $report['module'] ?>
+                                <?= $report['mod_desc'] ?>
                             </td>
                             <td class="px-4 py-2">
                                 <span

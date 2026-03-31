@@ -10,44 +10,42 @@ class BugVisibility
     }
 
     /**
-     * Fetches reports based on user permissions.
-     * Admin (Role 1) sees all. Users see only their own.
+     * @param string $current_user_id (UUID string)
+     * @param string $user_role (String like "Admin" or "User")
      */
-    public function getVisibleReports(string $currentUserId, int $currentUserRole, ?int $limit = null, ?int $offset = null): array
+    // CHANGED: $user_role must be 'string' here, not 'int'
+    public function getVisibleReports(string $current_user_id, string $user_role, ?int $limit = null, ?int $offset = null): array
     {
         $params = [];
         $types = "";
 
-        // Base Query with Joins to get human-readable names
         $sql = "SELECT 
-                    r.*, 
-                    u.username,
-                    c.cat_name, 
-                    m.mod_name, 
-                    s.sev_name, 
-                    st.status_name
-                FROM report r
-                INNER JOIN users u ON r.user_id = u.user_id
-                INNER JOIN category c ON r.cat_id = c.cat_id
-                INNER JOIN module m ON r.mod_id = m.mod_id
-                INNER JOIN severity s ON r.sev_id = s.sev_id
-                INNER JOIN status st ON r.status_id = st.status_id";
+                r.*, 
+                u.username,
+                c.category AS cat_desc,
+                m.module AS mod_desc, 
+                s.sev_desc AS severity, 
+                st.status_desc
+            FROM report r
+            LEFT JOIN users u ON r.user_id = u.user_id
+            LEFT JOIN category c ON r.cat_id = c.cat_id
+            LEFT JOIN module m ON r.mod_id = m.mod_id
+            LEFT JOIN severity s ON r.sev_id = s.sev_id
+            LEFT JOIN status st ON r.status_id = st.status_id";
 
-        // Logic: If NOT Admin (Role 1), restrict to the user's own reports
-        if ($currentUserRole !== 1) {
+        // This works perfectly now because $user_role is a string
+        if ($user_role !== 'Admin') {
             $sql .= " WHERE r.user_id = ?";
-            $params[] = $currentUserId;
-            $types .= "s"; // CHAR(36) is a string
+            $params[] = $current_user_id;
+            $types .= "s";
         }
 
         $sql .= " ORDER BY r.report_created_at DESC";
 
-        // Add Pagination
         if ($limit !== null) {
             $sql .= " LIMIT ?";
             $params[] = $limit;
             $types .= "i";
-
             if ($offset !== null) {
                 $sql .= " OFFSET ?";
                 $params[] = $offset;
@@ -55,12 +53,10 @@ class BugVisibility
             }
         }
 
+        // The final return line
         return $this->executeQuery($sql, $params, $types);
     }
 
-    /**
-     * Helper to execute prepared statements
-     */
     private function executeQuery($sql, $params, $types): array
     {
         $stmt = $this->conn->prepare($sql);

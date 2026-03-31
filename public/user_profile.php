@@ -83,24 +83,18 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
             <!-- Decorative Banner -->
             <div class="relative h-28 bg-gradient-to-r from-cyan-500 to-purple-600">
                 <!-- Edit Button (Positioned Absolute Top Right) -->
-                <button
-                    class="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 group"
-                    onclick="openEditUserModal(
-                '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
-                                    '<?= htmlspecialchars($userData['username'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['email'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_first_name'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_middle_name'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_last_name'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_birthdate'] ?? '') ?>',
-                                    '<?= addslashes(htmlspecialchars($userData['image_path'] ?? '', ENT_QUOTES)) ?>',
-                                    '<?= htmlspecialchars($userData['role_name'] ?? '') ?>'
-                                )">
+                <button class="p-2 text-black bg-blue-600 rounded-lg transition-all group" onclick="openEditUserModal(
+        '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
+                        '<?= htmlspecialchars($userData['username'] ?? '') ?>',
+                        '<?= htmlspecialchars($userData['user_role_id'] ?? '') ?>', // Pass ID, not name
+                        '<?= htmlspecialchars($userData['email'] ?? '') ?>',
+                        '<?= htmlspecialchars($userData['user_first_name'] ?? '') ?>',
+                        '<?= htmlspecialchars($userData['user_middle_name'] ?? '') ?>',
+                        '<?= htmlspecialchars($userData['user_last_name'] ?? '') ?>',
+                        '<?= htmlspecialchars($userData['user_dob'] ?? '') ?>', 
+                        '../public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>'
+                    )">
                     EDIT USER
-                    <!-- Tooltip (Optional) -->
-                    <span
-                        class="absolute -bottom-8 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Edit
-                        Profile</span>
                 </button>
             </div>
 
@@ -124,8 +118,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                     $firstName = ucfirst($userData['user_first_name']);
                     $middleInitial = !empty($userData['user_middle_name']) ? strtoupper(substr($userData['user_middle_name'], 0, 1)) . '.' : '';
                     $lastName = ucfirst($userData['user_last_name']);
-                    $extension = !empty($userData['name_extension']) ? ' ' . htmlspecialchars($userData['name_extension']) : '';
-                    $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName$extension"));
+                    $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName"));
                     ?>
                     <h2 class="text-xl font-bold text-gray-800 tracking-tight"><?= $fullName ?></h2>
                     <span
@@ -196,7 +189,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Birthdate
                             </p>
                             <p class="text-sm font-medium text-gray-700">
-                                <?= !empty($userData['user_birthdate']) ? date('F j, Y', strtotime($userData['user_birthdate'])) : "Not set" ?>
+                                <?= !empty($userData['user_dob']) ? date('F j, Y', strtotime($userData['user_dob'])) : "Not set" ?>
                             </p>
                         </div>
                     </div>
@@ -206,7 +199,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
     </div>
     <!-- Edit User Modal -->
     <div id="editUserModal"
-        class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm items-center justify-center transition-all duration-300 ease-out font-sans">
+        class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm items-center justify-center transition-all duration-300 ease-out font-sans hidden">
 
         <!-- Modal Content Card -->
         <div id="editUserModalContent"
@@ -222,7 +215,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
             <!-- 2. Scrollable Form Body -->
             <div class="flex-1 overflow-y-auto custom-scroll px-8 pt-8 pb-2">
-                <form id="editUserForm" method="POST" action="../controllers/edit_user_handler.php" class="space-y-8"
+                <form id="editUserForm" method="POST" action="../controllers/edit_user_profile.php" class="space-y-8"
                     enctype="multipart/form-data">
                     <input type="hidden" name="user_id" id="editUserId">
 
@@ -236,7 +229,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                     <span class="text-slate-400 text-xs font-medium">No Image</span>
                                 </div>
                                 <label for="user_image"
-                                    class="absolute bottom-0 right-0 p-2 bg-ntPurple text-white rounded-full cursor-pointer hover:bg-purple-700 shadow-lg transition-transform hover:scale-105 border-2 border-white">
+                                    class="absolute bottom-0 right-0 p-2 text-white rounded-full cursor-pointer hover:bg-purple-700 shadow-lg transition-transform hover:scale-105 border-2 border-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -245,7 +238,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                 </label>
-                                <input type="file" id="user_image" name="user_image" accept="image/*" class="hidden">
+                                <input type="file" id="user_image" name="user_image" accept="image/*">
                             </div>
                             <p class="text-[11px] text-slate-400 font-medium text-center w-32">Allowed: JPG, PNG</p>
                         </div>
@@ -281,11 +274,18 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                     class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-ntPurple focus:ring-1 focus:ring-ntPurple transition-all"
                                     placeholder="e.g. Dela Cruz">
                             </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="editUserBirthdate"
+                                    class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Last
+                                    Name <span class="text-red-500">*</span></label>
+                                <input type="date" name="birth_date" id="editUserBirthdate"
+                                    class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-ntPurple focus:ring-1 focus:ring-ntPurple transition-all">
+                            </div>
                         </div>
                     </div>
 
                     <!-- SECTION: Account Details (Card Style) -->
-                    <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-100">
+                    <div class=" bg-slate-50/80 p-5 rounded-2xl border border-slate-100">
                         <h3 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
                             <svg class="w-4 h-4 text-ntCyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -301,6 +301,17 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                 <input type="text" name="username" id="editUserName"
                                     class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-ntPurple focus:ring-1 focus:ring-ntPurple transition-all font-semibold text-slate-700">
                             </div>
+                        </div>
+                        <div>
+                            <label for="edit_user_role">User Role</label>
+                            <select name="user_role" id="edit_user_role">
+                                <option value="" disabled selected>Select a role</option>
+                                <?php foreach ($roleOptions as $option): ?>
+                                    <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
+                                        <?= htmlspecialchars($option['role_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <!-- Email -->
                         <div class="col-span-1 sm:col-span-2">
@@ -322,7 +333,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                     Cancel
                 </button>
                 <button type="submit" form="editUserForm"
-                    class="px-6 py-2.5 bg-ntPurple text-white font-semibold rounded-xl text-sm hover:bg-purple-700 shadow-md shadow-purple-200 transition-all transform hover:-translate-y-0.5">
+                    class="px-6 py-2.5 bg-ntPurple text-black font-semibold rounded-xl text-sm hover:bg-purple-700 shadow-md shadow-purple-200 transition-all transform hover:-translate-y-0.5">
                     Save Changes
                 </button>
             </div>
@@ -331,6 +342,6 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
     </div>
     <?php ob_end_flush(); ?>
 </body>
-
+<script src="js/user_profile.js"></script>
 
 </html>

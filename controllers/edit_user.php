@@ -14,24 +14,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->begin_transaction();
 
         if (!empty($password)) {
-            // 🔐 Hash password ONLY if provided
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            $sql = "UPDATE users 
-                    SET username = ?, user_role_id = ?, password = ?
-                    WHERE user_id = ?";
+            if (!empty($role)) {
+                $sql = "UPDATE users 
+                SET username = ?, user_role_id = ?, password = ?
+                WHERE user_id = ?";
 
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("siss", $username, $role, $hashed_password, $user_id);
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("siss", $username, $role, $hashed_password, $user_id);
+
+            } else {
+                $sql = "UPDATE users 
+                SET username = ?, password = ?
+                WHERE user_id = ?";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sss", $username, $hashed_password, $user_id);
+            }
 
         } else {
 
-            $sql = "UPDATE users 
-                    SET username = ?, user_role_id = ?
-                    WHERE user_id = ?";
+            if (!empty($role)) {
+                $sql = "UPDATE users 
+                SET username = ?, user_role_id = ?
+                WHERE user_id = ?";
 
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sis", $username, $role, $user_id);
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sis", $username, $role, $user_id);
+
+            } else {
+                $sql = "UPDATE users 
+                SET username = ?
+                WHERE user_id = ?";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ss", $username, $user_id);
+            }
         }
 
         $stmt->execute();
