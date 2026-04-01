@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
+
 
 /**
  * 2. Use checkAuth() instead of session_start()

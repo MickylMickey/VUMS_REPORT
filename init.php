@@ -1,4 +1,6 @@
 <?php
+session_start();
+ob_clean();
 // Config and autoload
 require_once __DIR__ . "/config/config.php";
 require_once __DIR__ . "/vendor/autoload.php";
@@ -18,4 +20,6 @@ require_once __DIR__ . "/functions/fetch_report_options.php";
 require_once __DIR__ . "/functions/role_functions.php";
 require_once __DIR__ . "/functions/pagination.php";
 require_once __DIR__ . "/functions/bug_visibility.php";
+require_once __DIR__ . "/functions/fetch_status.php";
+
 ?>

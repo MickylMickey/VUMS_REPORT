@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
+
 
 $userData = checkAuth();
 $current_user_id = $userData->user_id;

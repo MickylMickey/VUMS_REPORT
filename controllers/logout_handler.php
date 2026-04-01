@@ -2,7 +2,6 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
 use Ramsey\Uuid\Uuid;
 
 // 1. Initialize variables for logging

@@ -5,7 +5,6 @@ require_once __DIR__ . "/../init.php";
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 ob_start();
-session_start();
 
 use Ramsey\Uuid\Uuid;
 

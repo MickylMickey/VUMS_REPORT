@@ -2,8 +2,6 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
-
 $userData = checkAuth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

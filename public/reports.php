@@ -2,12 +2,12 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
 
 $userData = checkAuth();
 $categoryOptions = fetchAllFromTable($conn, 'category');
 $moduleOptions = fetchAllFromTable($conn, 'module');
 $severityOptions = fetchAllFromTable($conn, 'severity');
+$statusOptions = fetchStatus($conn);
 $visibility = new BugVisibility($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
@@ -45,6 +45,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                         <th class="px-4 py-2 text-left">Severity</th>
                         <th class="px-4 py-2 text-left">Description</th>
                         <th class="px-4 py-2 text-left">Status</th>
+                        <th class="px-4 py-2 text-left">Updated by</th>
                         <th class="px-4 py-2 text-left">Image</th>
                     </tr>
                 </thead>
@@ -55,7 +56,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                                 <?= $report['ref_num'] ?>
                             </td>
                             <td class="px-4 py-2">
-                                <?= htmlspecialchars($report['username']) ?>
+                                <?= htmlspecialchars($report['reporter_name']) ?>
                             </td>
                             <td class="px-4 py-2">
                                 <span class="text-xs text-gray-500 block">
@@ -73,10 +74,24 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                             <td class="px-4 py-2 text-sm max-w-xs truncate">
                                 <?= htmlspecialchars($report['report_desc']) ?>
                             </td>
-                            <td class="px-4 py-2">
-                                <span class="italic text-gray-600">
-                                    <?= $report['status_desc'] ?>
-                                </span>
+                            <td>
+                                <select class="status-updater w-full border rounded-lg p-2"
+                                    data-report-id="<?= $report['report_id'] ?>">
+                                    <?php foreach ($statusOptions as $status): ?>
+                                        <option value="<?= $status['status_id'] ?>"
+                                            <?= $status['status_id'] == $report['status_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($status['status_desc']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                            <td class="px-4 py-2 text-sm max-w-xs truncate">
+                                <?php if ($report['updated_by']): ?>
+                                    Last updated by <?= htmlspecialchars($report['updater_name']) ?> <br>
+                                    on <?= date('M d, Y', strtotime($report['report_updated_at'])) ?>
+                                <?php else: ?>
+                                    No updates yet
+                                <?php endif; ?>
                             </td>
                             <td class="px-4 py-2">
                                 <?php if ($report['report_img']): ?>
@@ -146,6 +161,50 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             </form>
         </div>
     </div>
+
 </body>
+<script>
+    // 1. Capture the PHP session ID for the JS to use
+    const currentUserId = "<?= $current_user_id ?>";
+
+    document.querySelectorAll('.status-updater').forEach(select => {
+        select.addEventListener('change', function () {
+            const reportId = this.getAttribute('data-report-id');
+            const statusId = this.value;
+
+            this.style.opacity = '0.5';
+
+            fetch('../controllers/quick_update_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                // 2. ADD updated_by TO THE BODY
+                body: `report_id=${reportId}&status_id=${statusId}&updated_by=${currentUserId}`
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Server error');
+                    return response.json();
+                })
+                .then(data => {
+                    this.style.opacity = '1';
+                    if (data.success) {
+                        console.log('Update successful');
+                        // Optional: Refresh page to show new "Last Modified" name
+                        // location.reload(); 
+                    } else {
+                        // This will now show the SPECIFIC error from your PHP debug steps
+                        alert('Update failed: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    this.style.opacity = '1';
+                    console.error('Error:', error);
+                    alert('Connection error. Check console.');
+                });
+        });
+    });
+</script>
 
 </html>

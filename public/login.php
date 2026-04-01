@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
+
 
 // Check if a valid token already exists
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {

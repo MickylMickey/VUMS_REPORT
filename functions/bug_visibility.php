@@ -20,18 +20,20 @@ class BugVisibility
         $types = "";
 
         $sql = "SELECT 
-                r.*, 
-                u.username,
-                c.category AS cat_desc,
-                m.module AS mod_desc, 
-                s.sev_desc AS severity, 
-                st.status_desc
-            FROM report r
-            LEFT JOIN users u ON r.user_id = u.user_id
-            LEFT JOIN category c ON r.cat_id = c.cat_id
-            LEFT JOIN module m ON r.mod_id = m.mod_id
-            LEFT JOIN severity s ON r.sev_id = s.sev_id
-            LEFT JOIN status st ON r.status_id = st.status_id";
+            r.*, 
+            u.username AS reporter_name, 
+            updater.username AS updater_name, 
+            c.category AS cat_desc,
+            m.module AS mod_desc, 
+            s.sev_desc AS severity, 
+            st.status_desc
+        FROM report r
+        LEFT JOIN users u ON r.user_id = u.user_id
+        LEFT JOIN users updater ON r.updated_by = updater.user_id 
+        LEFT JOIN category c ON r.cat_id = c.cat_id
+        LEFT JOIN module m ON r.mod_id = m.mod_id
+        LEFT JOIN severity s ON r.sev_id = s.sev_id
+        LEFT JOIN status st ON r.status_id = st.status_id";
 
         // This works perfectly now because $user_role is a string
         if ($user_role !== 'Admin') {

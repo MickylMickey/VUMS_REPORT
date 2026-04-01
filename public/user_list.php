@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-session_start();
+
 
 $user = checkAuth('Admin');
 $isAdmin = RoleHelper::isAdmin($role);
