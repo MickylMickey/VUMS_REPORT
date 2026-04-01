@@ -2,27 +2,24 @@
 require_once __DIR__ . "/../init.php";
 
 ob_start();
-
-
 $userData = checkAuth();
+$statusOptions = fetchStatus($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 
 $sql = "SELECT us.*, 
                st.status_desc, 
+               updater.username AS updater_name,
                UPPER(u.username) AS username 
         FROM user_suggestions us
-        JOIN status st ON us.status_id = st.status_id
-        JOIN users u ON us.user_id = u.user_id
-        ORDER BY us.suggestion_created_at DESC"; // Sorting by newest suggestion first
+        LEFT JOIN status st ON us.status_id = st.status_id
+        LEFT JOIN users updater ON us.suggestion_updated_by = updater.user_id
+        LEFT JOIN users u ON us.user_id = u.user_id
+        ORDER BY us.suggestion_created_at ASC";
 
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +44,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <th class="px-4 py-2 text-left">Reporter</th>
                     <th class="px-4 py-2 text-left">Suggestion</th>
                     <th class="px-4 py-2 text-left">Status</th>
+                    <th class="px-4 py-2 text-left">Updated by</th>
                     <th class="px-4 py-2 text-left">Image</th>
                 </tr>
             </thead>
@@ -61,10 +59,25 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>
                         </td>
 
-                        <td class="px-4 py-2">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                <?= htmlspecialchars($sug['status_desc']) ?>
-                            </span>
+                        <td>
+                            <select class="status-updater w-full border rounded-lg p-2"
+                                data-report-id="<?= $sug['suggestion_id'] ?>">
+                                <?php foreach ($statusOptions as $status): ?>
+                                    <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($status['status_desc']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                        <td class="px-4 py-2 text-sm max-w-xs truncate">
+                            <?php if ($sug['suggestion_updated_by']): ?>
+                                Last updated by
+                                <?= htmlspecialchars($sug['updater_name']) ?> <br>
+                                on
+                                <?= date('M d, Y', strtotime($sug['suggestion_updated_at'])) ?>
+                            <?php else: ?>
+                                No updates yet
+                            <?php endif; ?>
                         </td>
 
                         <td class="px-4 py-2">
@@ -109,5 +122,67 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 </body>
+<script>
+    // 1. Capture the PHP session ID for the JS to use
+    const currentUserId = "<?= $current_user_id ?>";
+
+    document.querySelectorAll('.status-updater').forEach(select => {
+        select.addEventListener('change', function () {
+            const suggestionId = this.getAttribute('data-report-id');
+            const statusId = this.value;
+
+            this.style.opacity = '0.5';
+
+            fetch('../controllers/quick_update_suggestion.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                // 2. ADD updated_by TO THE BODY
+                body: `suggestion_id=${suggestionId}&status_id=${statusId}&updated_by=${currentUserId}`
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Server error');
+                    return response.json();
+                })
+                .then(data => {
+                    this.style.opacity = '1';
+
+                    if (data.success) {
+                        console.log('Update successful');
+
+                        // Check if the status is 3 (Completed) or 4 (Cancelled)
+                        // We use parseInt to make sure we are comparing numbers
+                        const selectedStatus = parseInt(statusId);
+
+                        if (selectedStatus === 3 || selectedStatus === 4) {
+                            // Find the closest Table Row (tr) and remove it with a nice fade-out
+                            const row = this.closest('tr');
+
+                            row.style.transition = 'all 0.5s ease';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(20px)';
+
+                            setTimeout(() => {
+                                row.remove();
+                                // Optional: Show a message if the table is now empty
+                                checkIfTableEmpty();
+                            }, 500);
+                        }
+                    } else {
+                        alert('Update failed: ' + (data.error || 'Unknown error'));
+                        // Optional: Reset the dropdown to previous value on failure
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    this.style.opacity = '1';
+                    console.error('Error:', error);
+                    alert('Connection error. Check console.');
+                });
+        });
+    });
+</script>
 
 </html>

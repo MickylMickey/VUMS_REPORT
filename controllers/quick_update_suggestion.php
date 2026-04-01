@@ -9,15 +9,15 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $reportId = $_POST['report_id'] ?? null;
+    $suggestionId = $_POST['suggestion_id'] ?? null;
     $statusId = $_POST['status_id'] ?? null;
 
     // DEBUG: Ensure this matches the key you used when the user logged in!
     $updated_by = $_SESSION['user_id'] ?? null;
 
     // 1. Update the status normally first
-    $stmt = $conn->prepare("UPDATE report SET status_id = ?, updated_by = ? WHERE report_id = ?");
-    $stmt->bind_param("isi", $statusId, $updated_by, $reportId);
+    $stmt = $conn->prepare("UPDATE user_suggestions SET status_id = ?, suggestion_updated_by = ? WHERE suggestion_id = ?");
+    $stmt->bind_param("isi", $statusId, $updated_by, $suggestionId);
 
     if ($stmt->execute()) {
         // 2. Check if the new status is 3 (Completed) or 4 (Cancelled)
@@ -28,15 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             try {
                 // A. Copy the data to the archive table
-                $copySql = "INSERT INTO report_archive SELECT * FROM report WHERE report_id = ?";
+                $copySql = "INSERT INTO suggestion_archive SELECT * FROM user_suggestions WHERE suggestion_id = ?";
                 $copyStmt = $conn->prepare($copySql);
-                $copyStmt->bind_param("i", $reportId);
+                $copyStmt->bind_param("i", $suggestionId);
                 $copyStmt->execute();
 
                 // B. Delete from the active table
-                $delSql = "DELETE FROM report WHERE report_id = ?";
+                $delSql = "DELETE FROM user_suggestions WHERE suggestion_id = ?";
                 $delStmt = $conn->prepare($delSql);
-                $delStmt->bind_param("i", $reportId);
+                $delStmt->bind_param("i", $suggestionId);
                 $delStmt->execute();
 
                 // If both succeeded, save changes

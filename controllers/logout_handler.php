@@ -24,7 +24,6 @@ if (isset($_COOKIE['auth_token'])) {
 setcookie("auth_token", "", time() - 3600, "/");
 
 // 5. Clear any legacy PHP Sessions (just in case)
-session_start();
 session_unset();
 session_destroy();
 if (isset($_COOKIE[session_name()])) {

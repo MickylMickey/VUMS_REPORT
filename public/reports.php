@@ -189,13 +189,32 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                 })
                 .then(data => {
                     this.style.opacity = '1';
+
                     if (data.success) {
                         console.log('Update successful');
-                        // Optional: Refresh page to show new "Last Modified" name
-                        // location.reload(); 
+
+                        // Check if the status is 3 (Completed) or 4 (Cancelled)
+                        // We use parseInt to make sure we are comparing numbers
+                        const selectedStatus = parseInt(statusId);
+
+                        if (selectedStatus === 3 || selectedStatus === 4) {
+                            // Find the closest Table Row (tr) and remove it with a nice fade-out
+                            const row = this.closest('tr');
+
+                            row.style.transition = 'all 0.5s ease';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(20px)';
+
+                            setTimeout(() => {
+                                row.remove();
+                                // Optional: Show a message if the table is now empty
+                                checkIfTableEmpty();
+                            }, 500);
+                        }
                     } else {
-                        // This will now show the SPECIFIC error from your PHP debug steps
                         alert('Update failed: ' + (data.error || 'Unknown error'));
+                        // Optional: Reset the dropdown to previous value on failure
+                        location.reload();
                     }
                 })
                 .catch(error => {

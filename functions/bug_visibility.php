@@ -33,7 +33,8 @@ class BugVisibility
         LEFT JOIN category c ON r.cat_id = c.cat_id
         LEFT JOIN module m ON r.mod_id = m.mod_id
         LEFT JOIN severity s ON r.sev_id = s.sev_id
-        LEFT JOIN status st ON r.status_id = st.status_id";
+        LEFT JOIN status st ON r.status_id = st.status_id
+        ";
 
         // This works perfectly now because $user_role is a string
         if ($user_role !== 'Admin') {
@@ -42,7 +43,7 @@ class BugVisibility
             $types .= "s";
         }
 
-        $sql .= " ORDER BY r.report_created_at DESC";
+        $sql .= " ORDER BY r.report_created_at ASC";
 
         if ($limit !== null) {
             $sql .= " LIMIT ?";

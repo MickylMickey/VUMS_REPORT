@@ -19,7 +19,9 @@ class UserVisibility
         FROM users u
         INNER JOIN user_profile up ON u.user_id = up.user_id
         INNER JOIN user_role r ON u.user_role_id = r.user_role_id
-        WHERE u.user_status_id IN (1, 2, 3)";
+        WHERE u.user_status_id IN (1, 2, 3)
+            ORDER BY (r.role_name = 'Admin') DESC, u.username ASC, 
+            u.username ASC"; // Secondarily sort by name A-Z";
 
         if ($limit !== null) {
             $limit = max(0, (int) $limit);
