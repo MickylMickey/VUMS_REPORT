@@ -1,8 +1,8 @@
 <?php
-// 1. Include the middleware and helpers
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . '/../middleware/auth_middleware.php';
-require_once __DIR__ . '/../helper/generalValidationMessage.php';
+require_once __DIR__ . "/../init.php";
+
+ob_start();
+
 
 /**
  * 2. Use checkAuth() instead of session_start()
@@ -12,8 +12,10 @@ require_once __DIR__ . '/../helper/generalValidationMessage.php';
  *  - Check if the user has the 'Admin' role
  *  - Redirect to login.php automatically if any of the above fails
  */
-$user = checkAuth('Admin'); // Change 'Admin' to 'System Administrator' if that's the exact string in your DB
-
+// Change 'Admin' to 'System Administrator' if that's the exact string in your DB
+$userData = checkAuth('Admin');
+$current_user_id = $userData->user_id;
+$user_role = $userData->role;
 // If the code reaches here, the user is authenticated.
 ?>
 

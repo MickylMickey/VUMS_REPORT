@@ -1,33 +1,19 @@
 <?php
-session_start();
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../middleware/auth_middleware.php";
-require_once __DIR__ . "/../functions/fetch_report_options.php";
+require_once __DIR__ . "/../init.php";
 
+ob_start();
+
+$userData = checkAuth();
 $categoryOptions = fetchAllFromTable($conn, 'category');
 $moduleOptions = fetchAllFromTable($conn, 'module');
 $severityOptions = fetchAllFromTable($conn, 'severity');
-$userData = checkAuth();
+$statusOptions = fetchStatus($conn);
+$visibility = new BugVisibility($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 
-$sql = "SELECT r.*, 
-               UPPER(c.category) AS category, 
-               UPPER(m.mod_desc) AS module, 
-               UPPER(s.sev_desc) AS severity, 
-               (st.status_desc) AS status_desc, 
-               UPPER(u.username) AS username 
-        FROM report r
-        JOIN category c ON r.cat_id = c.cat_id
-        JOIN module m ON r.mod_id = m.mod_id
-        JOIN severity s ON r.sev_id = s.sev_id
-        JOIN status st ON r.status_id = st.status_id
-        JOIN users u ON r.user_id = u.user_id
-        ORDER BY r.report_created_at ASC";
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+// (Check if your object uses 'user_id' or 'id', and 'role' or 'role_id')
+$reports = $visibility->getVisibleReports($current_user_id, $user_role);
 
 // 2. You still have $user_role from your middleware to use in the HTML 
 // (e.g., to decide who gets to see the "Edit" or "Change Status" buttons)
@@ -40,6 +26,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/public/dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Reports</title>
 </head>
 
@@ -58,6 +45,7 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <th class="px-4 py-2 text-left">Severity</th>
                         <th class="px-4 py-2 text-left">Description</th>
                         <th class="px-4 py-2 text-left">Status</th>
+                        <th class="px-4 py-2 text-left">Updated by</th>
                         <th class="px-4 py-2 text-left">Image</th>
                     </tr>
                 </thead>
@@ -68,13 +56,13 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <?= $report['ref_num'] ?>
                             </td>
                             <td class="px-4 py-2">
-                                <?= htmlspecialchars($report['username']) ?>
+                                <?= htmlspecialchars($report['reporter_name']) ?>
                             </td>
                             <td class="px-4 py-2">
                                 <span class="text-xs text-gray-500 block">
-                                    <?= $report['category'] ?>
+                                    <?= $report['cat_desc'] ?>
                                 </span>
-                                <?= $report['module'] ?>
+                                <?= $report['mod_desc'] ?>
                             </td>
                             <td class="px-4 py-2">
                                 <span
@@ -86,10 +74,24 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <td class="px-4 py-2 text-sm max-w-xs truncate">
                                 <?= htmlspecialchars($report['report_desc']) ?>
                             </td>
-                            <td class="px-4 py-2">
-                                <span class="italic text-gray-600">
-                                    <?= $report['status_desc'] ?>
-                                </span>
+                            <td>
+                                <select class="status-updater w-full border rounded-lg p-2"
+                                    data-report-id="<?= $report['report_id'] ?>">
+                                    <?php foreach ($statusOptions as $status): ?>
+                                        <option value="<?= $status['status_id'] ?>"
+                                            <?= $status['status_id'] == $report['status_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($status['status_desc']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                            <td class="px-4 py-2 text-sm max-w-xs truncate">
+                                <?php if ($report['updated_by']): ?>
+                                    Last updated by <?= htmlspecialchars($report['updater_name']) ?> <br>
+                                    on <?= date('M d, Y', strtotime($report['report_updated_at'])) ?>
+                                <?php else: ?>
+                                    No updates yet
+                                <?php endif; ?>
                             </td>
                             <td class="px-4 py-2">
                                 <?php if ($report['report_img']): ?>
@@ -159,6 +161,69 @@ $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </form>
         </div>
     </div>
+
 </body>
+<script>
+    // 1. Capture the PHP session ID for the JS to use
+    const currentUserId = "<?= $current_user_id ?>";
+
+    document.querySelectorAll('.status-updater').forEach(select => {
+        select.addEventListener('change', function () {
+            const reportId = this.getAttribute('data-report-id');
+            const statusId = this.value;
+
+            this.style.opacity = '0.5';
+
+            fetch('../controllers/quick_update_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                // 2. ADD updated_by TO THE BODY
+                body: `report_id=${reportId}&status_id=${statusId}&updated_by=${currentUserId}`
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Server error');
+                    return response.json();
+                })
+                .then(data => {
+                    this.style.opacity = '1';
+
+                    if (data.success) {
+                        console.log('Update successful');
+
+                        // Check if the status is 3 (Completed) or 4 (Cancelled)
+                        // We use parseInt to make sure we are comparing numbers
+                        const selectedStatus = parseInt(statusId);
+
+                        if (selectedStatus === 3 || selectedStatus === 4) {
+                            // Find the closest Table Row (tr) and remove it with a nice fade-out
+                            const row = this.closest('tr');
+
+                            row.style.transition = 'all 0.5s ease';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(20px)';
+
+                            setTimeout(() => {
+                                row.remove();
+                                // Optional: Show a message if the table is now empty
+                                checkIfTableEmpty();
+                            }, 500);
+                        }
+                    } else {
+                        alert('Update failed: ' + (data.error || 'Unknown error'));
+                        // Optional: Reset the dropdown to previous value on failure
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    this.style.opacity = '1';
+                    console.error('Error:', error);
+                    alert('Connection error. Check console.');
+                });
+        });
+    });
+</script>
 
 </html>

@@ -4,10 +4,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../helper/jwt_helper.php";
-require_once __DIR__ . "/../vendor/autoload.php";
-require_once __DIR__ . '/../helper/generalValidationMessage.php';
+require_once __DIR__ . "/../init.php";
+
+ob_start();
 
 use Ramsey\Uuid\Uuid;
 
@@ -65,6 +64,8 @@ WHERE u.user_id =?;
                     "role" => $updatedUser["role_name"],
                     "exp" => time() + 3600 // 1 hour
                 ];
+
+                $_SESSION['user_id'] = $updatedUser["user_id"];
 
                 $jwt = JwtHelper::generateToken($payload);
                 $isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';

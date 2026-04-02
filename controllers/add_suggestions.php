@@ -1,8 +1,7 @@
 <?php
-session_start();
-require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../middleware/auth_middleware.php";
+require_once __DIR__ . "/../init.php";
 
+ob_start();
 $userData = checkAuth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
