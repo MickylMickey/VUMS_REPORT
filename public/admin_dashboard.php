@@ -1,5 +1,6 @@
 <?php
 // 1. Include the middleware and helpers
+require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . '/../middleware/auth_middleware.php';
 require_once __DIR__ . '/../helper/generalValidationMessage.php';
 
@@ -31,7 +32,7 @@ $user = checkAuth('Admin'); // Change 'Admin' to 'System Administrator' if that'
 
     <body class="bg-slate-50">
 
-        <?php include __DIR__ . '/../templates/navbar.php'; ?>
+
 
         <!-- Your content -->
         <!-- Show success message if they just logged in -->
@@ -41,9 +42,6 @@ $user = checkAuth('Admin'); // Change 'Admin' to 'System Administrator' if that'
 
         <div class="p-8">
             <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-            <p class="text-gray-600">Welcome back, <span class="font-bold text-blue-600">
-                    <?= htmlspecialchars($user->full_name) ?>
-                </span>!</p>
 
             <div class="mt-6 p-6 bg-white rounded-xl shadow-sm border border-slate-200">
                 <h2 class="font-semibold mb-2">User Info (Decoded from JWT):</h2>
