@@ -30,19 +30,17 @@ function checkAuth($requiredRole = null)
     }
 
     // Define globals so they are accessible in the files that call this function
-    global $user_id, $username, $role_id, $municipality, $barangay, $barangay_name, $role, $email, $user_status, $user_profile, $user_full_name;
+    global $user_id, $username, $role_id, $role, $email, $user_status, $user_profile, $user_full_name, $user_dob;
 
     $user_id = $userData->user_id ?? null;
     $username = $userData->username ?? null;
-    $municipality = $userData->municipality ?? null;
     $role_id = $userData->role_id ?? null;
-    $barangay = $userData->barangay ?? null;
-    $barangay_name = $userData->barangay_name ?? null;
     $role = $userData->role ?? null;
     $email = $userData->email ?? null;
     $user_status = $userData->user_status ?? null;
     $user_profile = $userData->user_profile ?? null;
     $user_full_name = $userData->user_full_name ?? null;
+    $user_dob = $userData->user_dob ?? null;
 
     return $userData;
 }

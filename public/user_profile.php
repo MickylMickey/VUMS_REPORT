@@ -276,8 +276,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                             </div>
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="editUserBirthdate"
-                                    class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Last
-                                    Name <span class="text-red-500">*</span></label>
+                                    class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Birthday <span class="text-red-500">*</span></label>
                                 <input type="date" name="birth_date" id="editUserBirthdate"
                                     class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-ntPurple focus:ring-1 focus:ring-ntPurple transition-all">
                             </div>

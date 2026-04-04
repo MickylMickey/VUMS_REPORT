@@ -20,12 +20,11 @@ class ComposerStaticInitba5b9fcdd461a562044bf9ffb1984f68
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
         ),
-        'R' =>
+        'R' => 
         array (
             'Ramsey\\Uuid\\' => 12,
             'Ramsey\\Collection\\' => 18,
         ),
-        'P' =>
         'P' => 
         array (
             'Pos\\VumsReport\\' => 15,
@@ -43,7 +42,7 @@ class ComposerStaticInitba5b9fcdd461a562044bf9ffb1984f68
         array (
             'Dotenv\\' => 7,
         ),
-        'B' =>
+        'B' => 
         array (
             'Brick\\Math\\' => 11,
         ),
@@ -61,6 +60,14 @@ class ComposerStaticInitba5b9fcdd461a562044bf9ffb1984f68
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'Ramsey\\Uuid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ramsey/uuid/src',
+        ),
+        'Ramsey\\Collection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ramsey/collection/src',
         ),
         'Pos\\VumsReport\\' => 
         array (
@@ -82,7 +89,7 @@ class ComposerStaticInitba5b9fcdd461a562044bf9ffb1984f68
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
-        'Brick\\Math\\' =>
+        'Brick\\Math\\' => 
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
         ),
