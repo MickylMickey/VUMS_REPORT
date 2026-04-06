@@ -1,6 +1,6 @@
 <?php
 
-class BugVisibility
+class reportArchiveVisibility
 {
     private $conn;
 
@@ -13,35 +13,35 @@ class BugVisibility
      * @param string $current_user_id (UUID string)
      * @param string $user_role (String like "Admin" or "User")
      */
-    public function getVisibleReports(string $current_user_id, string $user_role, ?int $limit = null, ?int $offset = null): array
+    public function getVisibleArchiveReports(string $current_user_id, string $user_role, ?int $limit = null, ?int $offset = null): array
     {
         $params = [];
         $types = "";
 
         $sql = "SELECT 
-            r.*, 
+            ra.*, 
             u.username AS reporter_name, 
             updater.username AS updater_name, 
             c.category AS cat_desc,
             m.module AS mod_desc, 
             s.sev_desc AS severity, 
             st.status_desc
-        FROM report r
-        LEFT JOIN users u ON r.user_id = u.user_id
-        LEFT JOIN users updater ON r.updated_by = updater.user_id 
-        LEFT JOIN category c ON r.cat_id = c.cat_id
-        LEFT JOIN module m ON r.mod_id = m.mod_id
-        LEFT JOIN severity s ON r.sev_id = s.sev_id
-        LEFT JOIN status st ON r.status_id = st.status_id
+        FROM report_archive ra
+        LEFT JOIN users u ON ra.user_id = u.user_id
+        LEFT JOIN users updater ON ra.updated_by = updater.user_id 
+        LEFT JOIN category c ON ra.cat_id = c.cat_id
+        LEFT JOIN module m ON ra.mod_id = m.mod_id
+        LEFT JOIN severity s ON ra.sev_id = s.sev_id
+        LEFT JOIN status st ON ra.status_id = st.status_id
         ";
 
         if ($user_role !== 'Admin') {
-            $sql .= " WHERE r.user_id = ?";
+            $sql .= " WHERE ra.user_id = ?";
             $params[] = $current_user_id;
             $types .= "s";
         }
 
-        $sql .= " ORDER BY r.report_created_at ASC";
+        $sql .= " ORDER BY ra.report_created_at ASC";
 
         if ($limit !== null) {
             $sql .= " LIMIT ?";

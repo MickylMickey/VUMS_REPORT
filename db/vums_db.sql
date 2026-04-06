@@ -97,12 +97,12 @@ CREATE TABLE `report` (
   KEY `report_ibfk_5` (`status_id`),
   KEY `report_ibfk_6` (`updated_by`),
   CONSTRAINT `report_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
-  CONSTRAINT `report_ibfk_2` FOREIGN KEY (`cat_id`) REFERENCES `category` (`cat_id`) ON DELETE CASCADE,
-  CONSTRAINT `report_ibfk_3` FOREIGN KEY (`mod_id`) REFERENCES `module` (`mod_id`) ON DELETE CASCADE,
+  CONSTRAINT `report_ibfk_2` FOREIGN KEY (`cat_id`) REFERENCES `category` (`cat_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `report_ibfk_3` FOREIGN KEY (`mod_id`) REFERENCES `module` (`mod_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `report_ibfk_4` FOREIGN KEY (`sev_id`) REFERENCES `severity` (`sev_id`) ON DELETE CASCADE,
   CONSTRAINT `report_ibfk_5` FOREIGN KEY (`status_id`) REFERENCES `status` (`status_id`) ON DELETE CASCADE,
   CONSTRAINT `report_ibfk_6` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +111,7 @@ CREATE TABLE `report` (
 
 LOCK TABLES `report` WRITE;
 /*!40000 ALTER TABLE `report` DISABLE KEYS */;
-INSERT INTO `report` VALUES (9,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',2,1,2,2,'rbac-dash-h-001',NULL,'wala','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-01 08:28:10','2026-04-01 08:28:12');
+INSERT INTO `report` VALUES (9,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',1,6,2,1,'bug-po-h-001',NULL,'ayaw ko nga','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-01 08:28:10','2026-04-06 06:40:56'),(21,'ecf74437-2721-11f1-80cd-fc068c03d3f8',10,11,1,1,'sec-pim-c-001',NULL,'ano lalabas','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 05:27:45','2026-04-06 06:41:09'),(22,'ecf74437-2721-11f1-80cd-fc068c03d3f8',1,NULL,2,1,'bug-xxx-h-001',NULL,'HAHokokh','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 05:27:56','2026-04-06 06:37:10'),(23,'ecf74437-2721-11f1-80cd-fc068c03d3f8',NULL,6,3,1,'xxx-po-m-001',NULL,'ewan ko rin ehhhh',NULL,'2026-04-06 05:28:13','2026-04-06 05:28:13');
 /*!40000 ALTER TABLE `report` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,8 +125,8 @@ DROP TABLE IF EXISTS `report_archive`;
 CREATE TABLE `report_archive` (
   `report_id` int NOT NULL AUTO_INCREMENT,
   `user_id` char(36) NOT NULL,
-  `cat_id` int NOT NULL,
-  `mod_id` int NOT NULL,
+  `cat_id` int DEFAULT NULL,
+  `mod_id` int DEFAULT NULL,
   `sev_id` int NOT NULL,
   `status_id` int NOT NULL DEFAULT '1',
   `ref_num` varchar(36) NOT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE `report_archive` (
   KEY `report_ibfk_4` (`sev_id`),
   KEY `report_ibfk_5` (`status_id`),
   KEY `report_ibfk_6` (`updated_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,7 +151,7 @@ CREATE TABLE `report_archive` (
 
 LOCK TABLES `report_archive` WRITE;
 /*!40000 ALTER TABLE `report_archive` DISABLE KEYS */;
-INSERT INTO `report_archive` VALUES (6,'ecf74437-2721-11f1-80cd-fc068c03d3f8',2,1,1,3,'rbac-dash-c-001',NULL,'wala lang',NULL,'2026-04-01 01:58:18','2026-04-01 08:13:23'),(7,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',2,3,2,3,'rbac-pay-h-001',NULL,'wala',NULL,'2026-04-01 02:07:33','2026-04-01 08:17:14'),(8,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',2,3,1,3,'rbac-pay-c-002','1775014211_d47d3471b8.png','nothuing happen','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-01 03:30:11','2026-04-01 08:28:00');
+INSERT INTO `report_archive` VALUES (6,'ecf74437-2721-11f1-80cd-fc068c03d3f8',2,1,1,3,'rbac-dash-c-001',NULL,'wala lang',NULL,'2026-04-01 01:58:18','2026-04-01 08:13:23'),(7,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',2,3,2,3,'rbac-pay-h-001',NULL,'wala',NULL,'2026-04-01 02:07:33','2026-04-01 08:17:14'),(8,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',2,3,1,3,'rbac-pay-c-002','1775014211_d47d3471b8.png','nothuing happen','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-01 03:30:11','2026-04-01 08:28:00'),(16,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',NULL,NULL,1,3,'xxx-xxx-c-001','1775445411_d080304cee.png','ewan','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 03:16:51','2026-04-06 03:37:46'),(17,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',1,NULL,1,3,'bug-xxx-c-001',NULL,'wala','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 03:21:40','2026-04-06 03:37:07'),(18,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',NULL,5,1,3,'xxx-pr-c-001',NULL,'wala','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 03:37:59','2026-04-06 03:38:07'),(19,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',1,NULL,1,3,'bug-xxx-c-001',NULL,'wala rin','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 03:38:20','2026-04-06 03:38:45'),(20,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',NULL,NULL,1,3,'xxx-xxx-c-001',NULL,'wala','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-06 03:38:37','2026-04-06 03:38:46');
 /*!40000 ALTER TABLE `report_archive` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,7 +169,7 @@ CREATE TABLE `severity` (
   `sev_created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `sev_updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`sev_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -403,4 +403,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-01 17:25:01
+-- Dump completed on 2026-04-06 15:28:53
