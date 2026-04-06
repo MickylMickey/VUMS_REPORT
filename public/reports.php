@@ -11,6 +11,7 @@ $statusOptions = fetchStatus($conn);
 $visibility = new BugVisibility($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
+$isAdmin = (isset($userData->role) && $userData->role === 'Admin');
 
 // (Check if your object uses 'user_id' or 'id', and 'role' or 'role_id')
 $reports = $visibility->getVisibleReports($current_user_id, $user_role);
@@ -47,35 +48,41 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Updated by</th>
                         <th class="px-4 py-2 text-left">Image</th>
+                        <?php if ($isAdmin): ?>
+                            <th>Action</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     <?php foreach ($reports as $report): ?>
-                        <tr class="border-b hover:bg-gray-50">
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
                             <td class="px-4 py-2 font-mono text-blue-600 uppercase">
-                                <?= $report['ref_num'] ?>
+                                <?= htmlspecialchars($report['ref_num']) ?>
                             </td>
                             <td class="px-4 py-2">
                                 <?= htmlspecialchars($report['reporter_name']) ?>
                             </td>
                             <td class="px-4 py-2">
-                                <span class="text-xs text-gray-500 block">
-                                    <?= $report['cat_desc'] ?>
+                                <span class="text-xs text-gray-400 block uppercase font-semibold">
+                                    <?= $report['cat_id'] ? htmlspecialchars($report['cat_desc']) : 'Other' ?>
                                 </span>
-                                <?= $report['mod_desc'] ?>
+                                <span class="text-sm">
+                                    <?= $report['mod_id'] ? htmlspecialchars($report['mod_desc']) : 'Other' ?>
+                                </span>
                             </td>
                             <td class="px-4 py-2">
                                 <span
                                     class="px-2 py-1 rounded text-xs font-bold 
-                            <?= $report['severity'] == 'Critical' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700' ?>">
+                                    <?= $report['severity'] == 'Critical' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700' ?>">
                                     <?= ucfirst($report['severity']) ?>
                                 </span>
                             </td>
-                            <td class="px-4 py-2 text-sm max-w-xs truncate">
+                            <td class="px-4 py-2 text-sm max-w-xs truncate"
+                                title="<?= htmlspecialchars($report['report_desc']) ?>">
                                 <?= htmlspecialchars($report['report_desc']) ?>
                             </td>
-                            <td>
-                                <select class="status-updater w-full border rounded-lg p-2"
+                            <td class="px-4 py-2">
+                                <select class="status-updater w-full border rounded-lg p-1 text-sm bg-white"
                                     data-report-id="<?= $report['report_id'] ?>">
                                     <?php foreach ($statusOptions as $status): ?>
                                         <option value="<?= $status['status_id'] ?>"
@@ -85,22 +92,34 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                                     <?php endforeach; ?>
                                 </select>
                             </td>
-                            <td class="px-4 py-2 text-sm max-w-xs truncate">
+                            <td class="px-4 py-2 text-xs text-gray-500">
                                 <?php if ($report['updated_by']): ?>
-                                    Last updated by <?= htmlspecialchars($report['updater_name']) ?> <br>
-                                    on <?= date('M d, Y', strtotime($report['report_updated_at'])) ?>
+                                    <span class="font-medium text-gray-700">By
+                                        <?= htmlspecialchars($report['updater_name']) ?></span><br>
+                                    <?= date('M d, Y', strtotime($report['report_updated_at'])) ?>
                                 <?php else: ?>
-                                    No updates yet
+                                    <span class="italic text-gray-400">No updates yet</span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-4 py-2 text-center">
                                 <?php if ($report['report_img']): ?>
                                     <a href="uploads/<?= $report['report_img'] ?>" target="_blank"
-                                        class="text-blue-500 underline text-xs">View Image</a>
+                                        class="text-blue-500 hover:text-blue-700 underline text-xs">View Image</a>
                                 <?php else: ?>
-                                    <span class="text-gray-400 text-xs">No Image</span>
+                                    <span class="text-gray-300 text-xs italic">N/A</span>
                                 <?php endif; ?>
                             </td>
+                            <?php if ($isAdmin): ?>
+                                <td class="px-4 py-2">
+                                    <button
+                                        class="edit-report-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                                        data-id="<?= $report['report_id'] ?>" data-cat="<?= $report['cat_id'] ?? 'other' ?>"
+                                        data-mod="<?= $report['mod_id'] ?? 'other' ?>" data-sev="<?= $report['sev_id'] ?>"
+                                        data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
+                                        Edit
+                                    </button>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -116,6 +135,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                     <label for="cat_id" class="block text-sm font-medium text-gray-700">Category</label>
                     <select name="cat_id" id="cat_id" class="w-full border rounded-lg p-2" required>
                         <option value="" disabled selected>-- Select Category --</option>
+                        <option value="Other">Other (Specify in Description)</option>
                         <?php foreach ($categoryOptions as $cat): ?>
                             <option value="<?= $cat['cat_id'] ?>">
                                 <?= htmlspecialchars($cat['category']) ?>
@@ -128,6 +148,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                     <label for="mod_id" class="block text-sm font-medium text-gray-700">Module</label>
                     <select name="mod_id" id="mod_id" class="w-full border rounded-lg p-2" required>
                         <option value="" disabled selected>-- Select Module --</option>
+                        <option value="Other">Other (Specify in Description)</option>
                         <?php foreach ($moduleOptions as $mod): ?>
                             <option value="<?= $mod['mod_id'] ?>">
                                 <?= htmlspecialchars($mod['module']) ?>
@@ -142,7 +163,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                         <option value="" disabled selected>-- Select Severity --</option>
                         <?php foreach ($severityOptions as $sev): ?>
                             <option value="<?= $sev['sev_id'] ?>">
-                                <?= htmlspecialchars($sev['severity']) ?>
+                                <?= htmlspecialchars($sev['sev_desc']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -161,7 +182,52 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             </form>
         </div>
     </div>
+    <!--Edit Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h2 class="text-xl mb-4">Edit Report</h2>
+            <form id="editForm" action="../controllers/edit_reports.php" method="POST">
+                <input type="hidden" name="report_id" id="edit_report_id">
 
+                <label>Category</label>
+                <select name="cat_id" id="edit_cat_id" class="w-full border p-2 mb-3">
+                    <option value="other">Other</option>
+                    <?php foreach ($categoryOptions as $c): ?>
+                        <option value="<?= $c['cat_id'] ?>">
+                            <?= $c['category'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <label>Module</label>
+                <select name="mod_id" id="edit_mod_id" class="w-full border p-2 mb-3">
+                    <option value="other">Other</option>
+                    <?php foreach ($moduleOptions as $m): ?>
+                        <option value="<?= $m['mod_id'] ?>">
+                            <?= $m['module'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label>Severity</label>
+                <select name="sev_id" id="edit_sev_id" class="w-full border p-2 mb-3">
+                    <option value="other">Other</option>
+                    <?php foreach ($severityOptions as $s): ?>
+                        <option value="<?= $s['sev_id'] ?>">
+                            <?= $s['sev_desc'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label>Description</label>
+                <textarea name="report_desc" id="edit_desc" class="w-full border p-2 mb-3"></textarea>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                    <button type="submit" class="bg-green-600 text-blue px-4 py-2 rounded">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 <script>
     // 1. Capture the PHP session ID for the JS to use
@@ -225,5 +291,6 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
         });
     });
 </script>
+<script src="js/reports.js"></script>
 
 </html>

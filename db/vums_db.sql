@@ -79,8 +79,8 @@ DROP TABLE IF EXISTS `report`;
 CREATE TABLE `report` (
   `report_id` int NOT NULL AUTO_INCREMENT,
   `user_id` char(36) NOT NULL,
-  `cat_id` int NOT NULL,
-  `mod_id` int NOT NULL,
+  `cat_id` int DEFAULT NULL,
+  `mod_id` int DEFAULT NULL,
   `sev_id` int NOT NULL,
   `status_id` int NOT NULL DEFAULT '1',
   `ref_num` varchar(36) NOT NULL,
