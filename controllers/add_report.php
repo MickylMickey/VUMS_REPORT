@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 2. Basic Validation
     if (empty($cat_id) || empty($mod_id) || empty($sev_id) || empty($report_desc)) {
-        $_SESSION['error'] = "All fields except the image are required.";
+        setValidation('error', "All fields except the image are required.");
         header("Location: ../public/reports.php");
         exit();
     }
@@ -89,9 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("siiisss", $user_id, $db_cat_id, $db_mod_id, $db_sev_id, $ref_num, $report_desc, $image_path);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Report submitted! Reference: " . $ref_num;
+            setValidation('success', "Report submitted! Reference: " . $ref_num);
         } else {
-            $_SESSION['error'] = "Database Error: " . $stmt->error;
+            setValidation('error', "Database Error: " . $stmt->error);
         }
         $stmt->close();
     }

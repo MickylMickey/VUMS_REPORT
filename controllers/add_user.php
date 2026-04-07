@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Commit if both succeeded
         $conn->commit();
 
-        $_SESSION["success"] = "User registered successfully";
+        setValidation('success', "User registered successfully");
 
         // Redirect back
         $redirectTo = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "../public/user_list.php";
@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         error_log("Registration Error: " . $e->getMessage());
 
         // Set error message for the user
-        $_SESSION["error"] = "Registration failed: " . $e->getMessage();
+        setValidation('error', "Registration failed: " . $e->getMessage());
 
         $redirectTo = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "../public/register.php";
         header("Location: " . $redirectTo);

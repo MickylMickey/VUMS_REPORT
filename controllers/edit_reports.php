@@ -84,9 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if ($stmt->execute()) {
-        $_SESSION['success'] = "Report and Ref Number updated! New Ref: " . $new_ref_num;
+        setValidation('success', "Report and Ref Number updated! New Ref: " . $new_ref_num);
     } else {
-        $_SESSION['error'] = "Update failed: " . $stmt->error;
+        setValidation('error', "Update failed: " . $stmt->error);
     }
 
     header("Location: ../public/reports.php");

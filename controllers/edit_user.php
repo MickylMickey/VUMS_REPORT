@@ -15,55 +15,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (!empty($password)) {
 
-            if (!empty($role)) {
-                $sql = "UPDATE users 
-                SET username = ?, user_role_id = ?, password = ?
-                WHERE user_id = ?";
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+            if (!empty($role)) {
+                $sql = "UPDATE users SET username = ?, user_role_id = ?, password = ? WHERE user_id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("siss", $username, $role, $hashed_password, $user_id);
-
             } else {
-                $sql = "UPDATE users 
-                SET username = ?, password = ?
-                WHERE user_id = ?";
-
+                $sql = "UPDATE users SET username = ?, password = ? WHERE user_id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sss", $username, $hashed_password, $user_id);
             }
-
         } else {
-
             if (!empty($role)) {
-                $sql = "UPDATE users 
-                SET username = ?, user_role_id = ?
-                WHERE user_id = ?";
-
+                $sql = "UPDATE users SET username = ?, user_role_id = ? WHERE user_id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sis", $username, $role, $user_id);
-
             } else {
-                $sql = "UPDATE users 
-                SET username = ?
-                WHERE user_id = ?";
-
+                $sql = "UPDATE users SET username = ? WHERE user_id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("ss", $username, $user_id);
             }
         }
 
-        $stmt->execute();
-        $conn->commit();
+        if ($stmt->execute()) {
+            $conn->commit();
+
+            setValidation('success', "User '{$username}' updated successfully!");
+        } else {
+            throw new Exception($stmt->error);
+        }
 
         $stmt->close();
 
     } catch (Exception $e) {
-        $conn->rollback();
-        echo "User update error: " . $e->getMessage();
-        exit;
+        if ($conn)
+            $conn->rollback();
+        setValidation('error', "User update error: " . $e->getMessage());
     } finally {
-        $conn->close();
-        header("Location: " . $_SERVER['HTTP_REFERER']);
+        // Use a fallback if HTTP_REFERER is missing
+        $redirect = $_SERVER['HTTP_REFERER'] ?? "../public/user_list.php";
+        header("Location: " . $redirect);
         exit;
     }
 }

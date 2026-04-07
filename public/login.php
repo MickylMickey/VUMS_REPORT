@@ -1,8 +1,6 @@
 <?php
 require_once __DIR__ . "/../init.php";
 
-ob_start();
-
 
 // Check if a valid token already exists
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
@@ -44,10 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
         <div class="p-8">
             <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Login</h2>
 
-            <!-- Display Validation Messages from Helper -->
-            <div class="mb-4">
-                <?= showValidation() ?>
-            </div>
+            <?php if (isset($_COOKIE['validation_message'])): ?>
+                <div id="validationBlock">
+                    <span><?= showValidation() ?></span>
+                </div>
+            <?php endif; ?>
 
             <form action="../controllers/login_handler.php" method="POST" class="space-y-6">
                 <input type="hidden" name="login_type">
@@ -80,5 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
         </div>
     </div>
 </body>
+<?php ob_end_flush(); ?>
+<script src="js/removeNotification.js" defer></script>
 
 </html>

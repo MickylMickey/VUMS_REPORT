@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 3. Validation
     if (empty($category_name)) {
-        $_SESSION['error'] = "Module name is required.";
+        setValidation('error', "Module name is required.");
         header("Location: ../public/categories_module.php");
         exit();
     }
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkStmt->execute();
 
     if ($checkStmt->get_result()->num_rows > 0) {
-        $_SESSION['error'] = "The module '$category_name' already exists.";
+        setValidation('error', "The module '$category_name' already exists.");
         header("Location: ../public/categories_module.php");
         exit();
     }
@@ -39,9 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ss", $category_name, $category_desc);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Module created successfully!";
+            setValidation('success', "Module created successfully!");
         } else {
-            $_SESSION['error'] = "Database Error: " . $stmt->error;
+            setValidation('error', "Database Error: " . $stmt->error);
         }
         $stmt->close();
     }

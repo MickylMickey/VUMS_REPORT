@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_desc = trim($_POST['edit_cat_desc'] ?? '');
 
     if (!$cat_id || empty($new_category)) {
-        $_SESSION['error'] = "Category name is required.";
+        setValidation('error', "Category name is required.");
         header("Location: ../public/categories_module.php");
         exit();
     }
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkStmt->execute();
 
     if ($checkStmt->get_result()->num_rows > 0) {
-        $_SESSION['error'] = "Another category with the name '$new_category' already exists.";
+        setValidation('error', "Another category with the name '$new_category' already exists.");
         header("Location: ../public/categories_module.php");
         exit();
     }
@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ssi", $new_category, $new_desc, $cat_id);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Category updated successfully!";
+            setValidation('success', "Category updated successfully!");
         } else {
-            $_SESSION['error'] = "Update failed: " . $stmt->error;
+            setValidation('error', "Update failed: " . $stmt->error);
         }
         $stmt->close();
     }

@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_desc = trim($_POST['edit_module_desc'] ?? '');
 
     if (!$mod_id || empty($new_module)) {
-        $_SESSION['error'] = "Module name is required.";
+        setValidation('error', "Module name is required.");
         header("Location: ../public/categories_module.php");
         exit();
     }
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkStmt->execute();
 
     if ($checkStmt->get_result()->num_rows > 0) {
-        $_SESSION['error'] = "Another module with the name '$new_module' already exists.";
+        setValidation('error', "Another module with the name '$new_module' already exists.");
         header("Location: ../public/categories_module.php");
         exit();
     }
@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ssi", $new_module, $new_desc, $mod_id);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Module updated successfully!";
+            setValidation('success', "Module updated successfully!");
         } else {
-            $_SESSION['error'] = "Update failed: " . $stmt->error;
+            setValidation('error', "Update failed: " . $stmt->error);
         }
         $stmt->close();
     }

@@ -94,13 +94,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt2->close();
 
         $conn->commit();
-        $_SESSION['success'] = "Profile updated successfully!";
+        setValidation('success', "Profile updated successfully!");
 
     } catch (Exception $e) {
         if (isset($conn))
             $conn->rollback();
         error_log("Edit Error: " . $e->getMessage());
-        $_SESSION['error'] = "Update failed: " . $e->getMessage();
+        setValidation('error', "Update failed: " . $e->getMessage());
     }
 
     header("Location: " . ($_SERVER["HTTP_REFERER"] ?? "../public/user_list.php"));

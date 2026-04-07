@@ -35,6 +35,11 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <body class="pt-24">
     <div>
         <?php include "templates/navbar.php"; ?>
+        <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+            <div class="pointer-events-auto">
+                <?= showValidation() ?>
+            </div>
+        </div>
     </div>
 
 
@@ -125,6 +130,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 </body>
+<?php ob_end_flush(); ?>
 <script>
     // 1. Capture the PHP session ID for the JS to use
     const currentUserId = "<?= $current_user_id ?>";
@@ -154,6 +160,19 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                     if (data.success) {
                         console.log('Update successful');
+
+                        // CREATE A MANUAL TOAST
+                        const statusToast = document.createElement('div');
+                        statusToast.className = "fixed top-24 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-[110] transition-all duration-500";
+                        statusToast.innerHTML = "Status updated successfully!";
+                        document.body.appendChild(statusToast);
+
+                        // Fade it out
+                        setTimeout(() => {
+                            statusToast.style.opacity = '0';
+                            statusToast.style.transform = 'translateY(-20px)';
+                            setTimeout(() => statusToast.remove(), 500);
+                        }, 3000);
 
                         // Check if the status is 3 (Completed) or 4 (Cancelled)
                         // We use parseInt to make sure we are comparing numbers
@@ -187,5 +206,6 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         });
     });
 </script>
+<script src="js/removeNotification.js" defer></script>
 
 </html>

@@ -28,7 +28,7 @@ function showToast(): void
     };
 
     echo <<<HTML
-<div id="toast" class="fixed top-5 right-5 opacity-0 translate-y-[-20px] {$bg} text-white px-6 py-3 rounded shadow-lg z-50 transition-all duration-500 ease-in-out">
+<div id="toast" class="fixed top-5 right-5 opacity-0 translate-y-4 {$bg} text-white px-6 py-3 rounded shadow-lg z-50 transition-all duration-500 ease-in-out">
     {$message}
 </div>
 <script>
@@ -37,14 +37,14 @@ function showToast(): void
         if (toast) {
             // Slide down and fade in
             setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+                toast.classList.remove('opacity-0', 'translate-y-4');
                 toast.classList.add('opacity-100', 'translate-y-0');
             }, 100); // slight delay to trigger animation
 
             // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', 'translate-y-[-20px]');
+                toast.classList.add('opacity-0', 'translate-y-4');
             }, 3000);
         }
     });

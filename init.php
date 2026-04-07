@@ -1,6 +1,7 @@
 <?php
-session_start();
 ob_clean();
+session_start();
+
 // Config and autoload
 require_once __DIR__ . "/config/config.php";
 require_once __DIR__ . "/vendor/autoload.php";

@@ -10,6 +10,8 @@ $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
 
 // (Check if your object uses 'user_id' or 'id', and 'role' or 'role_id')
 $reportArchive = $visibility->getVisibleArchiveReports($current_user_id, $user_role);
+$whereClause = $isAdmin ? "" : "WHERE sa.user_id = ?";
+
 $sql = "SELECT sa.*, 
                st.status_desc, 
                updater.username AS updater_name,
@@ -18,9 +20,15 @@ $sql = "SELECT sa.*,
         LEFT JOIN status st ON sa.status_id = st.status_id
         LEFT JOIN users updater ON sa.suggestion_updated_by = updater.user_id
         LEFT JOIN users u ON sa.user_id = u.user_id
-        ORDER BY sa.suggestion_created_at ASC";
+        $whereClause
+        ORDER BY sa.suggestion_updated_at DESC"; // Sort by newest archived first
 
 $stmt = $conn->prepare($sql);
+
+if (!$isAdmin) {
+    $stmt->bind_param("i", $current_user_id);
+}
+
 $stmt->execute();
 $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 

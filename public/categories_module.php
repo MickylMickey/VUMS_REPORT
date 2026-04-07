@@ -21,6 +21,11 @@ $user = checkAuth('Admin');
 <body class="pt-24">
     <div>
         <?php include "templates/navbar.php"; ?>
+        <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+            <div class="pointer-events-auto">
+                <?= showValidation() ?>
+            </div>
+        </div>
     </div>
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4">Category list</h2>
@@ -209,6 +214,8 @@ $user = checkAuth('Admin');
         </div>
     </div>
 </body>
+<?php ob_end_flush(); ?>
+<script src="js/removeNotification.js" defer></script>
 <script src="js/categories_module.js"></script>
 
 </html>

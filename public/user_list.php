@@ -47,6 +47,12 @@ $roleOptions = fetchRoles($conn);
 <body class="pt-24">
     <div>
         <?php include "templates/navbar.php"; ?>
+        <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+            <div class="pointer-events-auto">
+                <?= showValidation() ?>
+            </div>
+        </div>
+
     </div>
     <div
         class="bg-white border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] rounded-2xl overflow-hidden flex flex-col">
@@ -282,6 +288,8 @@ $roleOptions = fetchRoles($conn);
 
     </div>
 </body>
+<?php ob_end_flush(); ?>
+<script src="js/removeNotification.js" defer></script>
 <script src="js/user_list.js"></script>
 
 </html>

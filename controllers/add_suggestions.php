@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 2. Basic Validation
     if (empty($suggestion_desc)) {
-        $_SESSION['error'] = "Suggestion description is required.";
+        setValidation('error', "Suggestion description is required.");
         header("Location: ../public/suggestions.php");
         exit();
     }
@@ -55,13 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // --- CRITICAL: You must call execute() to actually save to DB ---
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Suggestion submitted successfully!";
+            setValidation('success', "Suggestion submitted successfully!");
         } else {
-            $_SESSION['error'] = "Database Error: " . $stmt->error;
+            setValidation('error', "Database Error: " . $stmt->error);
         }
         $stmt->close();
     } else {
-        $_SESSION['error'] = "System Error: Could not prepare statement.";
+        setValidation('error', "System Error: Could not prepare statement.");
     }
 
     header("Location: ../public/suggestions.php");
