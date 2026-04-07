@@ -31,7 +31,10 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
     <title>Reports</title>
 </head>
 
-<body>
+<body class="pt-24">
+    <div>
+        <?php include "templates/navbar.php"; ?>
+    </div>
     <!--List of reports here -->
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4">System Reports</h2>

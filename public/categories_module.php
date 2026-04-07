@@ -18,7 +18,10 @@ $user = checkAuth('Admin');
     <title>Modules and Categories</title>
 </head>
 
-<body>
+<body class="pt-24">
+    <div>
+        <?php include "templates/navbar.php"; ?>
+    </div>
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4">Category list</h2>
         <div class="overflow-x-auto bg-white rounded-lg shadow">

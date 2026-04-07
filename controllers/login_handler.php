@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     u.user_id, 
     u.username, 
     up.email,
+    up.user_prof,
     u.user_role_id, 
     ur.role_name,
     CONCAT(up.user_first_name, ' ', up.user_last_name) AS user_full_name 
@@ -62,6 +63,7 @@ WHERE u.user_id =?;
                     "user_id" => $updatedUser["user_id"],
                     "username" => $updatedUser["username"],
                     "role" => $updatedUser["role_name"],
+                    "user_prof" => $updatedUser["user_prof"],
                     "exp" => time() + 3600 // 1 hour
                 ];
 

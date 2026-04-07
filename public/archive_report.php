@@ -37,7 +37,10 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <title>Archive</title>
 </head>
 
-<body>
+<body class="pt-24">
+    <div>
+        <?php include "templates/navbar.php"; ?>
+    </div>
     <!-- Report Archive -->
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4">System Reports</h2>

@@ -29,12 +29,12 @@ $user_role = $userData->role;
     <title>Document</title>
 </head>
 
-<body>
-    Test
+<body class="pt-24">
+    <div>
+        <?php include "templates/navbar.php"; ?>
+    </div>
+    <h1>TEST</h1>
 
-    <a href="../controllers/logout_handler.php" class="text-red-500 hover:text-red-700 font-medium">
-        <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
-    </a>
 </body>
 
 </html>

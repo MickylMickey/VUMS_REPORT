@@ -32,7 +32,10 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <title>Suggestions</title>
 </head>
 
-<body>
+<body class="pt-24">
+    <div>
+        <?php include "templates/navbar.php"; ?>
+    </div>
 
 
     <h2 class="text-2xl font-bold mb-4">System Reports</h2>

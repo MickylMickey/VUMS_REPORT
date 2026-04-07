@@ -44,7 +44,10 @@ $roleOptions = fetchRoles($conn);
     <title>Users</title>
 </head>
 
-<body>
+<body class="pt-24">
+    <div>
+        <?php include "templates/navbar.php"; ?>
+    </div>
     <div
         class="bg-white border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] rounded-2xl overflow-hidden flex flex-col">
 
