@@ -48,16 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
                 </div>
             <?php endif; ?>
 
-            <form action="../controllers/login_handler.php" method="POST" class="space-y-6">
+            <form id="loginForm" action="../controllers/login_handler.php" method="POST" class="space-y-6">
                 <input type="hidden" name="login_type">
 
                 <div class="space-y-1.5">
                     <label class="text-sm font-semibold text-gray-700">Username</label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3 top-4 text-gray-400"></i>
-                        <input type="text" name="username" required
+                        <input type="text" name="username"
                             class="w-full pl-10 pr-4 py-3 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200"
-                            placeholder="Enter your username">
+                            placeholder="Enter your username" data-required="true" data-error="Username is required.">
+                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                     </div>
                 </div>
 
@@ -65,9 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
                     <label class="text-sm font-semibold text-gray-700">Password</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-4 text-gray-400"></i>
-                        <input type="password" name="password" required
+                        <input type="password" name="password"
                             class="w-full pl-10 pr-4 py-3 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200"
-                            placeholder="••••••••">
+                            placeholder="••••••••" data-required="true" data-error="Password is required.">
+                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                     </div>
                 </div>
 
@@ -80,6 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
     </div>
 </body>
 <?php ob_end_flush(); ?>
+
 <script src="js/removeNotification.js" defer></script>
+<script src="js/inputValidation.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", () => {
+        initFormValidation("loginForm");
+    });</script>
 
 </html>

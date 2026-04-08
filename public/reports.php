@@ -138,10 +138,11 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
     <h1>Report Problem</h1>
     <div>
         <div>
-            <form action="../controllers/add_report.php" method="POST" enctype="multipart/form-data">
+            <form id="addReportForm" action="../controllers/add_report.php" method="POST" enctype="multipart/form-data">
                 <div class="mb-4">
                     <label for="cat_id" class="block text-sm font-medium text-gray-700">Category</label>
-                    <select name="cat_id" id="cat_id" class="w-full border rounded-lg p-2" required>
+                    <select name="cat_id" id="cat_id" class="w-full border rounded-lg p-2" data-required="true"
+                        data-error="Category is required.">
                         <option value="" disabled selected>-- Select Category --</option>
                         <option value="Other">Other (Specify in Description)</option>
                         <?php foreach ($categoryOptions as $cat): ?>
@@ -150,11 +151,13 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
 
                 <div class="mb-4">
                     <label for="mod_id" class="block text-sm font-medium text-gray-700">Module</label>
-                    <select name="mod_id" id="mod_id" class="w-full border rounded-lg p-2" required>
+                    <select name="mod_id" id="mod_id" class="w-full border rounded-lg p-2" data-required="true"
+                        data-error="Module is required.">
                         <option value="" disabled selected>-- Select Module --</option>
                         <option value="Other">Other (Specify in Description)</option>
                         <?php foreach ($moduleOptions as $mod): ?>
@@ -163,11 +166,13 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
 
                 <div class="mb-4">
                     <label for="sev_id" class="block text-sm font-medium text-gray-700">Severity Level</label>
-                    <select name="sev_id" id="sev_id" class="w-full border rounded-lg p-2" required>
+                    <select name="sev_id" id="sev_id" class="w-full border rounded-lg p-2" data-required="true"
+                        data-error="Severity Level is required.">
                         <option value="" disabled selected>-- Select Severity --</option>
                         <?php foreach ($severityOptions as $sev): ?>
                             <option value="<?= $sev['sev_id'] ?>">
@@ -175,10 +180,13 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
                 <div>
                     <label for="rep_desc">Describe What Happened</label>
-                    <input type="text" name="rep_desc" id="rep_desc" placeholder="Anyare?" required>
+                    <input type="text" name="rep_desc" id="rep_desc" placeholder="Anyare?" data-required="true"
+                        data-error="Description is required.">
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
                 <div>
                     <label for="rep_img">Report Image</label>
@@ -207,40 +215,48 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
                     <select name="cat_id" id="edit_cat_id"
-                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                        data-required="true" data-error="Category is required.">
                         <option value="other">Other</option>
                         <?php foreach ($categoryOptions as $c): ?>
                             <option value="<?= $c['cat_id'] ?>"><?= htmlspecialchars($c['category']) ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Module</label>
                     <select name="mod_id" id="edit_mod_id"
-                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                        data-required="true" data-error="Module is required.">
                         <option value="other">Other</option>
                         <?php foreach ($moduleOptions as $m): ?>
                             <option value="<?= $m['mod_id'] ?>"><?= htmlspecialchars($m['module']) ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Severity</label>
                     <select name="sev_id" id="edit_sev_id"
-                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                        data-required="true" data-error="Severity is required.">
                         <?php foreach ($severityOptions as $s): ?>
                             <option value="<?= $s['sev_id'] ?>"><?= htmlspecialchars($s['sev_desc']) ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
                     <textarea name="report_desc" id="edit_desc" rows="4"
                         class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                        placeholder="Update description..."></textarea>
+                        data-required="true" data-error="Description is required.">
+                    </textarea>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t">
@@ -370,6 +386,11 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
     });
 </script>
 <script src="js/reports.js"></script>
+<script src="js/inputValidation.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", () => {
+        initFormValidation("addReportForm"),
+            initFormValidation("editForm");
+    });</script>
 
 
 </html>
