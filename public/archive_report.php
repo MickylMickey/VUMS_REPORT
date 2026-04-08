@@ -65,7 +65,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Date Created</th>
                         <th class="px-4 py-2 text-left">Date Archived</th>
-                        <th class="px-4 py-2 text-left">Archived by</th>
+                        <th class="px-4 py-2 text-left">Archived by </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
