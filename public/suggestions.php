@@ -164,6 +164,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
     
 
+    <!-- Add Suggestion Modal -->
     <div id="projectModal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-sm px-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
@@ -206,91 +207,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </body>
 <?php ob_end_flush(); ?>
 
-<script>
-    const currentUserId = "<?= $current_user_id ?>";
-
-    function toggleModal(show) {
-        const modal = document.getElementById('projectModal');
-        if (show) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        } else {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    }
-
-    window.onclick = function (event) {
-        const modal = document.getElementById('projectModal');
-        if (event.target == modal) {
-            toggleModal(false);
-        }
-    }
-
-    document.querySelectorAll('.status-updater').forEach(select => {
-        select.addEventListener('change', function () {
-            const suggestionId = this.getAttribute('data-report-id');
-            const statusId = this.value;
-
-            this.style.opacity = '0.5';
-
-            fetch('../controllers/quick_update_suggestion.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `suggestion_id=${suggestionId}&status_id=${statusId}&updated_by=${currentUserId}`
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Server error');
-                    return response.json();
-                })
-                .then(data => {
-                    this.style.opacity = '1';
-
-                    if (data.success) {
-                        console.log('Update successful');
-
-                        const statusToast = document.createElement('div');
-                        statusToast.className = "fixed top-24 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-[110] transition-all duration-500";
-                        statusToast.innerHTML = "Status updated successfully!";
-                        document.body.appendChild(statusToast);
-
-                        setTimeout(() => {
-                            statusToast.style.opacity = '0';
-                            statusToast.style.transform = 'translateY(-20px)';
-                            setTimeout(() => statusToast.remove(), 500);
-                        }, 3000);
-
-                        const selectedStatus = parseInt(statusId);
-
-                        if (selectedStatus === 3 || selectedStatus === 4) {
-                            const row = this.closest('tr');
-                            row.style.transition = 'all 0.5s ease';
-                            row.style.opacity = '0';
-                            row.style.transform = 'translateX(20px)';
-
-                            setTimeout(() => {
-                                row.remove();
-                                if (typeof checkIfTableEmpty === 'function') {
-                                    checkIfTableEmpty();
-                                }
-                            }, 500);
-                        }
-                    } else {
-                        alert('Update failed: ' + (data.error || 'Unknown error'));
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    this.style.opacity = '1';
-                    console.error('Error:', error);
-                    alert('Connection error. Check console.');
-                });
-        });
-    });
-</script>
 <script src="js/removeNotification.js" defer></script>
+<script src="js/suggestions.js"></script>
 
 </html>
