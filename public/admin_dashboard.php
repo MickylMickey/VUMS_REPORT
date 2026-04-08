@@ -50,9 +50,10 @@ $user_role = $userData->role;
             <pre class="bg-slate-100 p-4 rounded text-xs"><?php print_r($user); ?></pre>
         </div>
 
-        <a href="../controllers/logout_handler.php" class="text-red-500 hover:text-red-700 font-medium">
+        <!--  <a href="../controllers/logout_handler.php" class="text-red-500 hover:text-red-700 font-medium">
             <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
         </a>
+        -->
     </div>
 </body>
 
