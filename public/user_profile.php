@@ -78,151 +78,116 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
     <div class="max-w-6xl mx-auto p-6 lg:p-8 mt-4">
 
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
+        <!-- LEFT PROFILE CARD -->
+        <div style="background: linear-gradient(to right, #3b82f6, #ffffff);"
+            class="rounded-2xl shadow-sm overflow-hidden min-h-[400px]">
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="px-6 py-10 text-center">
 
-            <div style="background: linear-gradient(to right, #3b82f6, #ffffff);"
-                class="rounded-2xl shadow-sm overflow-hidden min-h-[400px]">
+                <!-- Profile Image -->
+                <div class="flex justify-center -mt-16 mb-4">
+                    <div class="relative">
+                        <img src="/public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>"
+                            class="w-32 h-32 rounded-full object-cover border-[5px] border-white shadow-md bg-white">
 
-
-                <div class="px-6 py-8 pb-6 relative">
-
-
-
-                    <div class="px-6 py-10 pb-6 relative">
-
-                        <div class="flex justify-center -mt-16 mb-4">
-                            <div class="relative">
-                                <img src="/public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>"
-                                    alt="Profile"
-                                    class="w-32 h-32 rounded-full object-cover border-[5px] border-white shadow-md bg-white">
-                                <div class="absolute bottom-2 right-2 w-5 h-5 bg-green-500 border-[3px] border-white rounded-full"
-                                    title="Active"></div>
-                            </div>
-                        </div>
-
-                        <div class="text-center mb-6">
-                            <?php
-                            $firstName = ucfirst($userData['user_first_name'] ?? '');
-                            $middleInitial = !empty($userData['user_middle_name']) ? strtoupper(substr($userData['user_middle_name'], 0, 1)) . '.' : '';
-                            $lastName = ucfirst($userData['user_last_name'] ?? '');
-                            $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName"));
-                            ?>
-                            <h2 class="text-xl font-extrabold text-slate-800 tracking-tight"><?= $fullName ?></h2>
-                            <span
-                                class="inline-block mt-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-600 uppercase tracking-wider">
-                                <?= htmlspecialchars($userData['role_name'] ?? 'User') ?>
-                            </span>
-                        </div>
-
-                        <div class="flex justify-center">
-                            <button
-                                class="inline-flex items-center justify-center gap-2 py-2 px-5 bg-white border border-slate-50 text-slate-700 font-semibold rounded-full text-[13px] hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
-                                onclick="openEditUserModal(
-                                    '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
-                                    '<?= htmlspecialchars($userData['username'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_role_id'] ?? '') ?>', 
-                                    '<?= htmlspecialchars($userData['email'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_first_name'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_middle_name'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_last_name'] ?? '') ?>',
-                                    '<?= htmlspecialchars($userData['user_dob'] ?? '') ?>', 
-                                    '../public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>'
-                                )">
-
-                                Edit Profile
-                            </button>
-                        </div>
+                        <div class="absolute bottom-2 right-2 w-5 h-5 bg-green-500 border-[3px] border-white rounded-full"></div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-2 space-y-6">
+                <!-- Name -->
+                <?php
+                $firstName = ucfirst($userData['user_first_name'] ?? '');
+                $middleInitial = !empty($userData['user_middle_name']) ? strtoupper(substr($userData['user_middle_name'], 0, 1)) . '.' : '';
+                $lastName = ucfirst($userData['user_last_name'] ?? '');
+                $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName"));
+                ?>
 
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex items-center gap-3 mb-8">
-                            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-5 h-5">
-                                    <path fill-rule="evenodd"
-                                        d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Personal Information</h3>
-                        </div>
+                <h2 class="text-xl font-extrabold text-slate-800"><?= $fullName ?></h2>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-12">
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 bg-blue-50 text-blue-500 rounded-xl shrink-0">
-                                    <i class="fa-regular fa-id-card w-4 h-4 flex items-center justify-center"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">Full Name
-                                    </p>
-                                    <p class="font-semibold text-slate-800 text-base"><?= $fullName ?></p>
-                                </div>
-                            </div>
+                <span class="inline-block mt-2 px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-600">
+                    <?= htmlspecialchars($userData['role_name'] ?? 'User') ?>
+                </span>
 
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 bg-pink-50 text-pink-500 rounded-xl shrink-0">
-                                    <i class="fa-solid fa-cake-candles w-4 h-4 flex items-center justify-center"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">Birthdate
-                                    </p>
-                                    <p class="font-semibold text-slate-800 text-base">
-                                        <?= !empty($userData['user_dob']) ? date('F j, Y', strtotime($userData['user_dob'])) : '<span class="text-slate-400 italic">Not set</span>' ?>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex items-center gap-3 mb-8">
-                            <div class="p-2 bg-purple-50 rounded-lg text-purple-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-5 h-5">
-                                    <path fill-rule="evenodd"
-                                        d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a3.375 3.375 0 0 1-2.423 2.423l-.549.091c-.904.15-1.567.934-1.567 1.85v.644c0 .916.663 1.699 1.567 1.85l.549.091a3.375 3.375 0 0 1 2.423 2.423l.091.549c.15.904.934 1.567 1.85 1.567h.644c.916 0 1.699-.663 1.85-1.567l.091-.549a3.375 3.375 0 0 1 2.423-2.423l.549-.091c.904-.15 1.567-.934 1.567-1.85v-.644c0-.916-.663-1.699-1.567-1.85l-.549-.091a3.375 3.375 0 0 1-2.423-2.423l-.091-.549a1.822 1.822 0 0 0-1.85-1.567h-.644Z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Account Details</h3>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-12">
-
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 bg-indigo-50 text-indigo-500 rounded-xl shrink-0">
-                                    <i class="fa-solid fa-at w-4 h-4 flex items-center justify-center"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">Username
-                                    </p>
-                                    <p class="font-semibold text-slate-800 text-base">
-                                        <?= htmlspecialchars($userData['username'] ?? 'N/A') ?></p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 bg-sky-50 text-sky-500 rounded-xl shrink-0">
-                                    <i class="fa-regular fa-envelope w-4 h-4 flex items-center justify-center"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">Email
-                                        Address</p>
-                                    <p class="font-semibold text-slate-800 text-base">
-                                        <?= htmlspecialchars($userData['email'] ?? 'N/A') ?></p>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
+                <!-- Edit Button -->
+                <div class="mt-6">
+                    <button
+                        class="px-5 py-2 bg-white border text-sm rounded-full shadow-sm hover:bg-slate-50"
+                        onclick="openEditUserModal(
+                            '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
+                            '<?= htmlspecialchars($userData['username'] ?? '') ?>',
+                            '<?= htmlspecialchars($userData['user_role_id'] ?? '') ?>', 
+                            '<?= htmlspecialchars($userData['email'] ?? '') ?>',
+                            '<?= htmlspecialchars($userData['user_first_name'] ?? '') ?>',
+                            '<?= htmlspecialchars($userData['user_middle_name'] ?? '') ?>',
+                            '<?= htmlspecialchars($userData['user_last_name'] ?? '') ?>',
+                            '<?= htmlspecialchars($userData['user_dob'] ?? '') ?>', 
+                            '../public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>'
+                        )">
+                        Edit Profile
+                    </button>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- PERSONAL INFO (FINAL VERSION ONLY) -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-2 bg-indigo-50 rounded-lg text-indigo-500">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Personal Information</h3>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div>
+                        <p class="text-xs text-gray-400">Full Name</p>
+                        <p class="font-semibold"><?= $fullName ?></p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs text-gray-400">Birthdate</p>
+                        <p class="font-semibold">
+                            <?= !empty($userData['user_dob']) ? date('F j, Y', strtotime($userData['user_dob'])) : 'Not set' ?>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ACCOUNT DETAILS -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-2 bg-purple-50 rounded-lg text-purple-500">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Account Details</h3>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div>
+                        <p class="text-xs text-gray-400">Username</p>
+                        <p class="font-semibold"><?= htmlspecialchars($userData['username'] ?? 'N/A') ?></p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs text-gray-400">Email</p>
+                        <p class="font-semibold"><?= htmlspecialchars($userData['email'] ?? 'N/A') ?></p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 
             </div>
 

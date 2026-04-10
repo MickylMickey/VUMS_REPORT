@@ -184,7 +184,7 @@ $user = checkAuth('Admin');
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closeEditCategoryModal()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl transition">Cancel</button>
-                    <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl transition">Save Changes</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -193,7 +193,7 @@ $user = checkAuth('Admin');
     <div id="editModuleModal" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
         <div class="absolute inset-0 bg-slate-900/60 transition-opacity duration-300" onclick="closeEditModuleModal()"></div>
         <div id="moduleModalContent" class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 transform scale-95 opacity-0 transition-all duration-300 ease-out">
-            <div class="bg-cyan-600 px-6 py-5 flex justify-between items-center text-white">
+            <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
                 <h2 class="text-xl font-bold">Edit Module</h2>
                 <button onclick="closeEditModuleModal()" class="hover:text-gray-200"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -201,15 +201,15 @@ $user = checkAuth('Admin');
                 <input type="hidden" name="module_id" id="edit_module_id">
                 <div>
                     <label class="text-[13px] font-semibold text-slate-600 ml-1">Module Name</label>
-                    <input type="text" name="edit_module_name" id="edit_module_name_input" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-cyan-500 outline-none transition-all">
+                    <input type="text" name="edit_module_name" id="edit_module_name_input" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
                 </div>
                 <div>
                     <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                    <input type="text" name="edit_module_desc" id="edit_module_desc_input" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-cyan-500 outline-none transition-all">
+                    <input type="text" name="edit_module_desc" id="edit_module_desc_input" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closeEditModuleModal()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl transition">Cancel</button>
-                    <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl transition">Save Changes</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition">Save Changes</button>
                 </div>
             </form>
         </div>
