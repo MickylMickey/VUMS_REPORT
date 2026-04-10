@@ -31,6 +31,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/public/dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Suggestions</title>
 </head>
 
@@ -51,9 +52,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <p class="text-slate-500 text-sm mt-1">Share your ideas to improve the system.</p>
             </div>
             <button onclick="toggleModal(true)"
-                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
-                <i class="fa-solid fa-plus mr-2"></i>
-                New Suggestion
+                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-16 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                <i class="fa-solid fa-plus mr-2"></i>New Suggestion
             </button>
         </div>
 
@@ -95,7 +95,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </div>
 
                     <div class="p-5 flex-grow">
-                        <p class="text-slate-600 text-sm leading-relaxed italic">
+                        <p class="text-slate-600 text-sm leading-relaxed italic break-all">
                             "<?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>"
                         </p>
 

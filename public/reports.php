@@ -47,31 +47,31 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             </div>
 
             <button onclick="openAddModal()"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex items-center">
+                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-16 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
             </button>
         </div>
 
         <div
-            class="bg-white p-4 rounded-t-2xl border-x border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex flex-1 min-w-[300px] relative">
+            class="bg-blue-500 p-4 rounded-t-2xl border-x border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex w-full max-w-xs relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" placeholder="Search by Ref Number or Reporter..."
-                    class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                <input type="text" placeholder="Search by Ref Number or Reporter. . ."
+                    class="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
             </div>
 
             <div class="flex gap-2">
                 <select
-                    class="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
                     <option value="">All Categories</option>
                 </select>
 
                 <select
-                    class="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
                     <option value="">All Severities</option>
                 </select>
 
-                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2.5 rounded-xl transition-all">
+                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
                     <i class="fa-solid fa-sliders"></i>
                 </button>
             </div>
@@ -106,7 +106,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                     <?php foreach ($reports as $report): ?>
                         <tr class="hover:bg-blue-50/30 transition-colors group">
                             <td class="px-6 py-4">
-                                <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs">
+                                <span
+                                    class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase">
                                     <?= htmlspecialchars($report['ref_num']) ?>
                                 </span>
                             </td>
