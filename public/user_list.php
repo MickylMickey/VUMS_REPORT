@@ -52,12 +52,12 @@ $roleOptions = fetchRoles($conn);
         </div>
     </div>
 
-    <div class="px-6 mb-20 max-w-7xl mx-auto">
+    <div class="container mx-auto p-6">
 
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
             <button onclick="toggleAddModal(true)"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center shadow-sm">
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
                 <i class="fa-solid fa-plus mr-2"></i>New User
             </button>
         </div>
@@ -65,24 +65,24 @@ $roleOptions = fetchRoles($conn);
         <div class="bg-white border border-gray-100 shadow-md rounded-2xl overflow-hidden flex flex-col">
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-50/50 sticky top-0 z-10 backdrop-blur-sm">
+                    <thead class="bg-blue-500 text-white">
                         <tr class="border-b border-gray-100">
-                            <th class="p-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-left">Full
+                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-left">Full
                                 Name</th>
-                            <th class="p-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center">
+                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center">
                                 Username</th>
-                            <th class="p-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center">
+                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center">
                                 Email</th>
-                            <th class="p-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center">
+                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center">
                                 Role</th>
                             <th
-                                class="p-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center w-32">
+                                class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center w-32">
                                 Actions</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody" class="divide-y divide-gray-50">
                         <?php
-                        // Initial Load (Server Side Rendering)
+                        
                         if (!empty($users)):
                             foreach ($users as $user):
                                 $user_id = $user['user_id'];

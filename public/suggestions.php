@@ -84,11 +84,11 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
 
-    <div class="px-6 ">
+    <div class="container mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">System Reports</h2>
+            <h2 class="text-2xl font-bold text-gray-800">System Reports </h2>
             <button onclick="toggleModal(true)"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center shadow-sm">
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
                 <i class="fa-solid fa-plus mr-2"></i>
                 Add Suggestion
             </button>
@@ -96,7 +96,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             <table class="min-w-full table-auto">
-                <thead class="bg-red-500 text-white">
+                <thead class="bg-blue-500 text-white">
                     <tr>
                         <th class="px-4 py-2 text-left">Reporter</th>
                         <th class="px-4 py-2 text-left">Suggestion</th>
@@ -112,12 +112,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <?= htmlspecialchars($sug['username']) ?>
                             </td>
 
-                            <td class="px-4 py-2 text-sm text-gray-600 max-w-xs">
+                            <td class="px-4 py-2 text-sm text-black-600 max-w-xs">
                                 <?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>
                             </td>
 
                             <td>
-                                <select class="status-updater w-full border rounded-lg p-2"
+                                <select class="status-updater w-full border rounded-lg p-1"
                                     data-report-id="<?= $sug['suggestion_id'] ?>">
                                     <?php foreach ($statusOptions as $status): ?>
                                         <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
@@ -144,7 +144,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         View Attachment
                                     </a>
                                 <?php else: ?>
-                                    <span class="text-gray-400 text-xs italic">No Image</span>
+                                    <span class="text-black-400 text-xs italic">No Image</span>
                                 <?php endif; ?>
                             </td>
                         </tr>

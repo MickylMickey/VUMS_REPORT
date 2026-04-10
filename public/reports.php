@@ -50,7 +50,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
 
         <div class="overflow-x-auto bg-white rounded-lg shadow mb-12">
             <table class="min-w-full table-auto">
-                <thead class="bg-gray-100">
+                <thead class="bg-blue-500 text-white">
                     <tr>
                         <th class="px-4 py-2 text-left">Ref Number</th>
                         <th class="px-4 py-2 text-left">Reporter</th>
