@@ -14,7 +14,9 @@ $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
 
 $reports = $visibility->getVisibleReports($current_user_id, $user_role);
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,6 +67,17 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     <?php foreach ($reports as $report): ?>
+                        <?php
+                        // Define the class inside the loop for EACH specific report
+                        $sev = strtolower($report['severity'] ?? 'low');
+                        $badgeMap = [
+                            'critical' => 'badge-critical',
+                            'high' => 'badge-high',
+                            'medium' => 'badge-medium',
+                            'low' => 'badge-low'
+                        ];
+                        $badgeClass = $badgeMap[$sev] ?? 'badge-low';
+                        ?>
                         <tr class="border-b hover:bg-gray-50 transition-colors">
                             <td class="px-4 py-2 font-mono text-blue-600 uppercase">
                                 <?= htmlspecialchars($report['ref_num']) ?>
@@ -81,10 +94,12 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                                 </span>
                             </td>
                             <td class="px-4 py-2">
-                                <span
-                                    class="px-2 py-1 rounded text-xs font-bold 
-                                    <?= $report['severity'] == 'Critical' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700' ?>">
-                                    <?= ucfirst($report['severity']) ?>
+                                <span class="px-2 py-1 rounded text-xs font-bold 
+<?= $report['severity'] == 'Critical' ? 'bg-red-100 text-red-700' :
+            ($report['severity'] == 'High' ? 'bg-orange-100 text-orange-700' :
+                ($report['severity'] == 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-green-100 text-green-700')) ?>">
+                                    <?= htmlspecialchars($report['severity']) ?>
                                 </span>
                             </td>
                             <td class="px-4 py-2 text-sm max-w-xs truncate"
@@ -93,7 +108,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                             </td>
                             <td class="px-4 py-2">
                                 <select class="status-updater w-full border rounded-lg p-1 text-sm bg-white"
-                                    data-report-id="<?= $report['report_id'] ?>">
+                                    data-report-id="<?= $report['report_id'] ?>" data-user-id="<?= $current_user_id ?>">
                                     <?php foreach ($statusOptions as $status): ?>
                                         <option value="<?= $status['status_id'] ?>"
                                             <?= $status['status_id'] == $report['status_id'] ? 'selected' : '' ?>>
@@ -137,275 +152,189 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
         </div>
 
         <div id="addReportModal"
-            class="hidden fixed inset-0 z-[150] flex items-center justify-center p-6 backdrop-blur-sm">
-            <div class="absolute inset-0 bg-black/40" onclick="closeAddModal()"></div>
+            class="hidden fixed inset-0 z-[250] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
+            <div id="addModalBackdrop"
+                class="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity duration-300"
+                onclick="closeAddModal()"></div>
 
-            <div
-                class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden z-10 flex flex-col min-h-[600px]">
-
-                <div class="bg-blue-600 px-5 py-3 flex justify-between items-center">
-                    <h2 class="text-lg font-bold text-white">Report a Problem</h2>
-                    <button onclick="closeAddModal()" class="text-white/80 hover:text-white transition-all">
-                        <i class="fa-solid fa-xmark text-sm"></i>
+            <div id="addModalContainer"
+                class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
+                <div class="bg-blue-500 px-6 py-5 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-white tracking-tight">Report a Problem</h2>
+                        <p class="text-blue-100 text-xs text-white ">Tell us what's going wrong.</p>
+                    </div>
+                    <button onclick="closeAddModal()"
+                        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <form action="../controllers/add_report.php" method="POST" enctype="multipart/form-data"
-                    class="p-6 space-y-6 flex-grow overflow-y-auto">
-
-                    <div class="space-y-5">
-                        <div>
-                            <label for="cat_id" class="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
+                <form id="addReportForm" action="../controllers/add_report.php" method="POST"
+                    enctype="multipart/form-data" class="p-6 space-y-4 overflow-y-auto max-h-[80vh]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-[13px] font-semibold text-slate-600 ml-1">Category</label>
                             <select name="cat_id" id="cat_id"
-                                class="w-full border border-gray-300 rounded-xl p-4 focus:ring-4 focus:ring-blue-500 outline-none text-sm transition-all"
-                                required>
-                                <option value="" disabled selected>-- Select Category --</option>
+                                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
+                                <option value="" disabled selected>Select...</option>
                                 <?php foreach ($categoryOptions as $cat): ?>
                                     <option value="<?= $cat['cat_id'] ?>"><?= htmlspecialchars($cat['category']) ?></option>
                                 <?php endforeach; ?>
                                 <option value="other">Other</option>
                             </select>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                         </div>
-
-                        <div class="mb-4">
-                            <label for="mod_id" class="block text-sm font-medium text-gray-700">Module</label>
-                            <select name="mod_id" id="mod_id" class="w-full border rounded-lg p-2" data-required="true"
-                                data-error="Module is required.">
-                                <option value="" disabled selected>-- Select Module --</option>
+                        <div class="space-y-1.5">
+                            <label class="text-[13px] font-semibold text-slate-600 ml-1">Module</label>
+                            <select name="mod_id" id="mod_id"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
+                                <option value="" disabled selected>Select...</option>
                                 <?php foreach ($moduleOptions as $mod): ?>
                                     <option value="<?= $mod['mod_id'] ?>"><?= htmlspecialchars($mod['module']) ?></option>
                                 <?php endforeach; ?>
                                 <option value="other">Other</option>
                             </select>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="sev_id" class="block text-sm font-medium text-gray-700">Severity Level</label>
-                            <select name="sev_id" id="sev_id" class="w-full border rounded-lg p-2" data-required="true"
-                                data-error="Severity Level is required.">
-                                <option value="" disabled selected>-- Select Severity --</option>
-                                <?php foreach ($severityOptions as $sev): ?>
-                                    <option value="<?= $sev['sev_id'] ?>"><?= htmlspecialchars($sev['sev_desc']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                        </div>
-
-                        <div>
-                            <label for="rep_desc">Describe What Happened</label>
-                            <input type="text" name="rep_desc" id="rep_desc" placeholder="Anyare?" data-required="true"
-                                data-error="Description is required.">
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-3 pt-6">
+                    <div class="space-y-2">
+                        <label class="text-[11px] uppercase tracking-wider font-bold text-slate-400 ml-1">
+                            Severity Level
+                        </label>
+
+                        <div class="flex gap-2">
+                            <?php foreach ($severityOptions as $s): ?>
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="sev_id" value="<?= $s['sev_id'] ?>" class="hidden peer"
+                                        required>
+
+                                    <div class="
+                    py-2 text-center text-[12px] font-semibold rounded-xl border
+                    border-slate-200 bg-white text-slate-500
+                    transition-all duration-200
+                    hover:border-blue-300 hover:text-blue-600
+                    peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50
+                ">
+                                        <?= htmlspecialchars($s['sev_desc']) ?>
+                                    </div>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="rep_desc" class="text-[13px] font-semibold text-slate-600 ml-1">What
+                            happened?</label>
+                        <textarea name="rep_desc" id="rep_desc" rows="3" placeholder="Briefly describe the issue..."
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-4">
                         <button type="button" onclick="closeAddModal()"
-                            class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                            Cancel
-                        </button>
+                            class="flex-1 px-4 py-3 text-sm font-bold text-slate-500 rounded-2xl hover:bg-slate-100 transition-colors">Discard</button>
                         <button type="submit"
-                            class="flex-1 px-4 py-2.5 text-sm bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-md transition-all active:scale-95">
-                            Submit Report
-                        </button>
+                            class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">Submit
+                            Report</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div id="editModal" class="hidden fixed inset-0 z-[150] flex items-center justify-center p-6 backdrop-blur-sm">
-            <div class="absolute inset-0 bg-black/40" onclick="closeModal()"></div>
+        <div id="editModal"
+            class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
 
-            <div
-                class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden z-10 flex flex-col min-h-[600px]">
+            <div id="editModalBackdrop"
+                class="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity duration-300"
+                onclick="closeEditModal()"></div>
 
-                <div class="bg-blue-600 px-5 py-3 flex justify-between items-center">
-                    <h2 class="text-lg font-bold text-white">Edit Report</h2>
-                    <button onclick="closeModal()" class="text-white/80 hover:text-white transition-all">
-                        <i class="fa-solid fa-xmark text-sm"></i>
+            <div id="editModalContainer"
+                class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
+
+                <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight">Edit Report Details</h2>
+                        <p class="text-blue-100 text-xs mt-0.5">Update the classification or description.</p>
+                    </div>
+                    <button onclick="closeEditModal()"
+                        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <form id="editForm" action="../controllers/edit_reports.php" method="POST"
-                    class="p-6 space-y-6 flex-grow overflow-y-auto">
+                <form id="editForm" action="../controllers/edit_reports.php" method="POST" class="p-6 space-y-5">
                     <input type="hidden" name="report_id" id="edit_report_id">
 
-                    <div class="space-y-5">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
-                            <select name="cat_id" id="edit_cat_id"
-                                class="w-full border border-gray-300 rounded-xl p-4 focus:ring-4 focus:ring-blue-500 outline-none text-sm"
-                                data-required="true" data-error="Category is required.">
-                                <option value="other">Other</option>
-                                <?php foreach ($categoryOptions as $c): ?>
-                                    <option value="<?= $c['cat_id'] ?>"><?= htmlspecialchars($c['category']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-[13px] font-semibold text-slate-600 ml-1">Category</label>
+                            <div class="relative">
+                                <select name="cat_id" id="edit_cat_id"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
+                                    <option value="other">Other</option>
+                                            <?php foreach ($categoryOptions as $c): ?>
+                                        <option value="<?= $c['cat_id'] ?>"><?= htmlspecialchars($c['category']) ?></option>
+                                            <?php endforeach; ?>
+                                </select>
+                                <i
+                                    class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Module</label>
-                            <select name="mod_id" id="edit_mod_id"
-                                class="w-full border border-gray-300 rounded-xl p-4 focus:ring-4 focus:ring-blue-500 outline-none text-sm"
-                                data-required="true" data-error="Module is required.">
-                                <option value="other">Other</option>
-                                <?php foreach ($moduleOptions as $m): ?>
-                                    <option value="<?= $m['mod_id'] ?>"><?= htmlspecialchars($m['module']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Severity</label>
-                            <select name="sev_id" id="edit_sev_id"
-                                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                                data-required="true" data-error="Severity is required.">
-                                <?php foreach ($severityOptions as $s): ?>
-                                    <option value="<?= $s['sev_id'] ?>"><?= htmlspecialchars($s['sev_desc']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Description</label>
-                            <textarea name="report_desc" id="edit_desc" rows="5"
-                                class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-none"></textarea>
+
+                        <div class="space-y-1.5">
+                            <label class="text-[13px] font-semibold text-slate-600 ml-1">Module</label>
+                            <div class="relative">
+                                <select name="mod_id" id="edit_mod_id"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
+                                    <option value="other">Other</option>
+                                            <?php foreach ($moduleOptions as $m): ?>
+                                        <option value="<?= $m['mod_id'] ?>"><?= htmlspecialchars($m['module']) ?></option>
+                                            <?php endforeach; ?>
+                                </select>
+                                <i
+                                    class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-3 pt-6">
-                        <button type="button" onclick="closeModal()"
-                            class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                            Cancel
+                    <div class="space-y-1.5">
+                        <label class="text-[13px] font-semibold text-slate-600 ml-1">Severity</label>
+                        <select name="sev_id" id="edit_sev_id"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
+                                    <?php foreach ($severityOptions as $s): ?>
+                                <option value="<?= $s['sev_id'] ?>"><?= htmlspecialchars($s['sev_desc']) ?></option>
+                                    <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
+                        <textarea name="report_desc" id="edit_desc" rows="4"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <button type="button" onclick="closeEditModal()"
+                            class="flex-1 px-4 py-3 text-sm font-bold text-slate-500 rounded-2xl hover:bg-slate-100 transition-colors">
+                            Discard
                         </button>
                         <button type="submit"
-                            class="flex-1 px-4 py-2.5 text-sm bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-md transition-all active:scale-95">
+                            class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
                             Save Changes
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-        <?php ob_end_flush(); ?>
 
-        <script src="js/removeNotification.js" defer></script>
-        <script>
-            const currentUserId = "<?= $current_user_id ?>";
-            const editModal = document.getElementById('editModal');
-            const addModal = document.getElementById('addReportModal');
-
-            // Functions to control modals
-            function openModal() { editModal.classList.remove('hidden'); }
-            function closeModal() { editModal.classList.add('hidden'); }
-
-            function openAddModal() { addModal.classList.remove('hidden'); }
-            function closeAddModal() { addModal.classList.add('hidden'); }
-
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    closeModal();
-                    closeAddModal();
-                }
-            });
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-                    <textarea name="report_desc" id="edit_desc" rows="4"
-                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                        data-required="true" data-error="Description is required.">
-                    </textarea>
-                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                </div >
-
-                <div class="flex justify-end gap-3 pt-4 border-t">
-                    <button type="button" onclick="closeModal()"
-                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-md transition-colors">
-                        Save Changes
-                    </button>
-                </div>
-            </form >
-        </div >
-    </div >
-
-</body >
-                <?php ob_end_flush(); ?>
-                < script src = "js/removeNotification.js" defer ></script>
-
-        <script>
-    // 1. Capture the PHP session ID for the JS to use
-    const currentUserId = "<?= $current_user_id ?>";
-            const editModal = document.getElementById('editModal');
-
-            // --- MODAL FUNCTIONS ---
-            function openModal() {
-                editModal.classList.remove('hidden');
-            }
-
-            function closeModal() {
-                editModal.classList.add('hidden');
-            }
-
-            // Close modal if user hits 'Esc' key
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeModal();
-            });
-
-            document.querySelectorAll('.edit-report-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    document.getElementById('edit_report_id').value = this.getAttribute('data-id');
-                    document.getElementById('edit_cat_id').value = this.getAttribute('data-cat');
-                    document.getElementById('edit_mod_id').value = this.getAttribute('data-mod');
-                    document.getElementById('edit_sev_id').value = this.getAttribute('data-sev');
-                    document.getElementById('edit_desc').value = this.getAttribute('data-desc');
-                    openModal();
-                });
-            });
-
-            document.querySelectorAll('.status-updater').forEach(select => {
-                select.addEventListener('change', function () {
-                    const reportId = this.getAttribute('data-report-id');
-                    const statusId = this.value;
-                    this.style.opacity = '0.5';
-
-                    fetch('../controllers/quick_update_status.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: `report_id=${reportId}&status_id=${statusId}&updated_by=${currentUserId}`
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            this.style.opacity = '1';
-                            if (data.success) {
-                                const toast = document.createElement('div');
-                                toast.className = "fixed top-24 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-[110]";
-                                toast.innerHTML = "Status updated successfully!";
-                                document.body.appendChild(toast);
-                                setTimeout(() => toast.remove(), 3000);
-
-                                if (parseInt(statusId) === 3 || parseInt(statusId) === 4) {
-                                    this.closest('tr').remove();
-                                }
-                            } else {
-                                alert('Update failed: ' + (data.error || 'Unknown error'));
-                                location.reload();
-                            }
-                        });
-                });
-            });
-        </script>
-        <script src="js/reports.js"></script>
-        <script src="js/inputValidation.js" defer></script>
-        <script>document.addEventListener("DOMContentLoaded", () => {
-                initFormValidation("addReportForm"),
-                    initFormValidation("editForm");
-            });</script>
+</body>
+<?php ob_end_flush(); ?>
+<script src="js/removeNotification.js" defer></script>
+<script src="js/reports.js"></script>
+<script src="js/inputValidation.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", () => {
+        initFormValidation("addReportForm"),
+            initFormValidation("editForm");
+    });</script>
 
 
 </html>

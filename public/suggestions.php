@@ -218,23 +218,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <script>
     const currentUserId = "<?= $current_user_id ?>";
 
-    function toggleModal(show) {
-        const modal = document.getElementById('projectModal');
-        if (show) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        } else {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    }
 
-    window.onclick = function (event) {
-        const modal = document.getElementById('projectModal');
-        if (event.target == modal) {
-            toggleModal(false);
-        }
-    }
 
     document.querySelectorAll('.status-updater').forEach(select => {
         select.addEventListener('change', function () {
@@ -301,5 +285,6 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     });
 </script>
 <script src="js/removeNotification.js" defer></script>
+<script src="js/suggestions.js"></script>
 
 </html>
