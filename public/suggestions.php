@@ -10,11 +10,13 @@ $user_role = $userData->role;
 $sql = "SELECT us.*, 
                st.status_desc, 
                updater.username AS updater_name,
-               UPPER(u.username) AS username 
+               UPPER(u.username) AS username,
+               up.user_prof AS reporter_profile_pic
         FROM user_suggestions us
         LEFT JOIN status st ON us.status_id = st.status_id
         LEFT JOIN users updater ON us.suggestion_updated_by = updater.user_id
         LEFT JOIN users u ON us.user_id = u.user_id
+        LEFT JOIN user_profile up ON up.user_id = u.user_id
         ORDER BY us.suggestion_created_at ASC";
 
 $stmt = $conn->prepare($sql);
@@ -30,46 +32,6 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/public/dist/output.css" rel="stylesheet">
     <title>Suggestions</title>
-    <style>
-        #projectModal {
-            display: none;
-
-            background-color: rgba(0, 0, 0, 0) !important;
-
-            z-index: 9999 !important;
-        }
-
-        #projectModal.flex {
-            display: flex;
-            animation: fadeInModal 0.3s ease-out forwards;
-        }
-
-        @keyframes fadeInModal {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        #projectModal.flex>div {
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
 
 <body class="pt-24 relative min-h-screen">
@@ -82,130 +44,164 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-
-
-    <div class="px-6 ">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">System Reports</h2>
+    <div class=" mt-10 px-6 pb-24">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-extrabold text-slate-800">Community Suggestions</h2>
+                <p class="text-slate-500 text-sm mt-1">Share your ideas to improve the system.</p>
+            </div>
             <button onclick="toggleModal(true)"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center shadow-sm">
+                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                 <i class="fa-solid fa-plus mr-2"></i>
-                Add Suggestion
+                New Suggestion
             </button>
         </div>
 
-        <div class="overflow-x-auto bg-white rounded-lg shadow">
-            <table class="min-w-full table-auto">
-                <thead class="bg-red-500 text-white">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Reporter</th>
-                        <th class="px-4 py-2 text-left">Suggestion</th>
-                        <th class="px-4 py-2 text-left">Status</th>
-                        <th class="px-4 py-2 text-left">Updated by</th>
-                        <th class="px-4 py-2 text-left">Image</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($suggestions as $sug): ?>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-4 py-2 font-semibold text-gray-700">
-                                <?= htmlspecialchars($sug['username']) ?>
-                            </td>
-
-                            <td class="px-4 py-2 text-sm text-gray-600 max-w-xs">
-                                <?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>
-                            </td>
-
-                            <td>
-                                <select class="status-updater w-full border rounded-lg p-2"
-                                    data-report-id="<?= $sug['suggestion_id'] ?>">
-                                    <?php foreach ($statusOptions as $status): ?>
-                                        <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($status['status_desc']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </td>
-                            <td class="px-4 py-2 text-sm max-w-xs truncate">
-                                <?php if ($sug['suggestion_updated_by']): ?>
-                                    Last updated by
-                                    <?= htmlspecialchars($sug['updater_name']) ?> <br>
-                                    on
-                                    <?= date('M d, Y', strtotime($sug['suggestion_updated_at'])) ?>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <?php foreach ($suggestions as $sug):
+                // Determine status colors
+                $statusColor = match ((int) $sug['status_id']) {
+                    1 => 'bg-amber-50 text-amber-700 border-amber-100',
+                    2 => 'bg-blue-50 text-blue-700 border-blue-100',
+                    3 => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                    4 => 'bg-rose-50 text-rose-700 border-rose-100',
+                    default => 'bg-slate-50 text-slate-600 border-slate-100'
+                };
+                ?>
+                <div
+                    class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
+                    <div class="p-5 border-b border-slate-50 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm overflow-hidden border-2 border-slate-100">
+                                <?php if (!empty($sug['reporter_profile_pic'])): ?>
+                                    <img src="img/prof_pic/<?= htmlspecialchars($sug['reporter_profile_pic']) ?>"
+                                        alt="<?= htmlspecialchars($sug['username']) ?>" class="w-full h-full object-cover">
                                 <?php else: ?>
-                                    No updates yet
+                                    <?= substr(htmlspecialchars($sug['username']), 0, 1) ?>
                                 <?php endif; ?>
-                            </td>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 leading-none"><?= htmlspecialchars($sug['username']) ?>
+                                </h3>
+                                <span class="text-[11px] text-slate-400 mt-1 block">
+                                    <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
+                                </span>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-[11px] font-bold border <?= $statusColor ?>">
+                            <?= htmlspecialchars($sug['status_desc']) ?>
+                        </span>
+                    </div>
 
-                            <td class="px-4 py-2">
-                                <?php if (!empty($sug['suggestion_img'])): ?>
-                                    <a href="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>"
-                                        target="_blank" class="text-blue-500 hover:text-blue-700 underline text-xs">
-                                        View Attachment
-                                    </a>
-                                <?php else: ?>
-                                    <span class="text-gray-400 text-xs italic">No Image</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <div class="p-5 flex-grow">
+                        <p class="text-slate-600 text-sm leading-relaxed italic">
+                            "<?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>"
+                        </p>
 
-                    <?php if (empty($suggestions)): ?>
-                        <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                                No suggestions found. Be the first to suggest something!
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                        <?php if (!empty($sug['suggestion_img'])): ?>
+                            <div class="mt-4 overflow-hidden rounded-2xl border border-slate-100 relative group/img">
+                                <img src="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>"
+                                    class="w-full h-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
+                                    alt="Attachment">
+                                <a href="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>" target="_blank"
+                                    class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold backdrop-blur-[2px]">
+                                    <i class="fa-solid fa-expand mr-2"></i> View Image
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="p-4 bg-slate-50/50 rounded-b-3xl mt-auto space-y-3">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+                                Status</label>
+                            <select
+                                class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                                data-report-id="<?= $sug['suggestion_id'] ?>">
+                                <?php foreach ($statusOptions as $status): ?>
+                                    <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($status['status_desc']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <?php if ($sug['suggestion_updated_by']): ?>
+                            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+                                <i class="fa-solid fa-user-check"></i>
+                                <span>Modified by <strong><?= htmlspecialchars($sug['updater_name']) ?></strong></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
+
+        <?php if (empty($suggestions)): ?>
+            <div
+                class="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                <div
+                    class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300 text-2xl">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <p class="text-slate-500 font-medium">No suggestions found. Be the first to suggest something!</p>
+            </div>
+        <?php endif; ?>
     </div>
 
-    <div class="fixed bottom-10 right-10 z-[90]">
-        <button onclick="toggleModal(true)"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-2xl transition-transform hover:scale-105 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Suggestion
-        </button>
-    </div>
+    <div id="projectModal"
+        class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
 
-    <div id="projectModal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-sm px-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
-                <h3 class="text-xl font-bold">New Suggestion</h3>
+        <div id="projectModalBackdrop"
+            class="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity duration-300"
+            onclick="toggleModal(false)"></div>
+
+        <div id="projectModalContainer"
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
+
+            <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
+                <div>
+                    <h2 class="text-xl font-bold tracking-tight">New Suggestion</h2>
+                    <p class="text-blue-100 text-xs mt-0.5">Share your ideas to improve the system.</p>
+                </div>
                 <button onclick="toggleModal(false)"
-                    class="text-white hover:text-gray-200 text-3xl leading-none">&times;</button>
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
             <form action="../controllers/add_suggestions.php" method="POST" enctype="multipart/form-data"
-                class="p-6 space-y-4">
-                <div>
-                    <label for="suggestion_desc" class="block text-sm font-medium text-gray-700 mb-1">Describe your
-                        Suggestion</label>
+                class="p-6 space-y-5">
+
+                <div class="space-y-1.5">
+                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Describe your Suggestion</label>
                     <textarea name="suggestion_desc" id="suggestion_desc" rows="4"
-                        class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
-                        placeholder="EDI WAG!!!" required></textarea>
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
+                        placeholder="Tell us what's on your mind..." required></textarea>
                 </div>
 
-                <div>
-                    <label for="suggestion_img" class="block text-sm font-medium text-gray-700 mb-1">Upload Image
-                        Here:</label>
-                    <input type="file" name="suggestion_img" id="suggestion_img"
-                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                <div class="space-y-1.5">
+                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Attachment (Optional)</label>
+                    <div class="relative group">
+                        <input type="file" name="suggestion_img" id="suggestion_img" class="w-full text-sm text-slate-500 
+                        file:mr-4 file:py-2 file:px-4 
+                        file:rounded-xl file:border-0 
+                        file:text-xs file:font-bold 
+                        file:bg-blue-50 file:text-blue-700 
+                        hover:file:bg-blue-100 cursor-pointer 
+                        bg-slate-50 border border-slate-200 rounded-2xl p-2 transition-all">
+                    </div>
                 </div>
 
-                <div class="pt-4 flex gap-3">
+                <div class="flex items-center gap-3 pt-2">
                     <button type="button" onclick="toggleModal(false)"
-                        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
-                        Cancel
+                        class="flex-1 px-4 py-3 text-sm font-bold text-slate-500 rounded-2xl hover:bg-slate-100 transition-colors">
+                        Discard
                     </button>
                     <button type="submit"
-                        class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg">
-                        Ipasa mo na
+                        class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                        Submit Suggestion
                     </button>
                 </div>
             </form>
@@ -214,75 +210,9 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 </body>
 <?php ob_end_flush(); ?>
-
 <script>
     const currentUserId = "<?= $current_user_id ?>";
-
-
-
-    document.querySelectorAll('.status-updater').forEach(select => {
-        select.addEventListener('change', function () {
-            const suggestionId = this.getAttribute('data-report-id');
-            const statusId = this.value;
-
-            this.style.opacity = '0.5';
-
-            fetch('../controllers/quick_update_suggestion.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `suggestion_id=${suggestionId}&status_id=${statusId}&updated_by=${currentUserId}`
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Server error');
-                    return response.json();
-                })
-                .then(data => {
-                    this.style.opacity = '1';
-
-                    if (data.success) {
-                        console.log('Update successful');
-
-                        const statusToast = document.createElement('div');
-                        statusToast.className = "fixed top-24 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-[110] transition-all duration-500";
-                        statusToast.innerHTML = "Status updated successfully!";
-                        document.body.appendChild(statusToast);
-
-                        setTimeout(() => {
-                            statusToast.style.opacity = '0';
-                            statusToast.style.transform = 'translateY(-20px)';
-                            setTimeout(() => statusToast.remove(), 500);
-                        }, 3000);
-
-                        const selectedStatus = parseInt(statusId);
-
-                        if (selectedStatus === 3 || selectedStatus === 4) {
-                            const row = this.closest('tr');
-                            row.style.transition = 'all 0.5s ease';
-                            row.style.opacity = '0';
-                            row.style.transform = 'translateX(20px)';
-
-                            setTimeout(() => {
-                                row.remove();
-                                if (typeof checkIfTableEmpty === 'function') {
-                                    checkIfTableEmpty();
-                                }
-                            }, 500);
-                        }
-                    } else {
-                        alert('Update failed: ' + (data.error || 'Unknown error'));
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    this.style.opacity = '1';
-                    console.error('Error:', error);
-                    alert('Connection error. Check console.');
-                });
-        });
-    });
+</script>
 </script>
 <script src="js/removeNotification.js" defer></script>
 <script src="js/suggestions.js"></script>

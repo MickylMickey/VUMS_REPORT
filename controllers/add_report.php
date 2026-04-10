@@ -1,5 +1,9 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once __DIR__ . "/../init.php";
+
 
 ob_start();
 $userData = checkAuth();
@@ -40,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $db_cat_id = (strcasecmp($cat_id, "other") === 0) ? null : (int) $cat_id;
     $db_mod_id = (strcasecmp($mod_id, "other") === 0) ? null : (int) $mod_id;
-    // Severity cannot be NULL in your DB, so use ID 99
     $db_sev_id = (strcasecmp($sev_id, "other") === 0) ? 99 : (int) $sev_id;
 
     // 5. Fetch names for the Reference Number
@@ -85,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
-        // bind_param will correctly send NULL to the DB for $db_cat_id and $db_mod_id
+        // MySQLi bind_param handles NULL values correctly if the variable passed is null
         $stmt->bind_param("siiisss", $user_id, $db_cat_id, $db_mod_id, $db_sev_id, $ref_num, $report_desc, $image_path);
 
         if ($stmt->execute()) {
@@ -94,8 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setValidation('error', "Database Error: " . $stmt->error);
         }
         $stmt->close();
+    } else {
+        setValidation('error', "Preparation Error: " . $conn->error);
     }
 
+    // Ensure NO output happened before this line
     header("Location: ../public/reports.php");
     exit();
 }

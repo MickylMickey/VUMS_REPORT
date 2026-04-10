@@ -3,6 +3,7 @@ const editModal = document.getElementById("editModal");
 const editContainer = document.getElementById("editModalContainer");
 const editBackdrop = document.getElementById("editModalBackdrop");
 const addModal = document.getElementById("addReportModal");
+const addReportForm = document.getElementById("addReportForm");
 const addContainer = document.getElementById("addModalContainer");
 const addBackdrop = document.getElementById("addModalBackdrop");
 
@@ -12,9 +13,6 @@ function openModal() {
 }
 function closeModal() {
   editModal.classList.add("hidden");
-}
-function openAddModal() {
-  addModal.classList.remove("hidden");
 }
 function closeAddModal() {
   addModal.classList.add("hidden");
@@ -28,19 +26,6 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// 3. Populate Edit Modal
-document.querySelectorAll(".edit-report-btn").forEach((button) => {
-  button.addEventListener("click", function () {
-    document.getElementById("edit_report_id").value = this.getAttribute("data-id");
-    document.getElementById("edit_cat_id").value = this.getAttribute("data-cat");
-    document.getElementById("edit_mod_id").value = this.getAttribute("data-mod");
-    document.getElementById("edit_sev_id").value = this.getAttribute("data-sev");
-    document.getElementById("edit_desc").value = this.getAttribute("data-desc");
-    openModal();
-  });
-});
-
-// 4. Quick Status Update
 // 4. Quick Status Update (UPDATED)
 document.querySelectorAll(".status-updater").forEach((select) => {
   select.addEventListener("change", function () {
@@ -66,11 +51,10 @@ document.querySelectorAll(".status-updater").forEach((select) => {
         this.disabled = false; // Re-enable so it's not stuck if it stays on screen
 
         if (data.success) {
-          showToast("Status updated successfully!", "bg-green-500");
+          showToast('<i class="fas fa-check-circle mr-2"></i>Status updated successfully!', "bg-green-500/80 text-white");
 
           // --- NEW ANIMATION LOGIC START ---
-          // Define which status IDs should trigger a removal (e.g., 3 for Completed, 4 for Cancelled)
-          // Check your database 'status' table to match these IDs exactly
+
           const statusToRemove = ["3", "4"];
 
           if (statusToRemove.includes(statusId)) {
@@ -175,14 +159,60 @@ function closeEditModal() {
   }, 300);
 }
 
-// Update your button listener to use the new function
 document.querySelectorAll(".edit-report-btn").forEach((button) => {
   button.addEventListener("click", function () {
+    // Populate standard fields
     document.getElementById("edit_report_id").value = this.getAttribute("data-id");
     document.getElementById("edit_cat_id").value = this.getAttribute("data-cat");
     document.getElementById("edit_mod_id").value = this.getAttribute("data-mod");
-    document.getElementById("edit_sev_id").value = this.getAttribute("data-sev");
     document.getElementById("edit_desc").value = this.getAttribute("data-desc");
-    openEditModal(); // Use the new function here
+
+    // Handle the Severity Radios
+    const severityId = this.getAttribute("data-sev");
+
+    // Find the radio button inside the Edit Modal that matches the ID
+    const radioToSelect = editModal.querySelector(`input[name="sev_id"][value="${severityId}"]`);
+
+    if (radioToSelect) {
+      radioToSelect.checked = true;
+    } else {
+      // Fallback: If no match found, uncheck all to prevent stale data
+      editModal.querySelectorAll('input[name="sev_id"]').forEach((r) => (r.checked = false));
+    }
+
+    openEditModal();
   });
 });
+// 5. Add Report Form Submission
+// Locate this section in your reports.js
+if (addReportForm) {
+  addReportForm.addEventListener("submit", function (e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const severityOptions = this.querySelectorAll('input[name="sev_id"]');
+    const severityError = document.getElementById("severity-error");
+
+    const isChecked = Array.from(severityOptions).some((r) => r.checked);
+
+    if (!isChecked) {
+      e.preventDefault();
+      if (severityError) severityError.classList.remove("hidden");
+      return false;
+    }
+
+    // --- CRITICAL FIX START ---
+    // If the code reaches here, it's valid.
+    // We update the UI to show it's loading.
+    submitBtn.style.pointerEvents = "none";
+    submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+    submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
+
+    // Since inputValidation.js likely called preventDefault(),
+    // we use a tiny timeout to call the native submit() method,
+    // which bypasses jQuery/JS listeners and goes straight to the PHP handler.
+    const form = this;
+    setTimeout(() => {
+      form.submit();
+    }, 100);
+    // --- CRITICAL FIX END ---
+  });
+}
