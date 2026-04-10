@@ -55,7 +55,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             <table class="min-w-full table-auto">
-                <thead class="bg-gray-100">
+                <thead class="bg-blue-500 text-white">
                     <tr>
                         <th class="px-4 py-2 text-left">Ref Number</th>
                         <th class="px-4 py-2 text-left">Reporter</th>
@@ -71,7 +71,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <tbody class="divide-y divide-gray-200">
                     <?php foreach ($reportArchive as $archive): ?>
                         <tr class="border-b hover:bg-gray-50 transition-colors">
-                            <td class="px-4 py-2 font-mono text-blue-600 uppercase">
+                            <td class="px-4 py-2 font-mono text-black-600 uppercase">
                                 <?= htmlspecialchars($archive['ref_num']) ?>
                             </td>
                             <td class="px-4 py-2">
@@ -122,13 +122,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <!--Suugestion Archive-->
-
-    <h2 class="text-2xl font-bold mb-4">System Reports</h2>
+    <div class="container mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-4">Suggestions Reports</h2>
 
     <div class="overflow-x-auto bg-white rounded-lg shadow">
         <table class="min-w-full table-auto">
-            <thead class="bg-red-500 text-white">
+            <thead class="bg-blue-500 text-white">
                 <tr>
                     <th class="px-4 py-2 text-left">Reporter</th>
                     <th class="px-4 py-2 text-left">Suggestion</th>
@@ -138,43 +137,63 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <th class="px-4 py-2 text-left">Archived by</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($suggestions as $sug): ?>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2 font-semibold text-gray-700">
-                            <?= htmlspecialchars($sug['username']) ?>
-                        </td>
+            <tbody class="divide-y divide-gray-200">
+                <?php if (!empty($suggestions)): ?>
+                    <?php foreach ($suggestions as $sug): ?>
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-2 text-sm">
+                                <?= htmlspecialchars($sug['username']) ?>
+                            </td>
 
-                        <td class="px-4 py-2 text-sm text-gray-600 max-w-xs">
-                            <?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>
-                        </td>
+                            <td class="px-4 py-2 text-sm max-w-xs truncate" 
+                                title="<?= htmlspecialchars($sug['suggestion_desc']) ?>">
+                                <?= htmlspecialchars($sug['suggestion_desc']) ?>
+                            </td>
 
-                        <td class="px-4 py-2 font-semibold text-gray-700">
-                            <?= htmlspecialchars($sug['status_desc']) ?>
-                        </td>
-                        <td class="px-4 py-2 font-semibold text-gray-700">
-                            <?= htmlspecialchars($sug['suggestion_created_at']) ?>
-                        </td>
-                        <td class="px-4 py-2 font-semibold text-gray-700">
-                            <?= htmlspecialchars($sug['suggestion_updated_at']) ?>
-                        </td>
-                        <td class="px-4 py-2 font-semibold text-gray-700">
-                            <?= htmlspecialchars($sug['updater_name'] ?? 'Not updated yet') ?>
-                        </td>
+                            <td class="px-4 py-2">
+                                <?php 
+                                    $status = $sug['status_desc'];
+                                    $badgeColor = "bg-gray-100 text-gray-700"; // Default
+                                    
+                                    // Check status for green or red
+                                    if (stripos($status, 'Completed') !== false) {
+                                        $badgeColor = "bg-green-100 text-green-700";
+                                    } elseif (stripos($status, 'Cancel') !== false) {
+                                        $badgeColor = "bg-red-100 text-red-700";
+                                    }
+                                ?>
+                                <span class="px-2 py-1 rounded text-xs font-bold <?= $badgeColor ?>">
+                                    <?= htmlspecialchars($status) ?>
+                                </span>
+                            </td>
 
-                    </tr>
-                <?php endforeach; ?>
+                            <td class="px-4 py-2 text-sm max-w-xs truncate"
+                                title="<?= htmlspecialchars($sug['suggestion_created_at']) ?>">
+                                <?= htmlspecialchars($sug['suggestion_created_at']) ?>
+                            </td>
 
-                <?php if (empty($suggestions)): ?>
+                            <td class="px-4 py-2 text-sm max-w-xs truncate"
+                                title="<?= htmlspecialchars($sug['suggestion_updated_at']) ?>">
+                                <?= htmlspecialchars($sug['suggestion_updated_at']) ?>
+                            </td>
+
+                            <td class="px-4 py-2 text-sm max-w-xs truncate"
+                                title="<?= htmlspecialchars($sug['updater_name'] ?? 'System') ?>">
+                                <?= htmlspecialchars($sug['updater_name'] ?? 'System') ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                            No suggestions found. Be the first to suggest something!
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                            No suggestions found.
                         </td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
+</div>
 </body>
 
 </html>
