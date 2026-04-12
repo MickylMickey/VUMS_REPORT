@@ -74,7 +74,10 @@ document.addEventListener("change", function (e) {
       select.disabled = false;
 
       if (data.success) {
-        showToast('<i class="fas fa-check-circle mr-2"></i>Suggestion updated!', "bg-green-600");
+        showToast(
+          '<i class="fas fa-check-circle mr-2"></i>Suggestion updated!',
+          "bg-green-600",
+        );
 
         // Remove card for 'Completed' (3) or 'Rejected' (4)
         if (["3", "4"].includes(statusId)) {

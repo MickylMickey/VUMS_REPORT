@@ -6,11 +6,7 @@ $userData = checkAuth();
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
-
-
-$reportSearch = $_GET['report_q'] ?? '';
-$sugSearch = $_GET['sug_q'] ?? '';
-
+$statusOptions = fetchStatus($conn);
 $visibility = new reportArchiveVisibility($conn);
 $reportArchive = $visibility->getVisibleArchiveReports($current_user_id, $user_role);
 
@@ -46,7 +42,7 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <section class="mb-16">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
                 <div class="flex items-center gap-3">
                     <div
                         class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
@@ -55,21 +51,30 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                     <h2 class="text-xl font-bold">System Reports Archive</h2>
                 </div>
 
-                <form class="flex flex-wrap gap-2">
-                    <div class="relative min-w-[280px]">
+                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" name="report_q" placeholder="Search reference or description..."
-                            value="<?= htmlspecialchars($reportSearch) ?>"
+                        <input type="text" id="searchInput" placeholder="Search by Reporter or Description . . ."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                     </div>
-                    <select
-                        class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-500">
+
+                    <select id="statusFilter"
+                        class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
                         <option value="">All Status</option>
+                        <?php foreach ($statusOptions as $status): ?>
+                            <option value="<?= htmlspecialchars($status['status_id']) ?>">
+                                <?= htmlspecialchars($status['status_desc']) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
-                    <button type="submit"
-                        class="bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-700 transition-all">Filter</button>
-                </form>
+
+                    <button id="resetBtn"
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all h-[40px] flex items-center justify-center"
+                        title="Reset Filters">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
@@ -84,6 +89,9 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                                 <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                     Classification</th>
                                 <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    Description</th>
+                                <th
                                     class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-center">
                                     Severity</th>
                                 <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -94,7 +102,11 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <?php foreach ($reportArchive as $archive): ?>
-                                <tr class="hover:bg-blue-50/30 transition-colors group">
+                                <tr class="report-row hover:bg-blue-50/30 transition-colors group"
+                                    data-ref="<?= htmlspecialchars($archive['ref_num']) ?>"
+                                    data-desc="<?= htmlspecialchars($archive['report_desc']) ?>"
+                                    data-reporter="<?= htmlspecialchars($archive['reporter_name']) ?>"
+                                    data-status="<?= htmlspecialchars($archive['status_id']) ?>">
                                     <td class="px-6 py-4">
                                         <span
                                             class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs uppercase">
@@ -112,6 +124,12 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                                             <?= htmlspecialchars($archive['mod_desc'] ?? 'Other') ?>
                                         </div>
                                     </td>
+                                    <td class="px-6 py-4">
+                                        <p class="text-sm text-slate-500 max-w-[200px] truncate"
+                                            title="<?= htmlspecialchars($archive['report_desc']) ?>">
+                                            <?= htmlspecialchars($archive['report_desc']) ?>
+                                        </p>
+                                    </td>
                                     <td class="px-6 py-4 text-center">
                                         <?php $sevClass = (stripos($archive['severity'], 'Critical') !== false) ? 'bg-red-50 text-red-600 border-red-100' : 'bg-amber-50 text-amber-600 border-amber-100'; ?>
                                         <span
@@ -128,6 +146,17 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
+                        <tbody class="divide-y divide-slate-100">
+                            <?php foreach ($reportArchive as $archive): ?>
+                            <?php endforeach; ?>
+
+                            <tr id="noResultsRow" class="hidden">
+                                <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-3xl mb-2 block opacity-20"></i>
+                                    No archived reports match your search criteria.
+                                </td>
+                            </tr>
+                        </tbody>
                         </tbody>
                     </table>
                 </div>
@@ -144,56 +173,69 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                     <h2 class="text-xl font-bold">Suggestions Archive</h2>
                 </div>
 
-                <form class="flex gap-2">
+                <div class="flex gap-2">
                     <div class="relative min-w-[280px]">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" name="sug_q" placeholder="Search users or text..."
-                            value="<?= htmlspecialchars($sugSearch) ?>"
+                        <input type="text" id="sugSearchInput" name="sug_q" placeholder="Search users or suggestion..."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     </div>
-                    <button type="submit"
-                        class="bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-700 transition-all">Search</button>
-                </form>
+                    <button id="resetSugBtn"
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="suggestionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php if (!empty($suggestions)):
                     foreach ($suggestions as $sug): ?>
-                        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                        <div class="suggestion-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all"
+                            data-user="<?= htmlspecialchars(strtolower($sug['username'])) ?>"
+                            data-text="<?= htmlspecialchars(strtolower($sug['suggestion_desc'])) ?>">
+
                             <div class="flex items-center justify-between mb-4">
-                                <span
-                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"><?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?></span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                    <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
+                                </span>
                                 <?php
                                 $sColor = (stripos($sug['status_desc'], 'Completed') !== false) ? 'text-green-600 bg-green-50' : 'text-slate-400 bg-slate-50';
                                 ?>
-                                <span
-                                    class="px-2 py-0.5 rounded text-[10px] font-bold <?= $sColor ?>"><?= $sug['status_desc'] ?></span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold <?= $sColor ?>">
+                                    <?= $sug['status_desc'] ?>
+                                </span>
                             </div>
+
                             <p class="text-slate-600 text-sm italic mb-4 line-clamp-3">
-                                "<?= htmlspecialchars($sug['suggestion_desc']) ?>"</p>
+                                "<?= htmlspecialchars($sug['suggestion_desc']) ?>"
+                            </p>
+
                             <div class="pt-4 border-t border-slate-50 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold uppercase text-slate-500">
                                         <?= substr($sug['username'], 0, 1) ?>
                                     </div>
-                                    <span
-                                        class="text-xs font-bold text-slate-700"><?= htmlspecialchars($sug['username']) ?></span>
+                                    <span class="text-xs font-bold text-slate-700">
+                                        <?= htmlspecialchars($sug['username']) ?>
+                                    </span>
                                 </div>
-                                <span class="text-[10px] text-slate-300">Archived by:
-                                    <?= htmlspecialchars($sug['updater_name'] ?? 'System') ?></span>
+                                <span class="text-[10px] text-slate-300">
+                                    Archived by: <?= htmlspecialchars($sug['updater_name'] ?? 'System') ?>
+                                </span>
                             </div>
                         </div>
-                    <?php endforeach; else: ?>
-                    <div
-                        class="col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400">
-                        No archived suggestions found.
-                    </div>
+                    <?php endforeach; ?>
                 <?php endif; ?>
+
+                <div id="noSugResults"
+                    class="hidden col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400">
+                    No suggestions match your search.
+                </div>
             </div>
         </section>
     </main>
 </body>
+<script src="js/archive_module.js"></script>
 
 </html>

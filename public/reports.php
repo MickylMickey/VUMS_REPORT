@@ -56,26 +56,44 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             class="bg-blue-500 p-4 rounded-t-2xl border-x border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
             <div class="flex w-full max-w-xs relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" placeholder="Search by Ref Number or Reporter. . ."
+                <input type="text" id="searchInput" placeholder="Search by Ref Number or Reporter. . ."
                     class="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
             </div>
 
             <div class="flex gap-2">
-                <select
+                <select id="categoryFilter"
                     class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
                     <option value="">All Categories</option>
+                    <?php foreach ($categoryOptions as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat['cat_id']) ?>"><?= htmlspecialchars($cat['category']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <select id="moduleFilter"
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
+                    <option value="">All Modules</option>
+                    <?php foreach ($moduleOptions as $mod): ?>
+                        <option value="<?= htmlspecialchars($mod['mod_id']) ?>"><?= htmlspecialchars($mod['module']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
 
-                <select
+                <select id="severityFilter"
                     class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
                     <option value="">All Severities</option>
+                    <?php foreach ($severityOptions as $sev): ?>
+                        <option value="<?= htmlspecialchars($sev['sev_id']) ?>"><?= htmlspecialchars($sev['sev_desc']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
 
-                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
-                    <i class="fa-solid fa-sliders"></i>
+                <button id="resetBtn"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
+                    <i class="fa-solid fa-rotate-right"></i>
                 </button>
             </div>
         </div>
+
 
         <div class="overflow-x-auto bg-white rounded-b-2xl shadow-sm border border-slate-100">
             <table class="min-w-full table-auto border-collapse">
@@ -102,9 +120,15 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                         <?php endif; ?>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody id="reportsTableBody" class="divide-y divide-slate-100">
                     <?php foreach ($reports as $report): ?>
-                        <tr class="hover:bg-blue-50/30 transition-colors group">
+                        <tr class="report-row hover:bg-blue-50/30 transition-colors group"
+                            data-ref="<?= htmlspecialchars($report['ref_num']) ?>"
+                            data-reporter="<?= htmlspecialchars($report['reporter_name']) ?>"
+                            data-desc="<?= htmlspecialchars($report['report_desc']) ?>"
+                            data-cat="<?= $report['cat_id'] ?? 'other' ?>" data-mod="<?= $report['mod_id'] ?? 'other' ?>"
+                            data-sev="<?= $report['sev_id'] ?? 'other' ?>">
+
                             <td class="px-6 py-4">
                                 <span
                                     class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase">
@@ -190,9 +214,21 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
+                <tbody id="reportsTableBody" class="divide-y divide-slate-100">
+                    <tr id="noResultsRow" class="hidden">
+                        <td colspan="100%" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-4xl mb-4 opacity-20"></i>
+                                <p class="text-sm font-medium">No reports found matching your criteria</p>
+                                <p class="text-xs">Try adjusting your filters or search term</p>
+                            </div>
+                        </td>
+                    </tr>
+
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 
     <div id="addReportModal"
@@ -430,10 +466,12 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
 <script src="js/removeNotification.js" defer></script>
 <script src="js/reports.js"></script>
 <script src="js/inputValidation.js" defer></script>
-<script>document.addEventListener("DOMContentLoaded", () => {
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
         initFormValidation("addReportForm"),
             initFormValidation("editForm");
-    });</script>
+    });
+</script>
 
 
 </html>

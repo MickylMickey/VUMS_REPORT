@@ -51,7 +51,10 @@ document.querySelectorAll(".status-updater").forEach((select) => {
         this.disabled = false; // Re-enable so it's not stuck if it stays on screen
 
         if (data.success) {
-          showToast('<i class="fas fa-check-circle mr-2"></i>Status updated successfully!', "bg-green-500/80 text-white");
+          showToast(
+            '<i class="fas fa-check-circle mr-2"></i>Status updated successfully!',
+            "bg-green-500/80 text-white",
+          );
 
           // --- NEW ANIMATION LOGIC START ---
 
@@ -162,22 +165,29 @@ function closeEditModal() {
 document.querySelectorAll(".edit-report-btn").forEach((button) => {
   button.addEventListener("click", function () {
     // Populate standard fields
-    document.getElementById("edit_report_id").value = this.getAttribute("data-id");
-    document.getElementById("edit_cat_id").value = this.getAttribute("data-cat");
-    document.getElementById("edit_mod_id").value = this.getAttribute("data-mod");
+    document.getElementById("edit_report_id").value =
+      this.getAttribute("data-id");
+    document.getElementById("edit_cat_id").value =
+      this.getAttribute("data-cat");
+    document.getElementById("edit_mod_id").value =
+      this.getAttribute("data-mod");
     document.getElementById("edit_desc").value = this.getAttribute("data-desc");
 
     // Handle the Severity Radios
     const severityId = this.getAttribute("data-sev");
 
     // Find the radio button inside the Edit Modal that matches the ID
-    const radioToSelect = editModal.querySelector(`input[name="sev_id"][value="${severityId}"]`);
+    const radioToSelect = editModal.querySelector(
+      `input[name="sev_id"][value="${severityId}"]`,
+    );
 
     if (radioToSelect) {
       radioToSelect.checked = true;
     } else {
       // Fallback: If no match found, uncheck all to prevent stale data
-      editModal.querySelectorAll('input[name="sev_id"]').forEach((r) => (r.checked = false));
+      editModal
+        .querySelectorAll('input[name="sev_id"]')
+        .forEach((r) => (r.checked = false));
     }
 
     openEditModal();
@@ -204,7 +214,8 @@ if (addReportForm) {
     // We update the UI to show it's loading.
     submitBtn.style.pointerEvents = "none";
     submitBtn.classList.add("opacity-70", "cursor-not-allowed");
-    submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
+    submitBtn.innerHTML =
+      '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
 
     // Since inputValidation.js likely called preventDefault(),
     // we use a tiny timeout to call the native submit() method,
@@ -216,3 +227,75 @@ if (addReportForm) {
     // --- CRITICAL FIX END ---
   });
 }
+
+//6. Filtering Logic
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.getElementById("searchInput"); // Ensure your input has this ID
+  const categoryFilter = document.getElementById("categoryFilter");
+  const moduleFilter = document.getElementById("moduleFilter");
+  const severityFilter = document.getElementById("severityFilter");
+  const resetBtn = document.getElementById("resetBtn");
+
+  const rows = document.querySelectorAll(".report-row");
+  const noResultsRow = document.getElementById("noResultsRow");
+
+  function applyFilters() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const catVal = categoryFilter.value;
+    const modVal = moduleFilter.value;
+    const sevVal = severityFilter.value;
+
+    let visibleCount = 0;
+
+    rows.forEach((row) => {
+      // 1. Get all data
+      const ref = row.getAttribute("data-ref").toLowerCase();
+      const reporter = row.getAttribute("data-reporter").toLowerCase();
+      const desc = row.getAttribute("data-desc").toLowerCase();
+      const catId = row.getAttribute("data-cat");
+      const modId = row.getAttribute("data-mod");
+      const sevId = row.getAttribute("data-sev");
+
+      // 2. Search Logic (Ref OR Reporter OR Description)
+      const matchesSearch =
+        searchTerm === "" ||
+        ref.includes(searchTerm) ||
+        reporter.includes(searchTerm) ||
+        desc.includes(searchTerm);
+
+      // 3. Filter Logic
+      const matchesCat = catVal === "" || catId === catVal;
+      const matchesMod = modVal === "" || modId === modVal;
+      const matchesSev = sevVal === "" || sevId === sevVal;
+
+      // 4. Combine everything
+      if (matchesSearch && matchesCat && matchesMod && matchesSev) {
+        row.classList.remove("hidden"); // Using Tailwind's 'hidden' class
+        visibleCount++;
+      } else {
+        row.classList.add("hidden");
+      }
+    });
+
+    // 5. Handle "No Results" display
+    if (visibleCount === 0) {
+      noResultsRow.classList.remove("hidden");
+    } else {
+      noResultsRow.classList.add("hidden");
+    }
+  }
+
+  // Listeners
+  searchInput.addEventListener("input", applyFilters);
+  categoryFilter.addEventListener("change", applyFilters);
+  moduleFilter.addEventListener("change", applyFilters);
+  severityFilter.addEventListener("change", applyFilters);
+
+  resetBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    categoryFilter.value = "";
+    moduleFilter.value = "";
+    severityFilter.value = "";
+    applyFilters();
+  });
+});
