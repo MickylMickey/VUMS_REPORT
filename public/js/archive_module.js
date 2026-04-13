@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
   // === 1. SYSTEM REPORTS FILTERING ===
   const searchInput = document.getElementById("searchInput");
-  const statusFilter = document.getElementById("statusFilter");
+  const severityFilter = document.getElementById("severityFilter");
   const resetBtn = document.getElementById("resetBtn");
   const reportRows = document.querySelectorAll(".report-row");
   const noResultsRow = document.getElementById("noResultsRow");
 
   function applyReportFilters() {
     const searchTerm = searchInput.value.toLowerCase().trim();
-    const statusVal = statusFilter.value;
+    const severityVal = severityFilter.value;
     let visibleCount = 0;
 
     reportRows.forEach((row) => {
@@ -16,20 +16,16 @@ document.addEventListener("DOMContentLoaded", function () {
       const ref = row.getAttribute("data-ref").toLowerCase();
       const reporter = row.getAttribute("data-reporter").toLowerCase();
       const description = (row.getAttribute("data-desc") || "").toLowerCase(); // New
-      const statusID = row.getAttribute("data-status");
+      const severityID = row.getAttribute("data-severity");
 
       // 2. Search Logic (Ref OR Reporter OR Description)
-      const matchesSearch =
-        searchTerm === "" ||
-        ref.includes(searchTerm) ||
-        reporter.includes(searchTerm) ||
-        description.includes(searchTerm); // Included description in search
+      const matchesSearch = searchTerm === "" || ref.includes(searchTerm) || reporter.includes(searchTerm) || description.includes(searchTerm); // Included description in search
 
       // 3. Filter Logic
-      const matchesStatus = statusVal === "" || statusID === statusVal;
+      const matchesSeverity = severityVal === "" || severityID === severityVal;
 
       // 4. Final Visibility Check
-      if (matchesSearch && matchesStatus) {
+      if (matchesSearch && matchesSeverity) {
         row.classList.remove("hidden");
         visibleCount++;
       } else {
@@ -49,11 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Report Listeners
   if (searchInput) searchInput.addEventListener("input", applyReportFilters);
-  if (statusFilter) statusFilter.addEventListener("change", applyReportFilters);
+  if (severityFilter) severityFilter.addEventListener("change", applyReportFilters);
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       searchInput.value = "";
-      statusFilter.value = "";
+      severityFilter.value = "";
       applyReportFilters();
     });
   }
@@ -81,15 +77,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (noSugResults) {
-      hasResults
-        ? noSugResults.classList.add("hidden")
-        : noSugResults.classList.remove("hidden");
+      hasResults ? noSugResults.classList.add("hidden") : noSugResults.classList.remove("hidden");
     }
   }
 
   // Suggestion Listeners
-  if (sugSearchInput)
-    sugSearchInput.addEventListener("input", filterSuggestions);
+  if (sugSearchInput) sugSearchInput.addEventListener("input", filterSuggestions);
   if (resetSugBtn) {
     resetSugBtn.addEventListener("click", () => {
       sugSearchInput.value = "";

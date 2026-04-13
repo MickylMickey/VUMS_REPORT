@@ -6,7 +6,7 @@ $userData = checkAuth();
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
-$statusOptions = fetchStatus($conn);
+$severities = fetchAllFromTable($conn, 'severity');
 $visibility = new reportArchiveVisibility($conn);
 $reportArchive = $visibility->getVisibleArchiveReports($current_user_id, $user_role);
 
@@ -59,12 +59,12 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                     </div>
 
-                    <select id="statusFilter"
+                    <select id="severityFilter"
                         class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
-                        <option value="">All Status</option>
-                        <?php foreach ($statusOptions as $status): ?>
-                            <option value="<?= htmlspecialchars($status['status_id']) ?>">
-                                <?= htmlspecialchars($status['status_desc']) ?>
+                        <option value="">All Severities</option>
+                        <?php foreach ($severities as $severity): ?>
+                            <option value="<?= htmlspecialchars($severity['sev_id']) ?>">
+                                <?= htmlspecialchars($severity['sev_desc']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -106,7 +106,7 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                                     data-ref="<?= htmlspecialchars($archive['ref_num']) ?>"
                                     data-desc="<?= htmlspecialchars($archive['report_desc']) ?>"
                                     data-reporter="<?= htmlspecialchars($archive['reporter_name']) ?>"
-                                    data-status="<?= htmlspecialchars($archive['status_id']) ?>">
+                                    data-severity="<?= htmlspecialchars($archive['sev_id']) ?>">
                                     <td class="px-6 py-4">
                                         <span
                                             class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs uppercase">
