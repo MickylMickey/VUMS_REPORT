@@ -67,7 +67,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <p class="text-sm text-slate-500 mt-1">Manage system access, roles, and member profiles.</p>
                 </div>
                 <button onclick="toggleAddModal(true)" data-tooltip="Create a new user account"
-                    class="inline-flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all shadow-sm shadow-blue-200">
+                    class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                     <i class="fa-solid fa-plus mr-2 text-xs"></i>
                     Create New User
                 </button>
@@ -176,14 +176,15 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                 <button
                                                     onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
                                                     data-tooltip="Edit user details"
-                                                    class="text-xs font-bold uppercase tracking-widest text-blue-500 hover:text-blue-700">
+                                                   class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                                                     Edit
                                                 </button>
                                                 <?php if (!$isSelf): ?>
-                                                    <button onclick="openArchiveUserModal('<?= $user_id ?>')"
-                                                        data-tooltip="Archive this user"
-                                                        class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700">
-                                                        Archive
+                                                    <button 
+                                                     onclick="openArchiveUserModal('<?= $user_id ?>')"
+                                                    data-tooltip="Archive this user"
+                                                    class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
+                                                    Archive
                                                     </button>
                                                 <?php endif; ?>
                                             </div>

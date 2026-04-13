@@ -71,7 +71,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             </div>
 
             <button onclick="openAddModal()"
-                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-16 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
+                class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
                 data-tooltip="Add New Report">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
             </button>
@@ -160,7 +160,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                             <td class="px-6 py-4">
                                 <span
-                                    class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase">
+                                    class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-medium uppercase">
                                     <?= htmlspecialchars($report['ref_num']) ?>
                                 </span>
                             </td>
@@ -226,19 +226,22 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                         <i class="fa-solid fa-image text-xs"></i>
                                     </a>
                                 <?php else: ?>
-                                    <span class="text-slate-300 text-[10px] italic">No image</span>
+                                    <span class="text-slate-300 text-[15px] italic">No image</span>
                                 <?php endif; ?>
                             </td>
 
                             <?php if ($isAdmin): ?>
                                 <td class="px-6 py-4 text-right">
-                                    <button
-                                        class="edit-report-btn text-blue-600 hover:text-blue-800 font-bold text-xs p-2 hover:bg-blue-50 rounded-lg transition-all"
-                                        data-id="<?= $report['report_id'] ?>" data-cat="<?= $report['cat_id'] ?? 'other' ?>"
-                                        data-mod="<?= $report['mod_id'] ?? 'other' ?>" data-sev="<?= $report['sev_id'] ?>"
-                                        data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
-                                        <i class="fa-solid fa-pen-to-square mr-1"></i>Edit
-                                    </button>
+                                    <button 
+    class="edit-report-btn hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
+    data-id="<?= $report['report_id'] ?>" 
+    data-cat="<?= $report['cat_id'] ?? 'other' ?>"
+    data-mod="<?= $report['mod_id'] ?? 'other' ?>" 
+    data-sev="<?= $report['sev_id'] ?>"
+    data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
+    <i class="fa-solid fa-pen-to-square mr-2"></i>
+    Edit
+</button>
                                 </td>
                             <?php endif; ?>
                         </tr>
