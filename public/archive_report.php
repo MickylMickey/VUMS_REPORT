@@ -108,14 +108,16 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]">
-                        <i
-                            class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]"
+     data-tooltip="Search archived reports">
+                        <i 
+                        class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="searchInput" placeholder="Search by Reporter or Description . . ."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                     </div>
 
                     <select id="severityFilter"
+                    data-tooltip="Filter reports by severity"
                         class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
                         <option value="">All Severities</option>
                         <?php foreach ($severities as $severity): ?>
@@ -126,8 +128,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </select>
 
                     <button id="resetBtn"
-                        class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all h-[40px] flex items-center justify-center"
-                        title="Reset Filters">
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all h-[40px] flex items-center justify-center"
+                    data-tooltip="Reset Filters">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
                 </div>
@@ -268,13 +270,15 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="flex gap-2">
-                    <div class="relative min-w-[280px]">
+                    <div class="relative min-w-[280px]"
+                    data-tooltip="Search suggestions">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="sugSearchInput" name="sug_q" placeholder="Search users or suggestion..."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <button id="resetSugBtn"
+                    data-tooltip="Reset suggestion search">
                         class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
@@ -366,8 +370,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
         </section>
+        <div id="tooltip"
+    class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+</div>
     </main>
 </body>
 <script src="js/archive_module.js"></script>
+<script src="js/tooltip.js"></script>
 
 </html>
