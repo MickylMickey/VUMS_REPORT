@@ -21,7 +21,10 @@
   },
   "homepage": "https://github.com/MickylMickey/VUMS_REPORT#readme",
   "devDependencies": {
-    "@tailwindcss/cli": "^4.2.2"
+    "@tailwindcss/cli": "^4.2.2",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^4.2.2"
   },
   "dependencies": {
     "detect-libc": "^2.1.2",
@@ -38,7 +41,6 @@
     "picocolors": "^1.1.1",
     "picomatch": "^4.0.3",
     "source-map-js": "^1.2.1",
-    "tailwindcss": "^4.0.0",
     "tapable": "^2.3.0"
   }
 }

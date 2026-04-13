@@ -30,97 +30,122 @@ $user = checkAuth('Admin');
 
     <div class="container mx-auto p-6">
         
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-                <h2 class="text-2xl font-bold whitespace-nowrap">Category List</h2>
-              <div class="relative w-full md:w-72 lg:w-80">
-    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+       <div class="container mx-auto p-6">
 
-    <input type="text" id="categorySearch"
-        onkeyup="filterTable('categorySearch', 'categoryTable')" 
-        placeholder="Search category..."
-        class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm
-        focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none
-        shadow-sm hover:shadow-md transition-all">
+
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+            
+            <!-- ✅ UPDATED CATEGORY HEADER -->
+            <h2 class="text-2xl font-bold flex items-center gap-2 whitespace-nowrap">
+                <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span>
+                <i class="fa-solid fa-layer-group text-blue-500 text-sm transition-transform duration-200 hover:scale-110"></i>
+                <span>Category List</span>
+            </h2>
+
+          <div class="relative w-full md:w-72 lg:w-80">
+<i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+
+<input type="text" id="categorySearch"
+    onkeyup="filterTable('categorySearch', 'categoryTable')" 
+    placeholder="Search category..."
+    class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm
+    focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none
+    shadow-sm hover:shadow-md transition-all">
+
+
 </div>
             </div>
-            <button onclick="openGenericModal('addCategoryModal', 'addCategoryContainer')" 
-                class="w-full md:w-auto bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-95">
-                <i class="fa-solid fa-plus mr-2"></i>New Category
-            </button>
+
+        <button onclick="openGenericModal('addCategoryModal', 'addCategoryContainer')" 
+    class="w-full md:w-auto bg-blue-600 text-white px-5 py-1.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-50">
+<i class="fa-solid fa-plus mr-1"></i>New Category
+
+
+</button>
         </div>
 
-        <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
-            <table id="categoryTable" class="min-w-full table-auto">
-                <thead>
-    <tr class="bg-slate-50 border-b border-slate-100">
-                    <tr>
-                       <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Code</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Category</th>
-                       <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Description</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Action</th>
+
+    <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
+        <table id="categoryTable" class="min-w-full table-auto">
+            <thead>
+                <tr class="bg-blue-600 text-white border-b border-blue-700">
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Code</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Category</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <?php foreach ($categories as $cat): ?>
+                    <tr class="hover:bg-blue-50/30 transition-colors group">
+                        <td class="px-6 py-4 text-sm font-semibold text-slate-700">
+<span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"><?= htmlspecialchars($cat['cat_id']) ?></span></td>
+                        <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($cat['category']) ?></td>
+                        <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($cat['cat_desc']) ?></td>
+                        <td class="px-4 py-3">
+                            <button onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
+                                class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">Edit</button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <?php foreach ($categories as $cat): ?>
-                        <tr class="hover:bg-blue-50/30 transition-colors group">
-                            <td class="px-6 py-4 text-sm font-semibold text-slate-700">
-    <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"><?= htmlspecialchars($cat['cat_id']) ?></td>
-                            <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($cat['category']) ?></td>
-                            <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($cat['cat_desc']) ?></td>
-                            <td class="px-4 py-3">
-                                <button onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
-                                    class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">Edit</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-                <h2 class="text-2xl font-bold">Module List</h2>
-                <div class="relative w-full md:w-72">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')" 
-                        placeholder="Search module code or name..." 
-                        class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:border-blue-500 outline-none transition-all shadow-sm">
-                </div>
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+            
+            <!-- ✅ UPDATED MODULE HEADER -->
+            <h2 class="text-2xl font-bold flex items-center gap-2 whitespace-nowrap">
+                <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span>
+                <i class="fa-solid fa-cubes text-blue-500 text-sm transition-transform duration-200 hover:scale-110"></i>
+                <span>Module List</span>
+            </h2>
+
+            <div class="relative w-full md:w-72">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')" 
+                    placeholder="Search module code or name..." 
+                    class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:border-blue-500 outline-none transition-all shadow-sm">
             </div>
-            <button onclick="openGenericModal('addModuleModal', 'addModuleContainer')"
-                class="w-full md:w-auto bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-95">
-                <i class="fa-solid fa-plus mr-2"></i>New Module
-            </button>
         </div>
 
-        <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
-            <table id="moduleTable" class="min-w-full table-auto">
-                <thead>
-    <tr class="bg-slate-50 border-b border-slate-100">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Code</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Module</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Description</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">Action</th>
+        <button onclick="openGenericModal('addModuleModal', 'addModuleContainer')"
+            class="w-full md:w-auto bg-blue-600 text-white px-5 py-1.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-50">
+            <i class="fa-solid fa-plus mr-2"></i>New Module
+        </button>
+    </div>
+
+    <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
+        <table id="moduleTable" class="min-w-full table-auto">
+            <thead>
+                <tr class="bg-blue-600 text-white border-b border-blue-700">
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Code</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Module</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <?php foreach ($modules as $mod): ?>
+                    <tr class="hover:bg-blue-50/30 transition-colors group">
+                        <td class="px-6 py-4">
+<span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"><?= htmlspecialchars($mod['mod_id']) ?></span></td>
+                       <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($mod['module']) ?></td>
+                        <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($mod['mod_desc']) ?></td>
+                        <td class="px-4 py-3">
+                            <button onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
+                                class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">Edit</button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <?php foreach ($modules as $mod): ?>
-                        <tr class="hover:bg-blue-50/30 transition-colors group">
-                            <td class="px-6 py-4">
-    <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"><?= htmlspecialchars($mod['mod_id']) ?></td>
-                           <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($mod['module']) ?></td>
-                            <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($mod['mod_desc']) ?></td>
-                            <td class="px-4 py-3">
-                                <button onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
-                                    class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">Edit</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+```
+
     </div>
     
     </body>
@@ -141,10 +166,24 @@ $user = checkAuth('Admin');
                     <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
                     <textarea name="cat_desc" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all resize-none"></textarea>
                 </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeGenericModal('addCategoryModal', 'addCategoryContainer')" class="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-2xl transition-colors">Discard</button>
-                    <button type="submit" class="flex-[2] py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">Add Category</button>
-                </div>
+                <div style="display: flex; gap: 12px; padding-top: 8px;">
+    <button type="button" 
+        onclick="closeGenericModal('addCategoryModal', 'addCategoryContainer')" 
+        style="flex: 1; padding: 12px 0; background-color: #10b981; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+        onmouseover="this.style.backgroundColor='#059669'" 
+        onmouseout="this.style.backgroundColor='#10b981'">
+        Close
+    </button>
+
+    <button type="submit" 
+        style="flex: 2; padding: 12px 0; background-color: #2563eb; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); transition: all 0.2s;"
+        onmouseover="this.style.backgroundColor='#1d4ed8'" 
+        onmouseout="this.style.backgroundColor='#2563eb'"
+        onmousedown="this.style.transform='scale(0.95)'"
+        onmouseup="this.style.transform='scale(1)'">
+        Add Category
+    </button>
+</div>
             </form>
         </div>
     </div>
@@ -165,10 +204,24 @@ $user = checkAuth('Admin');
                     <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
                     <textarea name="mod_desc" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all resize-none"></textarea>
                 </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeGenericModal('addModuleModal', 'addModuleContainer')" class="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-2xl transition-colors">Discard</button>
-                    <button type="submit" class="flex-[2] py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">Add Module</button>
-                </div>
+                <div style="display: flex; gap: 12px; padding-top: 8px;">
+    <button type="button" 
+        onclick="closeGenericModal('addModuleModal', 'addModuleContainer')" 
+        style="flex: 1; padding: 12px 0; background-color: #10b981; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+        onmouseover="this.style.backgroundColor='#059669'" 
+        onmouseout="this.style.backgroundColor='#10b981'">
+        Close
+    </button>
+
+    <button type="submit" 
+        style="flex: 2; padding: 12px 0; background-color: #2563eb; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); transition: all 0.2s;"
+        onmouseover="this.style.backgroundColor='#1d4ed8'" 
+        onmouseout="this.style.backgroundColor='#2563eb'"
+        onmousedown="this.style.transform='scale(0.95)'"
+        onmouseup="this.style.transform='scale(1)'">
+        Add Module
+    </button>
+</div>
             </form>
         </div>
     </div>

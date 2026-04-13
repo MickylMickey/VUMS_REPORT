@@ -337,13 +337,24 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                         class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
                 </div>
 
-                <div class="flex items-center gap-3 pt-4">
-                    <button type="button" onclick="closeAddModal()"
-                        class="flex-1 px-4 py-3 text-sm font-bold text-slate-500 rounded-2xl hover:bg-slate-100 transition-colors">Discard</button>
-                    <button type="submit"
-                        class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">Submit
-                        Report</button>
-                </div>
+                <div style="display: flex; align-items: center; gap: 12px; padding-top: 16px;">
+    <button type="button" 
+        onclick="closeAddModal()"
+        style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold; background-color: #10b981; color: white; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+        onmouseover="this.style.backgroundColor='#059669'" 
+        onmouseout="this.style.backgroundColor='#10b981'">
+        Discard
+    </button>
+
+    <button type="submit"
+        style="flex: 2; padding: 12px 16px; font-size: 14px; font-weight: bold; background-color: #2563eb; color: white; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); transition: all 0.2s;"
+        onmouseover="this.style.backgroundColor='#1d4ed8'" 
+        onmouseout="this.style.backgroundColor='#2563eb'"
+        onmousedown="this.style.transform='scale(0.95)'"
+        onmouseup="this.style.transform='scale(1)'">
+        Submit Report
+    </button>
+</div>
             </form>
         </div>
     </div>
