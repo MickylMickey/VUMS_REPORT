@@ -8,17 +8,73 @@ $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
 $severities = fetchAllFromTable($conn, 'severity');
 $visibility = new reportArchiveVisibility($conn);
-$reportArchive = $visibility->getVisibleArchiveReports($current_user_id, $user_role);
 
+// 1. Define your filters first
+$where = "ra.status_id != ?";
+$params = [0];
+$types = "i";
+
+// 2. RUN PAGINATION FIRST to generate $limit and $offset
+$pagination = getPaginationData(
+    $conn,
+    "report_archive ra", // Use the alias 'ra' to match your $where clause
+    $_GET['limit'] ?? 10,
+    $_GET['page'] ?? 1,
+    $where,
+    $params,
+    $types
+);
+
+// 3. NOW you can extract these (this fixes the 'Undefined variable' warning)
+$limit = $pagination['limit'];
+$offset = $pagination['offset'];
+$totalPages = $pagination['totalPages'];
+$totalRecords = $pagination['totalRecords'];
+$page = $pagination['page'];
+
+// 4. FINALLY, fetch the users using those fresh variables
+$reportArchive = $visibility->getVisibleArchiveReports($current_user_id, $user_role, $limit, $offset);
+
+// --- SUGGESTION PAGINATION ---
+
+// 1. Define filters for suggestions
+$s_where = "sa.status_id != ?"; // Adjust this if you want to show all (e.g., "1=1")
+$s_params = [0];
+$s_types = "i";
+
+// 2. RUN PAGINATION (Using 's_page' and 's_limit' to keep it separate)
+$s_pagination = getPaginationData(
+    $conn,
+    "suggestion_archive sa",
+    $_GET['s_limit'] ?? 6, // Suggestions usually look better in smaller grids
+    $_GET['s_page'] ?? 1,
+    $s_where,
+    $s_params,
+    $s_types
+);
+
+// 3. Extract Suggestion Variables
+$s_limit = $s_pagination['limit'];
+$s_offset = $s_pagination['offset'];
+$s_totalPages = $s_pagination['totalPages'];
+$s_totalRecords = $s_pagination['totalRecords'];
+$s_page = $s_pagination['page'];
+
+// 4. Fetch the actual suggestions using LIMIT and OFFSET
+// Note: You'll need to update your raw SQL query to use these
 $sql = "SELECT sa.*, st.status_desc, updater.username AS updater_name, UPPER(u.username) AS username 
         FROM suggestion_archive sa
         LEFT JOIN status st ON sa.status_id = st.status_id
         LEFT JOIN users updater ON sa.suggestion_updated_by = updater.user_id
         LEFT JOIN users u ON sa.user_id = u.user_id
-        $whereClause
-        ORDER BY sa.suggestion_updated_at DESC";
+        WHERE $s_where
+        ORDER BY sa.suggestion_updated_at DESC
+        LIMIT ? OFFSET ?"; // Added placeholders
 
-$suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sii", $s_params[0], $s_limit, $s_offset);
+$stmt->execute();
+$suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -160,6 +216,44 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                         </tbody>
                     </table>
                 </div>
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <p class="text-sm text-slate-500">
+                        Showing <span class="font-medium text-slate-700">
+                            <?= $offset + 1 ?>
+                        </span>
+                        to <span class="font-medium text-slate-700">
+                            <?= min($offset + $limit, $totalRecords) ?>
+                        </span>
+                        of <span class="font-medium text-slate-700">
+                            <?= $totalRecords ?>
+                        </span> users
+                    </p>
+
+                    <div class="flex gap-2">
+                        <?php if ($page > 1): ?>
+                            <a href="?page=<?= $page - 1 ?>&limit=<?= $limit ?>"
+                                class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                                Previous
+                            </a>
+                        <?php endif; ?>
+
+                        <div class="hidden sm:flex gap-1">
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <a href="?page=<?= $i ?>&limit=<?= $limit ?>"
+                                    class="px-3 py-2 text-sm font-medium rounded-lg border transition-all <?= $i == $page ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' ?>">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
+                        </div>
+
+                        <?php if ($page < $totalPages): ?>
+                            <a href="?page=<?= $page + 1 ?>&limit=<?= $limit ?>"
+                                class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                                Next
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -225,9 +319,47 @@ $suggestions = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                                 </span>
                             </div>
                         </div>
+
                     <?php endforeach; ?>
                 <?php endif; ?>
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <p class="text-sm text-slate-500">
+                        Showing <span class="font-medium text-slate-700">
+                            <?= $s_offset + 1 ?>
+                        </span>
+                        to <span class="font-medium text-slate-700">
+                            <?= min($s_offset + $s_limit, $s_totalRecords) ?>
+                        </span>
+                        of <span class="font-medium text-slate-700">
+                            <?= $s_totalRecords ?>
+                        </span> users
+                    </p>
 
+                    <div class="flex gap-2">
+                        <?php if ($s_page > 1): ?>
+                            <a href="?s_page=<?= $s_page - 1 ?>&limit=<?= $s_limit ?>"
+                                class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                                Previous
+                            </a>
+                        <?php endif; ?>
+
+                        <div class="hidden sm:flex gap-1">
+                            <?php for ($i = 1; $i <= $s_totalPages; $i++): ?>
+                                <a href="?s_page=<?= $i ?>&s_limit=<?= $s_limit ?>"
+                                    class="px-3 py-2 text-sm font-medium rounded-lg border transition-all <?= $i == $s_page ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' ?>">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
+                        </div>
+
+                        <?php if ($s_page < $s_totalPages): ?>
+                            <a href="?s_page=<?= $s_page ?>&s_page=<?= $s_page + 1 ?>&limit=<?= $s_limit ?>"
+                                class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                                Next
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
                 <div id="noSugResults"
                     class="hidden col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400">
                     No suggestions match your search.
