@@ -43,7 +43,8 @@ $user = checkAuth('Admin');
                 <span>Category List</span>
             </h2>
 
-          <div class="relative w-full md:w-72 lg:w-80">
+          <div class="relative w-full md:w-72 lg:w-80"
+     data-tooltip="Search categories">
 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
 
 <input type="text" id="categorySearch"
@@ -58,6 +59,7 @@ $user = checkAuth('Admin');
             </div>
 
         <button onclick="openGenericModal('addCategoryModal', 'addCategoryContainer')" 
+    data-tooltip="Add new category"
     class="w-full md:w-auto bg-blue-600 text-white px-5 py-1.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-50">
 <i class="fa-solid fa-plus mr-1"></i>New Category
 
@@ -79,15 +81,31 @@ $user = checkAuth('Admin');
             <tbody class="divide-y divide-gray-100">
                 <?php foreach ($categories as $cat): ?>
                     <tr class="hover:bg-blue-50/30 transition-colors group">
-                        <td class="px-6 py-4 text-sm font-semibold text-slate-700">
-<span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"><?= htmlspecialchars($cat['cat_id']) ?></span></td>
-                        <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($cat['category']) ?></td>
-                        <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($cat['cat_desc']) ?></td>
-                        <td class="px-4 py-3">
-                            <button onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
-                                class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">Edit</button>
-                        </td>
-                    </tr>
+    <td class="px-6 py-4 text-sm font-semibold text-slate-700">
+        <span 
+            class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"
+            data-tooltip="Category code">
+            <?= htmlspecialchars($cat['cat_id']) ?>
+        </span>
+    </td>
+
+    <td class="px-6 py-4 text-sm font-semibold text-slate-700">
+        <?= htmlspecialchars($cat['category']) ?>
+    </td>
+
+    <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate">
+        <?= htmlspecialchars($cat['cat_desc']) ?>
+    </td>
+
+    <td class="px-4 py-3">
+        <button 
+            onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
+            data-tooltip="Edit category"
+            class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">
+            Edit
+        </button>
+    </td>
+</tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -103,7 +121,8 @@ $user = checkAuth('Admin');
                 <span>Module List</span>
             </h2>
 
-            <div class="relative w-full md:w-72">
+            <div class="relative w-full md:w-72"
+            data-tooltip="Search modules">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')" 
                     placeholder="Search module code or name..." 
@@ -112,6 +131,7 @@ $user = checkAuth('Admin');
         </div>
 
         <button onclick="openGenericModal('addModuleModal', 'addModuleContainer')"
+             data-tooltip="Add new module"
             class="w-full md:w-auto bg-blue-600 text-white px-5 py-1.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-50">
             <i class="fa-solid fa-plus mr-2"></i>New Module
         </button>
@@ -130,21 +150,37 @@ $user = checkAuth('Admin');
             <tbody class="divide-y divide-gray-100">
                 <?php foreach ($modules as $mod): ?>
                     <tr class="hover:bg-blue-50/30 transition-colors group">
-                        <td class="px-6 py-4">
-<span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"><?= htmlspecialchars($mod['mod_id']) ?></span></td>
-                       <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($mod['module']) ?></td>
-                        <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($mod['mod_desc']) ?></td>
-                        <td class="px-4 py-3">
-                            <button onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
-                                class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">Edit</button>
-                        </td>
+                       <td class="px-6 py-4">
+    <span 
+        class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"
+        data-tooltip="Module code">
+        <?= htmlspecialchars($mod['mod_id']) ?>
+    </span>
+</td>
+
+<td class="px-6 py-4 text-sm font-semibold text-slate-700">
+    <?= htmlspecialchars($mod['module']) ?>
+</td>
+
+<td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate">
+    <?= htmlspecialchars($mod['mod_desc']) ?>
+</td>
+
+<td class="px-4 py-3">
+    <button 
+        onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
+        data-tooltip="Edit module"
+        class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">
+        Edit
+    </button>
+</td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 </div>
-```
+
 
     </div>
     
@@ -275,9 +311,13 @@ $user = checkAuth('Admin');
             </form>
         </div>
     </div>
+    <div id="tooltip"
+    class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+</div>
 </body>
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
 <script src="js/categories_module.js"></script>
+<script src="js/tooltip.js"></script>
 
 </html>

@@ -596,8 +596,32 @@
   .min-h-\[80vh\] {
     min-height: 80vh;
   }
+  .min-h-\[300px\] {
+    min-height: 300px;
+  }
   .min-h-\[520px\] {
     min-height: 520px;
+  }
+  .min-h-\[580px\] {
+    min-height: 580px;
+  }
+  .min-h-\[600px\] {
+    min-height: 600px;
+  }
+  .min-h-\[610px\] {
+    min-height: 610px;
+  }
+  .min-h-\[615px\] {
+    min-height: 615px;
+  }
+  .min-h-\[620px\] {
+    min-height: 620px;
+  }
+  .min-h-\[650px\] {
+    min-height: 650px;
+  }
+  .min-h-\[6580px\] {
+    min-height: 6580px;
   }
   .min-h-screen {
     min-height: 100vh;
@@ -808,6 +832,9 @@
   }
   .items-start {
     align-items: flex-start;
+  }
+  .items-stretch {
+    align-items: stretch;
   }
   .justify-between {
     justify-content: space-between;
@@ -2405,6 +2432,11 @@
       padding: calc(var(--spacing) * 8);
     }
   }
+  .sm\:p-10 {
+    @media (width >= 40rem) {
+      padding: calc(var(--spacing) * 10);
+    }
+  }
   .sm\:px-6 {
     @media (width >= 40rem) {
       padding-inline: calc(var(--spacing) * 6);
@@ -2455,9 +2487,79 @@
       grid-column: span 2 / span 2;
     }
   }
+  .lg\:min-h-\[500px\] {
+    @media (width >= 64rem) {
+      min-height: 500px;
+    }
+  }
+  .lg\:min-h-\[550px\] {
+    @media (width >= 64rem) {
+      min-height: 550px;
+    }
+  }
   .lg\:min-h-\[560px\] {
     @media (width >= 64rem) {
       min-height: 560px;
+    }
+  }
+  .lg\:min-h-\[580px\] {
+    @media (width >= 64rem) {
+      min-height: 580px;
+    }
+  }
+  .lg\:min-h-\[595px\] {
+    @media (width >= 64rem) {
+      min-height: 595px;
+    }
+  }
+  .lg\:min-h-\[600px\] {
+    @media (width >= 64rem) {
+      min-height: 600px;
+    }
+  }
+  .lg\:min-h-\[605px\] {
+    @media (width >= 64rem) {
+      min-height: 605px;
+    }
+  }
+  .lg\:min-h-\[610px\] {
+    @media (width >= 64rem) {
+      min-height: 610px;
+    }
+  }
+  .lg\:min-h-\[620px\] {
+    @media (width >= 64rem) {
+      min-height: 620px;
+    }
+  }
+  .lg\:min-h-\[638px\] {
+    @media (width >= 64rem) {
+      min-height: 638px;
+    }
+  }
+  .lg\:min-h-\[650px\] {
+    @media (width >= 64rem) {
+      min-height: 650px;
+    }
+  }
+  .lg\:min-h-\[658px\] {
+    @media (width >= 64rem) {
+      min-height: 658px;
+    }
+  }
+  .lg\:min-h-\[680px\] {
+    @media (width >= 64rem) {
+      min-height: 680px;
+    }
+  }
+  .lg\:min-h-\[700px\] {
+    @media (width >= 64rem) {
+      min-height: 700px;
+    }
+  }
+  .lg\:min-h-\[720px\] {
+    @media (width >= 64rem) {
+      min-height: 720px;
     }
   }
   .lg\:w-80 {

@@ -63,19 +63,22 @@ $roleOptions = fetchRoles($conn);
                     <p class="text-sm text-slate-500 mt-1">Manage system access, roles, and member profiles.</p>
                 </div>
                 <button onclick="toggleAddModal(true)"
+                 data-tooltip="Create a new user account"
                     class="inline-flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all shadow-sm shadow-blue-200">
                     <i class="fa-solid fa-plus mr-2 text-xs"></i>
                     Create New User
                 </button>
             </div>
             <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto mb-6">
-                <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]">
+                <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]"
+                data-tooltip="Search users by username">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" id="searchInput" placeholder="Search by Username"
                         class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                 </div>
 
                 <select id="roleFilter"
+                 data-tooltip="Filter users by role"
                     class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
                     <option value="">All Roles</option>
                     <?php foreach ($roleOptions as $role): ?>
@@ -147,6 +150,7 @@ $roleOptions = fetchRoles($conn);
                                                 </div>
                                                 <div class="flex flex-col">
                                                     <a href="../public/user_profile.php?u=<?= $user_id ?>"
+                                                        data-tooltip="View user profile"
                                                         class="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
                                                         <?= $fullName ?>
                                                     </a>
@@ -170,11 +174,13 @@ $roleOptions = fetchRoles($conn);
                                                 class="flex items-center justify-end gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                     onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
+                                                    data-tooltip="Edit user details"
                                                     class="text-xs font-bold uppercase tracking-widest text-blue-500 hover:text-blue-700">
                                                     Edit
                                                 </button>
                                                 <?php if (!$isSelf): ?>
                                                     <button onclick="openArchiveUserModal('<?= $user_id ?>')"
+                                                    data-tooltip="Archive this user"
                                                         class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700">
                                                         Archive
                                                     </button>
@@ -393,10 +399,14 @@ $roleOptions = fetchRoles($conn);
                 </form>
             </div>
         </div>
+        <div id="tooltip"
+    class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+</div>
 </body>
 
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
 <script src="js/user_list.js"></script>
+<script src="js/tooltip.js"></script>
 
 </html>

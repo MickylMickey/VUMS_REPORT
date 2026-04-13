@@ -88,15 +88,15 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full min-h-[80vh] py-10">
 
-    <div 
-        class="rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative self-center max-w-md mx-auto w-full min-h-[520px] lg:min-h-[560px] flex flex-col"
-        style="background: linear-gradient(to right, #3f8bf5, #ededeebe);"
-    >
+<div 
+    class="rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative max-w-md mx-auto w-full min-h-[300px] lg:min-h-[600px] flex flex-col"
+    style="background: linear-gradient(to bottom right, #3f8bf5, #ffffff);"
+>
         
-        <div class="h-32 bg-gradient-to-r from-blue-600/80 to-blue-700/80 w-full"></div>
+        
 
   
-        <div class="px-6 pb-8 text-center relative bg-transparent flex-1 flex flex-col justify-center items-center">
+        <div class="px-6 py-10 text-center relative bg-transparent flex-1 flex flex-col justify-center items-center">
 
             <div class="flex justify-center -mt-16 mb-4 w-full">
                 <div class="relative inline-block">
@@ -224,7 +224,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
     
     <div 
-        class="p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
+        class="p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
         style="background: linear-gradient(to right, #ffffff, #ffffff);"
     >
         <div class="flex items-center gap-4 mb-6 pb-6 border-b border-black/50">
