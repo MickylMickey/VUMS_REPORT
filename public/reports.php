@@ -47,7 +47,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             </div>
 
             <button onclick="openAddModal()"
-                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-16 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-14 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
             </button>
         </div>

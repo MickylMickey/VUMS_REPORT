@@ -148,7 +148,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
     <div class="lg:col-span-2 space-y-6 max-h-[80vh] overflow-y-auto pr-2">
 
-    <!-- personal information -->
+    
     <div 
         class="p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
         style="background: linear-gradient(to right, #ffffff, #ffffff);"
@@ -179,7 +179,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                 </div>
             </div>
 
-            <!-- Middle Name -->
+           
             <div class="flex items-center gap-3 p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm hover:shadow-md transition">
                 <div class="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100 text-purple-600">
                     <i class="fa-solid fa-circle-user"></i>
@@ -192,7 +192,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                 </div>
             </div>
 
-            <!-- Last Name -->
+            
             <div class="flex items-center gap-3 p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm hover:shadow-md transition">
                 <div class="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
                     <i class="fa-solid fa-id-card"></i>
@@ -207,7 +207,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
         </div>
 
-        <!-- BIRTHDATE  -->
+       
         <div class="mt-6 flex items-center gap-3 p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm">
             <div class="w-10 h-10 flex items-center justify-center rounded-full bg-green-100 text-green-600">
                 <i class="fa-solid fa-calendar"></i>
@@ -222,7 +222,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
     </div>
 
-    <!-- account details -->
+    
     <div 
         class="p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
         style="background: linear-gradient(to right, #ffffff, #ffffff);"
