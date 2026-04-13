@@ -976,6 +976,9 @@
   .rounded-3xl {
     border-radius: var(--radius-3xl);
   }
+  .rounded-\[16px\] {
+    border-radius: 16px;
+  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
@@ -1122,6 +1125,9 @@
   }
   .bg-\[\#f8fafc\] {
     background-color: #f8fafc;
+  }
+  .bg-\[\#fb2424\] {
+    background-color: #fb2424;
   }
   .bg-amber-50 {
     background-color: var(--color-amber-50);
@@ -2084,6 +2090,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: #34265b;
+      }
+    }
+  }
+  .hover\:bg-\[\#c01c1c\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #c01c1c;
       }
     }
   }
