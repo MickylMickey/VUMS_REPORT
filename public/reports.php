@@ -47,14 +47,15 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             </div>
 
             <button onclick="openAddModal()"
-                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-14 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-16 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
+                data-tooltip="Add New Report">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
             </button>
         </div>
 
         <div
             class="bg-blue-500 p-4 rounded-t-2xl border-x border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex w-full max-w-xs relative">
+            <div class="flex w-full max-w-xs relative" data-tooltip="Search Reports">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <input type="text" id="searchInput" placeholder="Search by Ref Number or Reporter. . ."
                     class="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
@@ -62,7 +63,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
 
             <div class="flex gap-2">
                 <select id="categoryFilter"
-                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer"
+                    data-tooltip="Filter by Category">
                     <option value="">All Categories</option>
                     <?php foreach ($categoryOptions as $cat): ?>
                         <option value="<?= htmlspecialchars($cat['cat_id']) ?>"><?= htmlspecialchars($cat['category']) ?>
@@ -70,7 +72,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                     <?php endforeach; ?>
                 </select>
                 <select id="moduleFilter"
-                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer"
+                    data-tooltip="Filter by Module">
                     <option value="">All Modules</option>
                     <?php foreach ($moduleOptions as $mod): ?>
                         <option value="<?= htmlspecialchars($mod['mod_id']) ?>"><?= htmlspecialchars($mod['module']) ?>
@@ -79,7 +82,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                 </select>
 
                 <select id="severityFilter"
-                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer">
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer"
+                    data-tooltip="Filter by Severity">
                     <option value="">All Severities</option>
                     <?php foreach ($severityOptions as $sev): ?>
                         <option value="<?= htmlspecialchars($sev['sev_id']) ?>"><?= htmlspecialchars($sev['sev_desc']) ?>
@@ -88,7 +92,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
                 </select>
 
                 <button id="resetBtn"
-                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all"
+                    data-tooltip="Reset Filters">
                     <i class="fa-solid fa-rotate-right"></i>
                 </button>
             </div>
@@ -471,11 +476,14 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role);
             </form>
         </div>
     </div>
-
+    <div id="tooltip"
+        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+    </div>
 </body>
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
 <script src="js/reports.js"></script>
+<script src="js/tooltip.js"></script>
 <script src="js/inputValidation.js" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {

@@ -29,6 +29,7 @@ $page = $pagination['page'];
 $userVisibility = new UserVisibility($conn);
 $users = $userVisibility->getVisibleUsers(20, 0);
 $roleOptions = fetchRoles($conn);
+
 ?>
 
 <!DOCTYPE html>
@@ -42,316 +43,358 @@ $roleOptions = fetchRoles($conn);
     <title>Users</title>
 </head>
 
-<body class="pt-24 bg-gray-50 min-h-screen">
-    <div>
-        <?php include "templates/navbar.php"; ?>
-        <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
-            <div class="pointer-events-auto">
-                <?= showValidation() ?>
-            </div>
+<body class="bg-[#f8fafc] min-h-screen antialiased text-slate-900 pt-24">
+    <div><?php include "templates/navbar.php"; ?>
+    </div>
+    <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+        <div class="pointer-events-auto">
+            <?= showValidation() ?>
         </div>
     </div>
+
 
     <div class="container mx-auto p-6">
 
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
-            <button onclick="toggleAddModal(true)"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-                <i class="fa-solid fa-plus mr-2"></i>New User
-            </button>
-        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <div class="bg-white border border-gray-100 shadow-md rounded-2xl overflow-hidden flex flex-col">
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-blue-500 text-white">
-                        <tr class="border-b border-gray-100">
-                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-left">Full
-                                Name</th>
-                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center">
-                                Username</th>
-                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center">
-                                Email</th>
-                            <th class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center">
-                                Role</th>
-                            <th
-                                class="p-5 text-xs font-semibold uppercase tracking-wider text-white-500 text-center w-32">
-                                Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody" class="divide-y divide-gray-50">
-                        <?php
-                        
-                        if (!empty($users)):
-                            foreach ($users as $user):
-                                $user_id = $user['user_id'];
-                                $middleInitial = '';
-                                $firstName = !empty($user['user_first_name']) ? ucfirst($user['user_first_name']) : '';
-                                if (!empty($user['user_middle_name'])) {
-                                    $middleInitial = strtoupper(substr($user['user_middle_name'], 0, 1)) . '.';
-                                }
-                                $lastName = !empty($user['user_last_name']) ? ucfirst($user['user_last_name']) : '';
-                                $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName"));
-                                $uploadDir = 'img/prof_pic/';
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">User Management</h1>
+                    <p class="text-sm text-slate-500 mt-1">Manage system access, roles, and member profiles.</p>
+                </div>
+                <button onclick="toggleAddModal(true)"
+                    class="inline-flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all shadow-sm shadow-blue-200">
+                    <i class="fa-solid fa-plus mr-2 text-xs"></i>
+                    Create New User
+                </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto mb-6">
+                <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search by Username"
+                        class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                </div>
 
-                                $dbImage = !empty($user['user_prof']) ? $user['user_prof'] : '';
+                <select id="roleFilter"
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
+                    <option value="">All Roles</option>
+                    <?php foreach ($roleOptions as $role): ?>
+                        <option value="<?= htmlspecialchars($role['user_role_id']) ?>">
+                            <?= htmlspecialchars($role['role_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
-                                if (!empty($dbImage) && $dbImage !== 'default.png') {
-                                    $userImage = $uploadDir . $dbImage;
-                                } else {
-                                    $userImage = $uploadDir . 'default.png';
-                                }
+                <button id="resetBtn"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all h-[40px] flex items-center justify-center"
+                    title="Reset Filters">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
 
-                                $isDefault = (strpos($userImage, 'default.png') !== false);
-                                $isSelf = (isset($_SESSION['user_id']) && $user['user_id'] == $_SESSION['user_id']);
-                                ?>
-                                <tr>
-                                    <td class="p-4 whitespace-nowrap">
-                                        <a href="../public/user_profile.php?u=<?= htmlspecialchars($user['user_id']) ?>"
-                                            class="flex items-center gap-3 group">
 
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-separate border-spacing-0">
+                        <thead>
+                            <tr class="bg-slate-50/50">
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                    User Details</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                    Username</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                    Access Level</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-right">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <?php if (!empty($users)):
+                                foreach ($users as $user):
+                                    $user_id = $user['user_id'];
+                                    $firstName = !empty($user['user_first_name']) ? ucfirst($user['user_first_name']) : '';
+                                    $middleInitial = !empty($user['user_middle_name']) ? strtoupper(substr($user['user_middle_name'], 0, 1)) . '.' : '';
+                                    $lastName = !empty($user['user_last_name']) ? ucfirst($user['user_last_name']) : '';
+                                    $fullName = htmlspecialchars(trim("$firstName $middleInitial $lastName"));
+
+                                    $userImage = (!empty($user['user_prof']) && $user['user_prof'] !== 'default.png')
+                                        ? 'img/prof_pic/' . $user['user_prof']
+                                        : 'img/prof_pic/default.png';
+
+                                    $isDefault = (strpos($userImage, 'default.png') !== false);
+                                    $isSelf = (isset($_SESSION['user_id']) && $user['user_id'] == $_SESSION['user_id']);
+                                    ?>
+                                    <tr class="report-row hover:bg-blue-50/30 transition-colors group"
+                                        data-username="<?= htmlspecialchars($user['username']) ?>"
+                                        data-role="<?= htmlspecialchars($user['user_role_id']) ?>">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-4">
+                                                <div class="relative flex-shrink-0">
+                                                    <?php if ($isDefault): ?>
+                                                        <div
+                                                            class="h-10 w-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200">
+                                                            <?= strtoupper(substr($firstName, 0, 1)); ?>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <img src="<?= htmlspecialchars($userImage) ?>"
+                                                            class="h-10 w-10 rounded-xl object-cover border border-slate-200 shadow-sm">
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <a href="../public/user_profile.php?u=<?= $user_id ?>"
+                                                        class="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+                                                        <?= $fullName ?>
+                                                    </a>
+                                                    <span
+                                                        class="text-xs text-slate-500"><?= htmlspecialchars($user['email']) ?></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600">
+                                            <span
+                                                class="bg-slate-100 px-2 py-1 rounded text-xs font-mono">@<?= htmlspecialchars($user['username']) ?></span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                                <?= htmlspecialchars($user['role_name']) ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
                                             <div
-                                                class="h-8 w-8 rounded-full border border-white shadow-sm flex items-center justify-center text-xs font-bold 
-                                                <?= $isDefault ? 'bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700' : '' ?>">
-                                                <?php if ($isDefault): ?>
-                                                    <?= strtoupper(substr($firstName, 0, 1)); ?>
-                                                <?php else: ?>
-                                                    <img src="<?= htmlspecialchars($userImage) ?>" alt="Profile"
-                                                        class="h-full w-full rounded-full object-cover">
+                                                class="flex items-center justify-end gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
+                                                    class="text-xs font-bold uppercase tracking-widest text-blue-500 hover:text-blue-700">
+                                                    Edit
+                                                </button>
+                                                <?php if (!$isSelf): ?>
+                                                    <button onclick="openArchiveUserModal('<?= $user_id ?>')"
+                                                        class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700">
+                                                        Archive
+                                                    </button>
                                                 <?php endif; ?>
                                             </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; endif; ?>
+                        <tbody class="divide-y divide-slate-100">
+                            <?php foreach ($reportArchive as $archive): ?>
+                            <?php endforeach; ?>
 
-                                            <span
-                                                class="text-sm font-bold text-gray-700 group-hover:text-purple-700 transition-colors">
-                                                <?= $fullName ?>
-                                            </span>
-                                        </a>
-                                    </td>
-                                    <td class="p-4 text-center">
-                                        <span class="px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs font-mono">
-                                            <?= htmlspecialchars($user['username']) ?>
-                                        </span>
-                                    </td>
-                                    <td class="p-4 text-center text-sm text-gray-600">
-                                        <?= htmlspecialchars($user['email']) ?>
-                                    </td>
-                                    <td class="p-4 text-center">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
-                                            <?= htmlspecialchars($user['role_name']) ?>
-                                        </span>
-                                    </td>
-
-                                    <td class="p-4 text-center">
-                                        <div class="flex items-center justify-center gap-4">
-                                            <button
-                                                onclick="openEditUserModal('<?= $user['user_id'] ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email'] ?? '') ?>', '<?= $user['user_role_id'] ?>')"
-                                                class="text-xs font-bold uppercase tracking-wider text-cyan-600 hover:text-cyan-800 transition-colors">
-                                                Edit
-                                            </button>
-
-                                            <?php if (!$isSelf): ?>
-                                                <button onclick="openArchiveUserModal('<?= $user['user_id'] ?>')"
-                                                    class="text-xs font-bold uppercase tracking-wider text-red-500 hover:text-red-700 transition-colors">
-                                                    Archive
-                                                </button>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; else: ?>
-                            <tr>
-                                <td colspan="7" class="py-12 text-center text-gray-400">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <div
-                                            class="h-12 w-12 rounded-full bg-gray-50 flex items-center justify-center mb-3">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-300">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                                            </svg>
-                                        </div>
-                                        <span class="text-sm">No users found.</span>
-                                    </div>
+                            <tr id="noResultsRow" class="hidden">
+                                <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-3xl mb-2 block opacity-20"></i>
+                                    No archived reports match your search criteria.
                                 </td>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="addUserModal"
-        class="fixed inset-0 hidden items-center justify-center backdrop-blur-sm bg-gray-900/40 z-[200] px-4 transition-opacity">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
-            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
-                <h3 class="text-xl font-bold">Add New User</h3>
-                <button onclick="toggleAddModal(false)"
-                    class="text-white hover:text-gray-200 text-3xl leading-none transition-colors">&times;</button>
+        <div id="addUserModal"
+            class="fixed inset-0 hidden items-center justify-center backdrop-blur-md bg-slate-900/60 z-[200] px-4 transition-all">
+            <div
+                class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-200 transition-all duration-300 opacity-0 scale-95">
+
+                <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Create New User</h3>
+                        <p class="text-[11px] text-slate-500">Enter account and personal details.</p>
+                    </div>
+                    <button onclick="toggleAddModal(false)"
+                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data" class="p-6">
+                    <div class="space-y-6">
+
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+                                <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Account
+                                    Access</h4>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="col-span-1">
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Username <span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" name="username" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Password <span
+                                            class="text-red-500">*</span></label>
+                                    <input type="password" name="password" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Email Address <span
+                                        class="text-red-500">*</span></label>
+                                <input type="email" name="email" required
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
+                                <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Personal
+                                    Details</h4>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">First
+                                        Name</label>
+                                    <input type="text" name="fname" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Last Name</label>
+                                    <input type="text" name="lname" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Middle
+                                        Name</label>
+                                    <input type="text" name="mname" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Birthdate</label>
+                                    <input type="date" name="birthday" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 items-end">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">User Role</label>
+                                    <select name="user_role" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none">
+                                        <option value="" disabled selected>Select Role</option>
+                                        <?php foreach ($roleOptions as $option): ?>
+                                            <option value="<?= $option['user_role_id'] ?>">
+                                                <?= $option['role_name'] ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
+                                        text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm flex
+                                        items-center justify-center gap-2">
+                                        <i class="fa-solid fa-camera"></i>
+                                        <span>Profile Picture</span>
+                                        <input type="file" name="prof_pic" class="hidden">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end items-center gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="toggleAddModal(false)"
+                            class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all">Cancel</button>
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-bold shadow-md shadow-blue-100 transition-all">
+                            Save User
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <form action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data" class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div id="editUserModal"
+            class="fixed inset-0 hidden items-center justify-center backdrop-blur-md bg-slate-900/60 z-[200] px-4 transition-all">
+            <div
+                class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-200 opacity-0 scale-95 duration-300">
+                <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Edit User Account</h3>
+                        <p class="text-xs text-slate-500">Update account credentials and system access.</p>
+                    </div>
+                    <button onclick="toggleEditModal(false)"
+                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
-                    <div class="space-y-4">
-                        <h4 class="font-semibold text-gray-800 border-b pb-2">Credentials</h4>
+                <form id="EditUserForm" action="../controllers/edit_user.php" method="POST" class="p-6 space-y-5">
+                    <input type="hidden" name="user_id" id="editUserId">
 
-                        <div>
-                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="username" id="username" placeholder="Username" required
-                                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">Username</label>
+                        <input type="text" name="username" id="username_edit" required
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                    </div>
 
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password <span
-                                    class="text-red-500">*</span></label>
-                            <input type="password" name="password" id="password" placeholder="******" required
-                                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span
-                                    class="text-red-500">*</span></label>
-                            <input type="email" name="email" id="email" placeholder="Email" required
-                                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-
-                        <div>
-                            <label for="user_role" class="block text-sm font-medium text-gray-700 mb-1">User Role <span
-                                    class="text-red-500">*</span></label>
-                            <select name="user_role" id="user_role" required
-                                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                                <option value="" disabled selected>Select a role</option>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">User
+                            Role</label>
+                        <div class="relative">
+                            <select name="user_role" id="user_role_edit"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                <option value="" disabled>Select a role</option>
                                 <?php foreach ($roleOptions as $option): ?>
                                     <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
                                         <?= htmlspecialchars($option['role_name']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            <div
+                                class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <h4 class="font-semibold text-gray-800 border-b pb-2">Personal Information</h4>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="fname" class="block text-sm font-medium text-gray-700 mb-1">First Name <span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" name="fname" id="fname" placeholder="First Name" required
-                                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                            <div>
-                                <label for="lname" class="block text-sm font-medium text-gray-700 mb-1">Last Name <span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" name="lname" id="lname" placeholder="Last Name" required
-                                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="mname" class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                            <input type="text" name="mname" id="mname" placeholder="Middle Name"
-                                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-
-                        <div>
-                            <label for="birthday" class="block text-sm font-medium text-gray-700 mb-1">Birthday <span
-                                    class="text-red-500">*</span></label>
-                            <input type="date" name="birthday" id="birthday" required
-                                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-
-                        <div>
-                            <label for="prof_pic" class="block text-sm font-medium text-gray-700 mb-1">Profile
-                                Picture</label>
-                            <input type="file" name="prof_pic" id="prof_pic"
-                                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">New
+                            Password</label>
+                        <input type="password" name="password" id="password_edit"
+                            placeholder="Leave blank to keep current"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
                     </div>
-                </div>
 
-                <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button type="button" onclick="toggleAddModal(false)"
-                        class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">
-                        Save User
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="editUserModal"
-        class="hidden fixed inset-0 items-center justify-center backdrop-blur-sm bg-gray-900/40 z-[200] px-4">
-        <div id="editUserModalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden p-6">
-            <h3 class="text-xl font-bold mb-4">Edit User</h3>
-            <form id="EditUserForm" action="../controllers/edit_user.php" method="POST" class="space-y-4">
-                <input type="hidden" name="user_id" id="editUserId">
-
-                <div>
-                    <label for="username_edit" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                    <input type="text" name="username" id="username_edit" placeholder="Edit Username"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-
-                <div>
-                    <label for="user_role_edit" class="block text-sm font-medium text-gray-700 mb-1">User Role</label>
-                    <select name="user_role" id="user_role_edit"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        <option value="" disabled>Select a role</option>
-                        <?php foreach ($roleOptions as $option): ?>
-                            <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
-                                <?= htmlspecialchars($option['role_name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="password_edit" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" name="password" id="password_edit"
-                        placeholder="Leave blank to keep current password"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-            </form>
-
-            <div class="mt-6 flex justify-end gap-3">
-                <button type="submit" form="EditUserForm"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">
-                    Update Changes
-                </button>
+                    <div class="pt-4 flex justify-end items-center gap-3">
+                        <button type="button" onclick="toggleEditModal(false)"
+                            class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800 transition-all">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-100 transition-all">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
-
-    <script>
-        function toggleAddModal(show) {
-            const modal = document.getElementById('addUserModal');
-            if (show) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        // Close Add Modal if clicked outside
-        window.addEventListener('click', function (event) {
-            const modal = document.getElementById('addUserModal');
-            if (event.target === modal) {
-                toggleAddModal(false);
-            }
-        });
-    </script>
 </body>
+
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
 <script src="js/user_list.js"></script>
