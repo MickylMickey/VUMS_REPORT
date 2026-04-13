@@ -52,7 +52,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <p class="text-slate-500 text-sm mt-1">Share your ideas to improve the system.</p>
             </div>
             <button onclick="toggleModal(true)"
-                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-14 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                class="hidden md:flex bg-blue-600 text-white px-5 py-2.5 rounded-xl h-14 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
+                data-tooltip="Add New Suggestion">
                 <i class="fa-solid fa-plus mr-2"></i>New Suggestion
             </button>
         </div>
@@ -207,7 +208,9 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </form>
         </div>
     </div>
-
+    <div id="tooltip"
+        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+    </div>
 </body>
 <?php ob_end_flush(); ?>
 <script>
@@ -216,5 +219,6 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </script>
 <script src="js/removeNotification.js" defer></script>
 <script src="js/suggestions.js"></script>
+<script src="js/tooltip.js"></script>
 
 </html>

@@ -24,7 +24,7 @@ document.addEventListener("mouseover", (e) => {
     tooltip.style.left = rect.left + rect.width / 2 + "px";
     tooltip.style.transform = "translateX(-50%)";
     tooltip.style.opacity = "1";
-  }, 3000); // <--- 3000ms = 3 seconds
+  }, 500); // <--- 500ms = 0.5 second
 });
 
 document.addEventListener("mouseout", (e) => {
