@@ -59,7 +59,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <title>Reports</title>
 </head>
 
-<body class="pt-24 bg-gray-50">
+<body class="min-h-screen flex flex-col pt-24 bg-gray-50">
     <div>
         <?php include "templates/navbar.php"; ?>
         <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
@@ -69,17 +69,22 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
         </div>
     </div>
 
+    <main class="flex-grow">
     <div class="container mx-auto p-6 max-w-7xl">
+
+        <!-- HEADER -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
                 <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">System Reports</h2>
+                
                 <p class="text-slate-500 text-sm">Monitor and manage system issues and status updates.</p>
             </div>
 
             <button onclick="openAddModal()"
-                class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
-                data-tooltip="Add a new system report">
+                data-tooltip="Report a new issue or bug in the system"
+                class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
+                
             </button>
         </div>
 
@@ -135,23 +140,23 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             <table class="min-w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50/50 border-b border-slate-100">
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Ref Number</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Reporter</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Category & Module</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Severity</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Description</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Status</th>
                         <th
-                            class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">
+                            class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider text-center">
                             Image</th>
                         <?php if ($isAdmin): ?>
-                            <th class="px-6 py-4 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-right text-[13px] font-bold text-black-400 uppercase tracking-wider">
                                 Action</th>
                         <?php endif; ?>
                     </tr>
@@ -592,6 +597,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <div id="tooltip"
         class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
     </div>
+    
+    </main>
     <?php include "templates/footer.php"; ?>
 </body>
 <?php ob_end_flush(); ?>

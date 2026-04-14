@@ -1072,6 +1072,9 @@
   .border-blue-500 {
     border-color: var(--color-blue-500);
   }
+  .border-blue-600 {
+    border-color: var(--color-blue-600);
+  }
   .border-blue-700 {
     border-color: var(--color-blue-700);
   }
@@ -1582,6 +1585,9 @@
   .text-amber-700 {
     color: var(--color-amber-700);
   }
+  .text-black {
+    color: var(--color-black);
+  }
   .text-blue-100 {
     color: var(--color-blue-100);
   }
@@ -1855,6 +1861,10 @@
     transition-property: transform, translate, scale, rotate;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .duration-150 {
+    --tw-duration: 150ms;
+    transition-duration: 150ms;
   }
   .duration-200 {
     --tw-duration: 200ms;

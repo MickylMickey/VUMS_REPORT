@@ -90,7 +90,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
 <div 
     class="rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative max-w-md mx-auto w-full h-[450px] lg:h-[600px] self-start flex flex-col"
-    style="background: linear-gradient(to bottom right, #3f8bf5, #ffffff);"
+    style="background: linear-gradient(135deg, #833ab4 0%, #e1306c 50%, #fcb045 100%);"
 >
         
         
@@ -115,7 +115,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
             ?>
 
             <h2 class="text-xl font-bold text-slate-800"><?= $fullName ?></h2>
-            <p class="text-sm text-slate-500 font-medium mt-1">
+            <p class="text-sm text-black-500 font-medium mt-1">
                 @<?= htmlspecialchars($userData['username'] ?? 'user') ?>
             </p>
 
@@ -160,7 +160,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
             </div>
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Personal Information</h3>
-                <p class="text-sm text-slate-500">Your basic profile details</p>
+                <p class="text-sm text-black-500">Your basic profile details</p>
             </div>
         </div>
 
@@ -228,13 +228,13 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
         class="p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
         style="background: linear-gradient(to right, #ffffff, #ffffff);"
     >
-        <div class="flex items-center gap-4 mb-6 pb-6 border-b border-black/50">
+        <div class="flex items-center gap-4 mb-4 pb-4 border-b border-black/50">
             <div class="w-12 h-12 flex items-center justify-center bg-purple-50 rounded-xl text-purple-600">
                 <i class="fa-solid fa-gear text-xl"></i>
             </div>
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Account Details</h3>
-                <p class="text-sm text-slate-500">System credentials and contact</p>
+                <p class="text-sm text-black-500">System credentials and contact</p>
             </div>
         </div>
 

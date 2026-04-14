@@ -179,6 +179,7 @@ $user = checkAuth('Admin');
             </div>
         </div>
 
+
         <div class="mt-auto">
             <?php include "templates/footer.php"; ?>
         </div>

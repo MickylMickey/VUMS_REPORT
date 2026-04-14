@@ -99,7 +99,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
     <main class="container mx-auto px-4 pb-20 max-w-7xl">
         <div class="mt-12 mb-10">
-            <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Archive Repository</h1>
+            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Archive Repository</h1>
             <p class="text-slate-500 mt-2">View and manage all historical reports and system suggestions.</p>
         </div>
 
@@ -144,23 +144,30 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50 border-b border-slate-100">
-                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Ref
-                                    Number</th>
-                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                                    Reporter</th>
-                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                                    Classification</th>
+                            <tr class="bg-blue-500 border-b border-blue-600">
+                                <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
+                                    Ref Number
+                                </th>
+                                <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
+                                    Reporter
+                                </th>
+                                <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
+                                    Classification
+                                </th>
                                 <th
-                                    class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                                    Description</th>
+                                    class="px-6 py-4 text-left text-[13px] font-bold text-white uppercase tracking-wider">
+                                    Description
+                                </th>
                                 <th
-                                    class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-center">
-                                    Severity</th>
-                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                                    Status</th>
-                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                                    Archived On</th>
+                                    class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest text-center">
+                                    Severity
+                                </th>
+                                <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
+                                    Status
+                                </th>
+                                <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
+                                    Archived On
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -378,10 +385,11 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </main>
     <?php include "templates/footer.php"; ?>
     <div id="tooltip"
-        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+        class="fixed pointer-events-none opacity-0 transition-all duration-150 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
     </div>
 </body>
 <script src="js/archive_module.js"></script>
+<script src="js/tooltip.js"></script>
 
 
 </html>

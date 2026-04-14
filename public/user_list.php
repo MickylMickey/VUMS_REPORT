@@ -106,16 +106,16 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                             <thead>
                                 <tr class="bg-slate-50/50">
                                     <th
-                                        class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                                         User Details</th>
                                     <th
-                                        class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                                         Username</th>
                                     <th
-                                        class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                                         Access Level</th>
                                     <th
-                                        class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-right">
+                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-right">
                                         Actions</th>
                                 </tr>
                             </thead>
