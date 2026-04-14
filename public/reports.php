@@ -221,10 +221,10 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                             <td class="px-6 py-4 text-center">
                                 <?php if ($report['report_img']): ?>
-                                    <a href="uploads/<?= $report['report_img'] ?>" target="_blank"
+                                    <a href="uploads/<?= $report['report_img'] ?>"
+                                        download="<?= 'report_' . $report['report_id'] . '.png' ?>" title="Download Image"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition-all">
-                                        <i class="fa-solid fa-image text-xs"></i>
-                                    </a>
+                                        <i class="fa-solid fa-download text-xs"></i> </a>
                                 <?php else: ?>
                                     <span class="text-slate-300 text-[15px] italic">No image</span>
                                 <?php endif; ?>
@@ -232,16 +232,14 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                             <?php if ($isAdmin): ?>
                                 <td class="px-6 py-4 text-right">
-                                    <button 
-    class="edit-report-btn hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
-    data-id="<?= $report['report_id'] ?>" 
-    data-cat="<?= $report['cat_id'] ?? 'other' ?>"
-    data-mod="<?= $report['mod_id'] ?? 'other' ?>" 
-    data-sev="<?= $report['sev_id'] ?>"
-    data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
-    <i class="fa-solid fa-pen-to-square mr-2"></i>
-    Edit
-</button>
+                                    <button
+                                        class="edit-report-btn hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
+                                        data-id="<?= $report['report_id'] ?>" data-cat="<?= $report['cat_id'] ?? 'other' ?>"
+                                        data-mod="<?= $report['mod_id'] ?? 'other' ?>" data-sev="<?= $report['sev_id'] ?>"
+                                        data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
+                                        <i class="fa-solid fa-pen-to-square mr-2"></i>
+                                        Edit
+                                    </button>
                                 </td>
                             <?php endif; ?>
                         </tr>
@@ -329,14 +327,23 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             data-required="true" data-error="Category is required.">
                             <option value="" disabled selected>Select...</option>
                             <?php foreach ($categoryOptions as $cat): ?>
-                                <option value="<?= $cat['cat_id'] ?>"><?= htmlspecialchars($cat['category']) ?></option>
+                                <option value="<?= $cat['cat_id'] ?>"
+                                    data-desc="<?= htmlspecialchars($cat['cat_desc'] ?? $cat['category']) ?>">
+                                    <?= htmlspecialchars($cat['category']) ?>
+                                </option>
                             <?php endforeach; ?>
-                            <option value="other">Other</option>
+                            <option value="other" data-desc="Use this for issues not listed above.">Other...</option>
                         </select>
+                        <div id="cat-desc-panel"
+                            class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl animate-fade-in">
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Definition</p>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-1" id="cat-desc-text"></p>
+                        </div>
                         <div>
                             <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                         </div>
                     </div>
+
                     <div class="space-y-1.5">
                         <label class="text-[13px] font-semibold text-slate-600 ml-1">Module</label>
                         <select name="mod_id" id="mod_id"
@@ -344,10 +351,18 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             data-required="true" data-error="Module is required.">
                             <option value="" disabled selected>Select...</option>
                             <?php foreach ($moduleOptions as $mod): ?>
-                                <option value="<?= $mod['mod_id'] ?>"><?= htmlspecialchars($mod['module']) ?></option>
+                                <option value="<?= $mod['mod_id'] ?>"
+                                    data-desc="<?= htmlspecialchars($mod['mod_desc'] ?? $mod['module']) ?>">
+                                    <?= htmlspecialchars($mod['module']) ?>
+                                </option>
+                                <option value="other" data-desc="Use this for issues not listed above.">Other...</option>
                             <?php endforeach; ?>
-                            <option value="other">Other</option>
                         </select>
+                        <div id="mod-desc-panel"
+                            class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl animate-fade-in">
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-1" id="mod-desc-text"></p>
+                        </div>
                         <div>
                             <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                         </div>
@@ -403,8 +418,20 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 </div>
                 <div class="space-y-1.5">
                     <label class="text-[13px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
-                    <input type="file" name="rep_img" accept="image/*"
+                    <p class="text-[10px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
+                        description box!</p>
+
+                    <input type="file" name="rep_img" id="rep_img_input" accept="image/*"
                         class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
+
+                    <div id="paste-preview-container" class="hidden mt-4 relative inline-block">
+                        <img id="paste-preview"
+                            class="max-h-40 w-auto rounded-xl border-2 border-blue-100 shadow-md object-cover" src="">
+                        <button id="clear-preview-btn" type="button" onclick="clearPastedImage()"
+                            class="hidden absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 12px; padding-top: 16px;">
@@ -455,17 +482,24 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                         <label class="text-[13px] font-semibold text-slate-600 ml-1">Category</label>
                         <div class="relative">
                             <select name="cat_id" id="edit_cat_id"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
-                                <option value="other">Other</option>
+                                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer"
+                                data-required="true" data-error="Category is required.">
+                                <option value="other" data-desc="Select this if the category is not listed.">Other
+                                </option>
                                 <?php foreach ($categoryOptions as $c): ?>
-                                    <option value="<?= $c['cat_id'] ?>"><?= htmlspecialchars($c['category']) ?></option>
+                                    <option value="<?= $c['cat_id'] ?>"
+                                        data-desc="<?= htmlspecialchars($c['category_long_desc'] ?? $c['category']) ?>">
+                                        <?= htmlspecialchars($c['category']) ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                             <i
                                 class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
                         </div>
-                        <div>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                        <div id="edit_cat_desc_panel"
+                            class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Definition</p>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
                         </div>
                     </div>
 
@@ -474,13 +508,22 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                         <div class="relative">
                             <select name="mod_id" id="edit_mod_id"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
-                                <option value="other">Other</option>
+                                <option value="other" data-desc="Select this if the module is not listed.">Other
+                                </option>
                                 <?php foreach ($moduleOptions as $m): ?>
-                                    <option value="<?= $m['mod_id'] ?>"><?= htmlspecialchars($m['module']) ?></option>
+                                    <option value="<?= $m['mod_id'] ?>"
+                                        data-desc="<?= htmlspecialchars($m['module_long_desc'] ?? $m['module']) ?>">
+                                        <?= htmlspecialchars($m['module']) ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                             <i
                                 class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
+                        <div id="edit_mod_desc_panel"
+                            class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
                         </div>
                     </div>
                 </div>
@@ -547,6 +590,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 <script src="js/removeNotification.js" defer></script>
 <script src="js/reports.js"></script>
 <script src="js/tooltip.js"></script>
+<script src="js/dropdown_helper.js"></script>
+<script src="js/paste_image.js"></script>
 <script src="js/inputValidation.js" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {

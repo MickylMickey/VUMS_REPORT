@@ -187,15 +187,18 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Attachment (Optional)</label>
-                    <div class="relative group">
-                        <input type="file" name="suggestion_img" id="suggestion_img" class="w-full text-sm text-slate-500 
-                        file:mr-4 file:py-2 file:px-4 
-                        file:rounded-xl file:border-0 
-                        file:text-xs file:font-bold 
-                        file:bg-blue-50 file:text-blue-700 
-                        hover:file:bg-blue-100 cursor-pointer 
-                        bg-slate-50 border border-slate-200 rounded-2xl p-2 transition-all">
+                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
+                    <p class="text-[10px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
+                        description box!</p>
+                    <input type="file" name="suggestion_img" id="suggestion_img_input" accept="image/*"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
+                    <div id="paste-preview-container" class="hidden mt-4 relative inline-block">
+                        <img id="paste-preview"
+                            class="max-h-40 w-auto rounded-xl border-2 border-blue-100 shadow-md object-cover" src="">
+                        <button id="clear-preview-btn" type="button" onclick="clearPastedImage()"
+                            class="hidden absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -226,6 +229,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <script src="js/removeNotification.js" defer></script>
 <script src="js/suggestions.js"></script>
 <script src="js/tooltip.js"></script>
+<script src="js/paste_image_suggestion.js"></script>
 <script src="js/inputValidation.js" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {

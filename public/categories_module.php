@@ -67,7 +67,7 @@ $user = checkAuth('Admin');
                 </div>
 
 
-                <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
+                <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-30">
                     <table id="categoryTable" class="min-w-full table-auto">
                         <thead>
                             <tr class="bg-blue-600 text-white border-b border-blue-700">
@@ -128,7 +128,7 @@ $user = checkAuth('Admin');
                             <i
                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                             <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')"
-                                placeholder="Search module code or name..."
+                                placeholder="Search module..."
                                 class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:border-blue-500 outline-none transition-all shadow-sm">
                         </div>
                     </div>

@@ -52,3 +52,25 @@ document.addEventListener("click", (e) => {
     tooltip.textContent = target.dataset.tooltip;
   }
 });
+
+document.querySelectorAll("select[data-tooltip]").forEach((select) => {
+  select.addEventListener("change", function () {
+    const selectedOption = this.options[this.selectedIndex];
+    const dbValue = selectedOption.getAttribute("data-desc");
+
+    if (dbValue) {
+      // 1. Update the current tooltip text
+      this.dataset.tooltip = dbValue;
+
+      // 2. CRITICAL: Update the 'original' so the click/hover logic
+      // doesn't revert it to "Select a category" later.
+      this.dataset.originalTooltip = dbValue;
+
+      // 3. Immediate UI update if hovered
+      const tooltipEl = document.getElementById("tooltip");
+      if (tooltipEl && tooltipEl.style.opacity === "1") {
+        tooltipEl.textContent = dbValue;
+      }
+    }
+  });
+});
