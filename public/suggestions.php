@@ -85,12 +85,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <div>
                                 <h3 class="font-bold text-slate-800 leading-none"><?= htmlspecialchars($sug['username']) ?>
                                 </h3>
-                                <span class="text-[11px] text-slate-400 mt-1 block">
+                                <span class="text-[15px] text-slate-400 mt-1 block">
                                     <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
                                 </span>
                             </div>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-[11px] font-bold border <?= $statusColor ?>">
+                        <span class="px-3 py-1 rounded-full text-[15px] font-bold border <?= $statusColor ?>">
                             <?= htmlspecialchars($sug['status_desc']) ?>
                         </span>
                     </div>
@@ -115,7 +115,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                     <div class="p-4 bg-slate-50/50 rounded-b-3xl mt-auto space-y-3">
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+                            <label class="text-[15px] font-bold text-slate-400 uppercase tracking-wider ml-1">
                                 Status</label>
                             <select
                                 class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none"
@@ -129,7 +129,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         </div>
 
                         <?php if ($sug['suggestion_updated_by']): ?>
-                            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+                            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 text-[15px] text-slate-400">
                                 <i class="fa-solid fa-user-check"></i>
                                 <span>Modified by <strong><?= htmlspecialchars($sug['updater_name']) ?></strong></span>
                             </div>
@@ -147,8 +147,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <p class="text-slate-500 font-medium">No suggestions found. Be the first to suggest something!</p>
             </div>
         <?php endif; ?>
-    </div> <footer style="margin-top:auto; background-color:#3b82f6; color:white;">
-    <div style="max-width:80rem; margin:0 auto; padding:1rem 1.5rem;">
+    </div> <footer style=" background-color: #0a2550; color: white;">
+     <div class="max-w-7xl mx-auto px-2 py-4 md:py-3">
         <div class="flex flex-col md:flex-row justify-between items-center gap-8">
 
            
@@ -193,7 +193,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
                 <div>
                     <h2 class="text-xl font-bold tracking-tight">New Suggestion</h2>
-                    <p class="text-blue-100 text-xs mt-0.5">Share your ideas to improve the system.</p>
+                    <p class="text-blue-100 text-medium mt-0.5">Share your ideas to improve the system.</p>
                 </div>
                 <button onclick="toggleModal(false)"
                     class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
@@ -205,7 +205,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 enctype="multipart/form-data" class="p-6 space-y-5">
 
                 <div class="space-y-1.5">
-                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Describe your Suggestion</label>
+                    <label class="text-[17px] font-semibold text-slate-600 ml-1">Describe your Suggestion</label>
                     <textarea name="suggestion_desc" id="suggestion_desc" rows="4"
                         class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
                         placeholder="Tell us what's on your mind..." data-required="true"
@@ -216,8 +216,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
-                    <p class="text-[10px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
+                    <label class="text-[17px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
+                    <p class="text-[15px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
                         description box!</p>
                     <input type="file" name="suggestion_img" id="suggestion_img_input" accept="image/*"
                         class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">

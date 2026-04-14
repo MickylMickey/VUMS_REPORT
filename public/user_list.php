@@ -104,21 +104,28 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-separate border-spacing-0">
                             <thead>
-                                <tr class="bg-slate-50/50">
-                                    <th
-                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
-                                        User Details</th>
-                                    <th
-                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
-                                        Username</th>
-                                    <th
-                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
-                                        Access Level</th>
-                                    <th
-                                        class="px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-right">
-                                        Actions</th>
-                                </tr>
-                            </thead>
+    <tr style="background-color: #3b82f6;">
+        <th
+            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
+            User Details
+        </th>
+
+        <th
+            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
+            Username
+        </th>
+
+        <th
+            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
+            Access Level
+        </th>
+
+        <th
+            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb; text-align: right;">
+            Actions
+        </th>
+    </tr>
+</thead>
                             <tbody class="divide-y divide-slate-100">
                                 <?php if (!empty($users)):
                                     foreach ($users as $user):
@@ -159,7 +166,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                             class="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
                                                             <?= $fullName ?>
                                                         </a>
-                                                        <span class="text-xs text-slate-500">
+                                                        <span class="text-medium text-slate-500">
                                                             <?= htmlspecialchars($user['email']) ?>
                                                         </span>
                                                     </div>
@@ -168,7 +175,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                             <!-- USERNAME -->
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600">
-                                                <span class="bg-slate-100 px-2 py-1 rounded text-xs font-mono">
+                                                <span class="bg-slate-100 px-2 py-1 rounded text-[15px] font-mono">
                                                     <?= htmlspecialchars($user['username']) ?>
                                                 </span>
                                             </td>
@@ -176,7 +183,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                             <!-- ACCESS LEVEL (IBINALIK) -->
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
                                                     <?= htmlspecialchars($user['role_name']) ?>
                                                 </span>
                                             </td>
@@ -275,7 +282,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
             <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Create New User</h3>
-                    <p class="text-[11px] text-slate-500">Enter account and personal details.</p>
+                    <p class="text-[15px] text-slate-500">Enter account and personal details.</p>
                 </div>
                 <button onclick="toggleAddModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,13 +299,13 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <div class="space-y-3">
                         <div class="flex items-center gap-2 mb-1">
                             <span class="w-1 h-1 rounded-full bg-blue-500"></span>
-                            <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Account
+                            <h4 class="text-[15px] font-bold uppercase tracking-widest text-slate-400">Account
                                 Access</h4>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div class="col-span-1">
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Username <span
+                                <label class="block text-[14px] font-semibold text-slate-700 mb-1">Username <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="username" data-required="true"
                                     data-error="Username is required."
@@ -309,7 +316,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 </div>
                             </div>
                             <div class="col-span-1">
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Password <span
+                                <label class="block text-[14px] font-semibold text-slate-700 mb-1">Password <span
                                         class="text-red-500">*</span></label>
                                 <input type="password" name="password" data-required="true"
                                     data-error="Password is required."
@@ -321,7 +328,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-700 mb-1">Email Address <span
+                            <label class="block text-[14px] font-semibold text-slate-700 mb-1">Email Address <span
                                     class="text-red-500">*</span></label>
                             <input type="email" name="email" data-required="true" data-error="Email is required."
                                 data-check-url="/check-availability.php?field=email&value="
@@ -335,13 +342,13 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <div class="space-y-3">
                         <div class="flex items-center gap-2 mb-1">
                             <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
-                            <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Personal
+                            <h4 class="text-[15px] font-bold uppercase tracking-widest text-slate-400">Personal
                                 Details</h4>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">First
+                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">First
                                     Name</label>
                                 <input type="text" name="fname" data-required="true"
                                     data-error="First Name is required."
@@ -351,7 +358,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Last Name</label>
+                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">Last Name</label>
                                 <input type="text" name="lname" data-required="true" data-error="Last Name is required."
                                     class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
                                 <div>
@@ -361,7 +368,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Middle
+                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">Middle
                                     Name</label>
                                 <input type="text" name="mname" data-required="true"
                                     data-error="Middle Name is required."
@@ -371,7 +378,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Birthdate</label>
+                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">Birthdate</label>
                                 <input type="date" name="birthday" data-required="true"
                                     data-error="Birthdate is required."
                                     class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
@@ -383,7 +390,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                         <div class="grid grid-cols-2 gap-3 items-end">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">User Role</label>
+                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">User Role</label>
                                 <select name="user_role" data-required="true" data-error="User Role is required."
                                     class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none">
                                     <option value="" disabled selected>Select Role</option>
@@ -399,7 +406,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                             </div>
                             <div>
                                 <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
-                                        text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm flex
+                                        text-[15px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm flex
                                         items-center justify-center gap-2">
                                     <i class="fa-solid fa-camera"></i>
                                     <span>Profile Picture</span>

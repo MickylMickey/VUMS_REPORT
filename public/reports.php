@@ -321,7 +321,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             <div class="bg-blue-500 px-6 py-5 flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold text-white tracking-tight">Report a Problem</h2>
-                    <p class="text-blue-100 text-xs text-white ">Tell us what's going wrong.</p>
+                    <p class="text-blue-100 text-medium text-white ">Tell us what's going wrong</p>
                 </div>
                 <button onclick="closeAddModal()"
                     class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">
@@ -382,7 +382,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[11px] uppercase tracking-wider font-bold text-slate-400 ml-1">
+                    <label class="text-[15px] uppercase tracking-wider font-bold text-slate-400 ml-1">
                         Severity Level
                     </label>
                     <div class="severity-group">
@@ -419,7 +419,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 </div>
 
                 <div class="space-y-1.5">
-                    <label for="rep_desc" class="text-[13px] font-semibold text-slate-600 ml-1">What
+                    <label for="rep_desc" class="text-[15px] font-semibold text-slate-600 ml-1">What
                         happened?</label>
                     <textarea name="rep_desc" id="rep_desc" rows="3" placeholder="Briefly describe the issue... "
                         class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none"
@@ -429,8 +429,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                     </div>
                 </div>
                 <div class="space-y-1.5">
-                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
-                    <p class="text-[10px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
+                    <label class="text-[20px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
+                    <p class="text-[13px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
                         description box!</p>
 
                     <input type="file" name="rep_img" id="rep_img_input" accept="image/*"
@@ -491,7 +491,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <label class="text-[13px] font-semibold text-slate-600 ml-1">Category</label>
+                        <label class="text-[15px] font-semibold text-slate-600 ml-1">Category</label>
                         <div class="relative">
                             <select name="cat_id" id="edit_cat_id"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer"
@@ -516,7 +516,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[13px] font-semibold text-slate-600 ml-1">Module</label>
+                        <label class="text-[15px] font-semibold text-slate-600 ml-1">Module</label>
                         <div class="relative">
                             <select name="mod_id" id="edit_mod_id"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
@@ -541,7 +541,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 </div>
 
                 <div class="space-y-3">
-                    <label class="text-[13px] font-semibold text-slate-600 ml-1">Severity Level</label>
+                    <label class="text-[15px] font-semibold text-slate-600 ml-1">Severity Level</label>
 
                     <div class="flex gap-2">
                         <?php foreach ($severityOptions as $s): ?>

@@ -304,13 +304,13 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             data-text="<?= htmlspecialchars(strtolower($sug['suggestion_desc'])) ?>">
 
                             <div class="flex items-center justify-between mb-4">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                <span class="text-[15px] font-bold text-slate-400 uppercase tracking-widest">
                                     <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
                                 </span>
                                 <?php
                                 $sColor = (stripos($sug['status_desc'], 'Completed') !== false) ? 'text-green-600 bg-green-50' : 'text-slate-400 bg-slate-50';
                                 ?>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold <?= $sColor ?>">
+                                <span class="px-2 py-0.5 rounded text-[15px] font-bold <?= $sColor ?>">
                                     <?= $sug['status_desc'] ?>
                                 </span>
                             </div>
@@ -325,7 +325,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold uppercase text-slate-500">
                                         <?= substr($sug['username'], 0, 1) ?>
                                     </div>
-                                    <span class="text-xs font-bold text-slate-700">
+                                    <span class="text-[13px] font-bold text-slate-700">
                                         <?= htmlspecialchars($sug['username']) ?>
                                     </span>
                                 </div>

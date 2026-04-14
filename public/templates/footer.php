@@ -1,5 +1,5 @@
-<footer style=" background-color: #3b82f6; color: white;">
-    <div class="max-w-7xl mx-auto px-6 py-4 md:py-6">
+<footer style=" background-color: #0a2550; color: white;">
+    <div class="max-w-7xl mx-auto px-2 py-4 md:py-3">
 
         <div class="flex flex-col md:flex-row justify-between items-center gap-8">
 
