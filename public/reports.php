@@ -72,14 +72,14 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
             <button onclick="openAddModal()"
                 class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
-                data-tooltip="Add New Report">
+                data-tooltip="Add a new system report">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
             </button>
         </div>
 
         <div
             class="bg-blue-500 p-4 rounded-t-2xl border-x border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex w-full max-w-xs relative" data-tooltip="Search Reports">
+            <div class="flex w-full max-w-xs relative" data-tooltip="Search reports by reference number or reporter name">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <input type="text" id="searchInput" placeholder="Search by Ref Number or Reporter. . ."
                     class="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
@@ -117,7 +117,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                 <button id="resetBtn"
                     class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all"
-                    data-tooltip="Reset Filters">
+                    data-tooltip="Reset filters and search">
                     <i class="fa-solid fa-rotate-right"></i>
                 </button>
             </div>
@@ -234,11 +234,13 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 <td class="px-6 py-4 text-right">
                                     <button 
     class="edit-report-btn hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
+    data-tooltip="Edit Report Details"
     data-id="<?= $report['report_id'] ?>" 
     data-cat="<?= $report['cat_id'] ?? 'other' ?>"
     data-mod="<?= $report['mod_id'] ?? 'other' ?>" 
     data-sev="<?= $report['sev_id'] ?>"
     data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
+    
     <i class="fa-solid fa-pen-to-square mr-2"></i>
     Edit
 </button>
