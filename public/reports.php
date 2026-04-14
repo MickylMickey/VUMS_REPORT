@@ -76,12 +76,15 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
                 <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">System Reports</h2>
+                
                 <p class="text-slate-500 text-sm">Monitor and manage system issues and status updates.</p>
             </div>
 
             <button onclick="openAddModal()"
+                data-tooltip="Report a new issue or bug in the system"
                 class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                 <i class="fa-solid fa-plus mr-2"></i>New Report
+                
             </button>
         </div>
 
