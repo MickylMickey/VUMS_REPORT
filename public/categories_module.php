@@ -70,13 +70,13 @@ $user = checkAuth('Admin');
                 <table id="categoryTable" class="min-w-full table-auto">
                     <thead>
                         <tr class="bg-blue-600 text-white border-b border-blue-700">
-                            <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Code
+                            <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">Code
                             </th>
-                            <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">
                                 Category</th>
-                            <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">
                                 Description</th>
-                            <th class="px-6 py-4 text-left text-sm font-bold text-black uppercase tracking-wider">Action
+                            <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">Action
                             </th>
                         </tr>
                     </thead>

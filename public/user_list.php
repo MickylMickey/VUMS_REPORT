@@ -176,15 +176,14 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                 <button
                                                     onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
                                                     data-tooltip="Edit user details"
-                                                   class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                                                    class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                                                     Edit
                                                 </button>
                                                 <?php if (!$isSelf): ?>
-                                                    <button 
-                                                     onclick="openArchiveUserModal('<?= $user_id ?>')"
-                                                    data-tooltip="Archive this user"
-                                                    class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
-                                                    Archive
+                                                    <button onclick="openArchiveUserModal('<?= $user_id ?>')"
+                                                        data-tooltip="Archive this user"
+                                                        class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
+                                                        Archive
                                                     </button>
                                                 <?php endif; ?>
                                             </div>
@@ -466,8 +465,8 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                     <div class="pt-4 flex justify-end items-center gap-3">
                         <button type="button" onclick="toggleEditModal(false)"
-                            class="px-4 py-2 text-sm font-semibold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">
-                            Cancel
+                            class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">Cancel
+
                         </button>
                         <button type="submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-100 transition-all">
