@@ -86,10 +86,10 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
     <div class="max-w-6xl w-full">
         
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full min-h-[80vh] py-10">
+       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full h-full py-10">
 
 <div 
-    class="rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative max-w-md mx-auto w-full min-h-[300px] lg:min-h-[600px] flex flex-col"
+    class="rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative max-w-md mx-auto w-full h-[450px] lg:h-[600px] self-start flex flex-col"
     style="background: linear-gradient(to bottom right, #3f8bf5, #ffffff);"
 >
         
@@ -126,22 +126,23 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
             </div>
 
             <div class="mt-8 pt-6 flex justify-center w-full"> 
-                <button
-                    class="w-fit flex items-center justify-center gap-2 px-6 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl shadow-sm hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200"
-                    onclick="openEditUserModal(
-                        '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
-                        '<?= htmlspecialchars($userData['username'] ?? '') ?>',
-                        '<?= htmlspecialchars($userData['user_role_id'] ?? '') ?>', 
-                        '<?= htmlspecialchars($userData['email'] ?? '') ?>',
-                        '<?= htmlspecialchars($userData['user_first_name'] ?? '') ?>',
-                        '<?= htmlspecialchars($userData['user_middle_name'] ?? '') ?>',
-                        '<?= htmlspecialchars($userData['user_last_name'] ?? '') ?>',
-                        '<?= htmlspecialchars($userData['user_dob'] ?? '') ?>', 
-                        '../public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>'
-                    )">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit Profile
-                </button>
-            </div>
+    <button
+        data-tooltip="Configurate your profile details"
+        class="relative group w-fit flex items-center justify-center gap-2 px-6 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl shadow-sm hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200"
+        onclick="openEditUserModal(
+            '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
+            '<?= htmlspecialchars($userData['username'] ?? '') ?>',
+            '<?= htmlspecialchars($userData['user_role_id'] ?? '') ?>', 
+            '<?= htmlspecialchars($userData['email'] ?? '') ?>',
+            '<?= htmlspecialchars($userData['user_first_name'] ?? '') ?>',
+            '<?= htmlspecialchars($userData['user_middle_name'] ?? '') ?>',
+            '<?= htmlspecialchars($userData['user_last_name'] ?? '') ?>',
+            '<?= htmlspecialchars($userData['user_dob'] ?? '') ?>', 
+            '../public/img/prof_pic/<?= htmlspecialchars($userData['user_prof'] ?? 'default.png') ?>'
+        )">
+        <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+    </button>
+</div>
 
         </div>
     </div>
@@ -418,7 +419,11 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
     </div>
 
     <?php ob_end_flush(); ?>
+    <div id="tooltip"
+    class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+</div>
 </body>
 <script src="js/user_profile.js"></script>
+<script src="js/tooltip.js"></script>
 
 </html>

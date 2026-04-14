@@ -53,7 +53,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
             <button onclick="toggleModal(true)"
                 class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
-                data-tooltip="Add New Suggestion">
+                data-tooltip="Add a new suggestion">
                 <i class="fa-solid fa-plus mr-2"></i>New Suggestion
             </button>
         </div>

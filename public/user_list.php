@@ -66,7 +66,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <h1 class="text-2xl font-bold tracking-tight text-slate-900">User Management</h1>
                     <p class="text-sm text-slate-500 mt-1">Manage system access, roles, and member profiles.</p>
                 </div>
-                <button onclick="toggleAddModal(true)" data-tooltip="Create a new user account"
+                <button onclick="toggleAddModal(true)" data-tooltip="Create a new user account with specific access roles"
                     class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                     <i class="fa-solid fa-plus mr-2 text-xs"></i>
                     Create New User
@@ -133,62 +133,82 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                     $isSelf = (isset($_SESSION['user_id']) && $user['user_id'] == $_SESSION['user_id']);
                                     ?>
                                     <tr class="report-row hover:bg-blue-50/30 transition-colors group"
-                                        data-username="<?= htmlspecialchars($user['username']) ?>"
-                                        data-role="<?= htmlspecialchars($user['user_role_id']) ?>">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center gap-4">
-                                                <div class="relative flex-shrink-0">
-                                                    <?php if ($isDefault): ?>
-                                                        <div
-                                                            class="h-10 w-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200">
-                                                            <?= strtoupper(substr($firstName, 0, 1)); ?>
-                                                        </div>
-                                                    <?php else: ?>
-                                                        <img src="<?= htmlspecialchars($userImage) ?>"
-                                                            class="h-10 w-10 rounded-xl object-cover border border-slate-200 shadow-sm">
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <a href="../public/user_profile.php?u=<?= $user_id ?>"
-                                                        data-tooltip="View user profile"
-                                                        class="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
-                                                        <?= $fullName ?>
-                                                    </a>
-                                                    <span
-                                                        class="text-xs text-slate-500"><?= htmlspecialchars($user['email']) ?></span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600">
-                                            <span
-                                                class="bg-slate-100 px-2 py-1 rounded text-xs font-mono">@<?= htmlspecialchars($user['username']) ?></span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                                <?= htmlspecialchars($user['role_name']) ?>
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right">
-                                            <div
-                                                class="flex items-center justify-end gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
-                                                    data-tooltip="Edit user details"
-                                                    class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
-                                                    Edit
-                                                </button>
-                                                <?php if (!$isSelf): ?>
-                                                    <button onclick="openArchiveUserModal('<?= $user_id ?>')"
-                                                        data-tooltip="Archive this user"
-                                                        class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
-                                                        Archive
-                                                    </button>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                    </tr>
+    data-username="<?= htmlspecialchars($user['username']) ?>"
+    data-role="<?= htmlspecialchars($user['user_role_id']) ?>">
+
+    <!-- USER DETAILS -->
+    <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center gap-4">
+            <div class="relative flex-shrink-0">
+                <?php if ($isDefault): ?>
+                    <div class="h-10 w-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200">
+                        <?= strtoupper(substr($firstName, 0, 1)); ?>
+                    </div>
+                <?php else: ?>
+                    <img src="<?= htmlspecialchars($userImage) ?>"
+                        class="h-10 w-10 rounded-xl object-cover border border-slate-200 shadow-sm">
+                <?php endif; ?>
+            </div>
+            <div class="flex flex-col">
+                <a href="../public/user_profile.php?u=<?= $user_id ?>"
+                    data-tooltip="View profile details"
+                    class="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+                    <?= $fullName ?>
+                </a>
+                <span class="text-xs text-slate-500">
+                    <?= htmlspecialchars($user['email']) ?>
+                </span>
+            </div>
+        </div>
+    </td>
+
+    <!-- USERNAME -->
+    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600">
+        <span class="bg-slate-100 px-2 py-1 rounded text-xs font-mono">
+            @<?= htmlspecialchars($user['username']) ?>
+        </span>
+    </td>
+
+    <!-- ACCESS LEVEL (IBINALIK) -->
+    <td class="px-6 py-4 whitespace-nowrap">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+            <?= htmlspecialchars($user['role_name']) ?>
+        </span>
+    </td>
+
+    <!-- ACTIONS -->
+    <td class="px-6 py-4 whitespace-nowrap text-right">
+        <div class="flex items-center justify-end gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+
+            <!-- VIEW -->
+            <a href="../public/user_profile.php?u=<?= $user_id ?>"
+    data-tooltip="View profile details"
+    class="flex bg-green-600 text-white px-4 py-1.5 rounded-xl h-10 font-semibold text-sm hover:bg-green-700 transition-all items-center shadow-md shadow-green-200">
+    <i class="fa-solid fa-user mr-2"></i>
+    View
+</a>
+
+            <!-- EDIT -->
+            <button
+                onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
+                data-tooltip="Edit user account and access level"
+                class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                Edit
+            </button>
+
+            <!-- ARCHIVE -->
+            <?php if (!$isSelf): ?>
+                <button onclick="openArchiveUserModal('<?= $user_id ?>')"
+                    data-tooltip="Archive this user account"
+                    class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
+                    Archive
+                </button>
+            <?php endif; ?>
+
+        </div>
+    </td>
+
+</tr>
                                 <?php endforeach; endif; ?>
                         <tbody class="divide-y divide-slate-100">
                             <?php foreach ($users as $user): ?>
