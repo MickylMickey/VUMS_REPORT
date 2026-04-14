@@ -7,7 +7,7 @@ const addReportForm = document.getElementById("addReportForm");
 const addContainer = document.getElementById("addModalContainer");
 const addBackdrop = document.getElementById("addModalBackdrop");
 
-// 2. Optimized Modal Controls
+
 function openModal() {
   editModal.classList.remove("hidden");
 }
@@ -18,7 +18,7 @@ function closeAddModal() {
   addModal.classList.add("hidden");
 }
 
-// Close modals on 'Esc' key
+
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeModal();
@@ -26,14 +26,14 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// 4. Quick Status Update (UPDATED)
+
 document.querySelectorAll(".status-updater").forEach((select) => {
   select.addEventListener("change", function () {
     const reportId = this.getAttribute("data-report-id");
     const statusId = this.value;
     const userId = this.getAttribute("data-user-id");
 
-    // Visual feedback for the select itself
+  
     this.style.opacity = "0.5";
     this.disabled = true;
 
@@ -48,7 +48,7 @@ document.querySelectorAll(".status-updater").forEach((select) => {
       .then((response) => response.json())
       .then((data) => {
         this.style.opacity = "1";
-        this.disabled = false; // Re-enable so it's not stuck if it stays on screen
+        this.disabled = false; 
 
         if (data.success) {
           showToast(
@@ -56,7 +56,7 @@ document.querySelectorAll(".status-updater").forEach((select) => {
             "bg-green-500/80 text-white",
           );
 
-          // --- NEW ANIMATION LOGIC START ---
+          
 
           const statusToRemove = ["3", "4"];
 
