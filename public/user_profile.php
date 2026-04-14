@@ -228,7 +228,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
         class="p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
         style="background: linear-gradient(to right, #ffffff, #ffffff);"
     >
-        <div class="flex items-center gap-4 mb-6 pb-6 border-b border-black/50">
+        <div class="flex items-center gap-4 mb-4 pb-4 border-b border-black/50">
             <div class="w-12 h-12 flex items-center justify-center bg-purple-50 rounded-xl text-purple-600">
                 <i class="fa-solid fa-gear text-xl"></i>
             </div>
