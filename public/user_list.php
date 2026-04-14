@@ -47,7 +47,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
     <title>Users</title>
 </head>
 
-<body class="bg-[#f8fafc] min-h-screen antialiased text-slate-900 pt-24">
+<body class="bg-[#f8fafc] min-h-screen flex flex-col antialiased text-slate-900 pt-24">
     <div><?php include "templates/navbar.php"; ?>
     </div>
     <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
@@ -56,7 +56,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
         </div>
     </div>
 
-
+    <main class="flex-grow">
     <div class="container mx-auto p-6">
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -274,7 +274,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                 </div>
             </div>
         </div>
-
+</main>
         <div id="addUserModal"
             class="fixed inset-0 hidden items-center justify-center backdrop-blur-md bg-slate-900/60 z-[200] px-4 transition-all">
             <div
@@ -509,6 +509,9 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
         <div id="tooltip"
             class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
         </div>
+        <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
+        </div>
 </body>
 
 <?php ob_end_flush(); ?>
@@ -522,5 +525,6 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
             initFormValidation("EditUserForm");
     });
 </script>
+
 
 </html>

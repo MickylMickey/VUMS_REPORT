@@ -35,7 +35,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <title>Suggestions</title>
 </head>
 
-<body class="pt-24 relative min-h-screen">
+<body class="pt-24 relative min-h-screen flex flex-col">
     <div>
         <?php include "templates/navbar.php"; ?>
         <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
@@ -45,7 +45,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <div class=" mt-10 px-6 pb-24">
+    <div class="mt-10 px-6 pb-24 min-h-[75vh]">
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h2 class="text-3xl font-extrabold text-slate-800">Community Suggestions</h2>
@@ -140,16 +140,42 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <?php if (empty($suggestions)): ?>
-            <div
-                class="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-                <div
-                    class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300 text-2xl">
+            <div class="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300 text-2xl">
                     <i class="fa-solid fa-lightbulb"></i>
                 </div>
                 <p class="text-slate-500 font-medium">No suggestions found. Be the first to suggest something!</p>
             </div>
         <?php endif; ?>
-    </div>
+    </div> <footer class="mt-auto bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-6 py-4 md:py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                
+                <div class="text-center md:text-left space-y-1">
+                    <h2 class="text-2xl font-extrabold tracking-tight text-blue-400">
+                        Vinculum Technologies Inc.
+                    </h2>
+                    
+                </div>
+
+                <div class="hidden md:block w-px h-12 bg-slate-700/50"></div>
+
+                <div class="text-center md:text-right space-y-1">
+                    <p class="text-sm text-slate-300">
+                        © <?= date("Y"); ?> <span class="font-bold text-white uppercase tracking-wider">Vinculum</span>.
+                        All rights reserved.
+                    </p>
+
+                    <div class="flex justify-center md:justify-end gap-4 text-[11px] uppercase tracking-widest text-slate-500">
+                        <span class="bg-slate-800 px-2 py-0.5 rounded text-blue-400">System v1.0</span>
+                        <span>-</span>
+                        <span>VUMS REPORTING SYSTEM</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
 
     <div id="projectModal"
         class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
@@ -204,11 +230,10 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                 <div class="flex items-center gap-3 pt-2">
                     <button type="button" onclick="toggleModal(false)"
-                        style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold; background-color: #fb2424; color: white; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
-                        onmouseover="this.style.backgroundColor='#c01c1c'"
-                        onmouseout="this.style.backgroundColor='#fb2424'">
+                        class="flex-1 px-4 py-3 text-sm font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-2xl transition-all duration-200">
                         Cancel
                     </button>
+
                     <button type="submit"
                         class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
                         Submit Suggestion
@@ -217,24 +242,25 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </form>
         </div>
     </div>
-    <div id="tooltip"
-        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
-    </div>
-</body>
-<?php ob_end_flush(); ?>
-<script>
-    const currentUserId = "<?= $current_user_id ?>";
-</script>
-</script>
-<script src="js/removeNotification.js" defer></script>
-<script src="js/suggestions.js"></script>
-<script src="js/tooltip.js"></script>
-<script src="js/paste_image_suggestion.js"></script>
-<script src="js/inputValidation.js" defer></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        initFormValidation("suggestionForm");
-    });
-</script>
 
-</html>
+    <div id="tooltip"
+        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-[200] px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+    </div>
+
+    <?php ob_end_flush(); ?>
+
+    <script>
+        const currentUserId = "<?= $current_user_id ?>";
+    </script>
+
+    <script src="js/removeNotification.js" defer></script>
+    <script src="js/suggestions.js"></script>
+    <script src="js/tooltip.js"></script>
+    <script src="js/paste_image_suggestion.js"></script>
+    <script src="js/inputValidation.js" defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            initFormValidation("suggestionForm");
+        });
+    </script>

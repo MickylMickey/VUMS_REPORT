@@ -588,6 +588,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <div id="tooltip"
         class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
     </div>
+    <?php include "templates/footer.php"; ?>
 </body>
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>

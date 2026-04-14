@@ -18,7 +18,7 @@ $user = checkAuth('Admin');
     <title>Modules and Categories</title>
 </head>
 
-<body class="pt-24 bg-gray-50 text-slate-900">
+<body class="bg-gray-50 text-slate-900 min-h-screen flex flex-col antialiased pt-24">
     <div>
         <?php include "templates/navbar.php"; ?>
         <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
@@ -28,172 +28,123 @@ $user = checkAuth('Admin');
         </div>
     </div>
 
-    <div class="container mx-auto p-6">
-
+    <main class="flex-grow">
         <div class="container mx-auto p-6">
 
-            <div class="container mx-auto p-6">
-
-
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-
-                        <!-- ✅ UPDATED CATEGORY HEADER -->
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Categories</h2>
-                            <p class="text-slate-500 text-sm">Monitor and manage Categories.</p>
-                        </div>
-
-                        <div class="relative w-full md:w-72 lg:w-80" data-tooltip="Search for categories by code, name, or description">
-                            <i
-                                class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-
-                            <input type="text" id="categorySearch"
-                                onkeyup="filterTable('categorySearch', 'categoryTable')"
-                                placeholder="Search category..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm
-    focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none
-    shadow-sm hover:shadow-md transition-all">
-
-
-                        </div>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Categories</h2>
+                        <p class="text-slate-500 text-sm">Monitor and manage Categories.</p>
                     </div>
 
-                    <button onclick="openGenericModal('addCategoryModal', 'addCategoryContainer')"
-                        data-tooltip="Add a new category to classify your modules"
-                        class="hidden md:flex items-center justify-center gap-x-2 whitespace-nowrap flex-shrink-0 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-5 h-10 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-600/20">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>New Category</span>
-                    </button>
-                </div>
-
-
-                <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-30">
-                    <table id="categoryTable" class="min-w-full table-auto">
-                        <thead>
-                            <tr class="bg-blue-600 text-white border-b border-blue-700">
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Code
-                                </th>
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">
-                                    Category</th>
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">
-                                    Description</th>
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Action
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <?php foreach ($categories as $cat): ?>
-                                <tr class="hover:bg-blue-50/30 transition-colors group">
-                                    <td class="px-6 py-4 text-sm font-semibold text-slate-700">
-                                        <span
-                                            class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"
-                                            data-tooltip="Category Code">
-                                            <?= htmlspecialchars($cat['cat_id']) ?>
-                                        </span>
-                                    </td>
-
-                                    <td class="px-6 py-4 text-sm font-semibold text-slate-700">
-                                        <?= htmlspecialchars($cat['category']) ?>
-                                    </td>
-
-                                    <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate">
-                                        <?= htmlspecialchars($cat['cat_desc']) ?>
-                                    </td>
-
-                                    <td class="px-4 py-3">
-                                        <button
-                                            onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
-                                            data-tooltip="Edit category details"
-                                            class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                            <span>Edit</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-
-                        <!-- ✅ UPDATED MODULE HEADER -->
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Modules</h2>
-                            <p class="text-slate-500 text-sm">Monitor and manage Modules.</p>
-                        </div>
-
-                        <div class="relative w-full md:w-72" data-tooltip="Search for modules by code, name, or description">
-                            <i
-                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')"
-                                placeholder="Search module..."
-                                class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:border-blue-500 outline-none transition-all shadow-sm">
-                        </div>
+                    <div class="relative w-full md:w-72 lg:w-80" data-tooltip="Search for categories by code, name, or description">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="categorySearch" onkeyup="filterTable('categorySearch', 'categoryTable')"
+                            placeholder="Search category..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none shadow-sm hover:shadow-md transition-all">
                     </div>
-
-                    <button onclick="openGenericModal('addModuleModal', 'addModuleContainer')"
-                        data-tooltip="Add a new module to classify your categories"
-                        class="hidden md:flex items-center justify-center gap-x-2 whitespace-nowrap flex-shrink-0 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-5 h-10 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-600/20">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>New Module</span>
-                    </button>
                 </div>
 
-                <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
-                    <table id="moduleTable" class="min-w-full table-auto">
-                        <thead>
-                            <tr class="bg-blue-600 text-white border-b border-blue-700">
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Code
-                                </th>
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Module
-                                </th>
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">
-                                    Description</th>
-                                <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Action
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <?php foreach ($modules as $mod): ?>
-                                <tr class="hover:bg-blue-50/30 transition-colors group">
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase"
-                                            data-tooltip="Module Code">
-                                            <?= htmlspecialchars($mod['mod_id']) ?>
-                                        </span>
-                                    </td>
-
-                                    <td class="px-6 py-4 text-sm font-semibold text-slate-700">
-                                        <?= htmlspecialchars($mod['module']) ?>
-                                    </td>
-
-                                    <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate">
-                                        <?= htmlspecialchars($mod['mod_desc']) ?>
-                                    </td>
-
-                                    <td class="px-4 py-3">
-                                        <button
-                                            onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
-                                            data-tooltip="Edit module details"
-                                            class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                            <span>Edit</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                <button onclick="openGenericModal('addCategoryModal', 'addCategoryContainer')"
+                    class="hidden md:flex items-center justify-center gap-x-2 whitespace-nowrap flex-shrink-0 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-5 h-10 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-600/20">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Category</span>
+                </button>
             </div>
 
+            <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
+                <table id="categoryTable" class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-blue-600 text-white border-b border-blue-700">
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Code</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php foreach ($categories as $cat): ?>
+                            <tr class="hover:bg-blue-50/30 transition-colors group">
+                                <td class="px-6 py-4 text-sm font-semibold text-slate-700">
+                                    <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase">
+                                        <?= htmlspecialchars($cat['cat_id']) ?>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($cat['category']) ?></td>
+                                <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($cat['cat_desc']) ?></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
+                                        class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
 
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Modules</h2>
+                        <p class="text-slate-500 text-sm">Monitor and manage Modules.</p>
+                    </div>
+
+                    <div class="relative w-full md:w-72" data-tooltip="Search for modules by code, name, or description">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')"
+                            placeholder="Search module..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:border-blue-500 outline-none transition-all shadow-sm">
+                    </div>
+                </div>
+
+                <button onclick="openGenericModal('addModuleModal', 'addModuleContainer')"
+                    class="hidden md:flex items-center justify-center gap-x-2 whitespace-nowrap flex-shrink-0 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-5 h-10 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-600/20">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Module</span>
+                </button>
+            </div>
+
+            <div class="overflow-hidden bg-white rounded-2xl shadow-md border border-slate-100 mb-12">
+                <table id="moduleTable" class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-blue-600 text-white border-b border-blue-700">
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Code</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Module</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php foreach ($modules as $mod): ?>
+                            <tr class="hover:bg-blue-50/30 transition-colors group">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm uppercase">
+                                        <?= htmlspecialchars($mod['mod_id']) ?>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm font-semibold text-slate-700"><?= htmlspecialchars($mod['module']) ?></td>
+                                <td class="px-6 py-4 text-sm text-slate-500 max-w-[250px] truncate"><?= htmlspecialchars($mod['mod_desc']) ?></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
+                                        class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
+    </main>
 
-</body>
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
+    </div>
+
 
 <div id="addCategoryModal"
     class="hidden fixed inset-0 z-[250] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
@@ -347,6 +298,8 @@ $user = checkAuth('Admin');
 <div id="tooltip"
     class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
 </div>
+
+
 </body>
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
@@ -361,5 +314,6 @@ $user = checkAuth('Admin');
             initFormValidation("editFormModule");
     });
 </script>
+
 
 </html>

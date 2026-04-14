@@ -20,7 +20,7 @@ if (!empty($user->user_prof)) {
 
 <link href="/public/dist/output.css" rel="stylesheet">
 
-<nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-6xl z-50">
+<nav class="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-6xl z-50">
     <div
         class="bg-white/70 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl shadow-lg flex items-center justify-between">
         <div class="text-xl font-bold text-gray-800">
