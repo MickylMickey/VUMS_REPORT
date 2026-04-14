@@ -24,7 +24,7 @@
                 <div class="flex justify-center md:justify-end gap-4 text-[11px] uppercase tracking-widest text-slate-500">
                     <span>System v1.0</span>
                     <span>-</span>
-                    <span>VUMS REPORTING SYSTEM</span>
+                    <span>VUMS REPORTING System</span>
                 </div>
             </div>
 

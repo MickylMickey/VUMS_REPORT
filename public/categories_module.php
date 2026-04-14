@@ -170,7 +170,6 @@ $user = checkAuth('Admin');
                                         data-tooltip="Edit module details"
                                         class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
                                         <i class="fa-solid fa-pen-to-square"></i>
-                                        <span>Edit</span>
                                     </button>
                                 </td>
                             </tr>
@@ -179,6 +178,7 @@ $user = checkAuth('Admin');
                 </table>
             </div>
         </div>
+
 
         <div class="mt-auto">
             <?php include "templates/footer.php"; ?>

@@ -378,10 +378,11 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </main>
     <?php include "templates/footer.php"; ?>
     <div id="tooltip"
-        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
-    </div>
+     class="fixed pointer-events-none opacity-0 transition-all duration-150 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+</div>
 </body>
 <script src="js/archive_module.js"></script>
+<script src="js/tooltip.js"></script>
 
 
 </html>
