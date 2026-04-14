@@ -169,7 +169,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                             <!-- USERNAME -->
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600">
                                                 <span class="bg-slate-100 px-2 py-1 rounded text-xs font-mono">
-                                                    @<?= htmlspecialchars($user['username']) ?>
+                                                    <?= htmlspecialchars($user['username']) ?>
                                                 </span>
                                             </td>
 

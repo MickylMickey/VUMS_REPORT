@@ -362,8 +362,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                     data-desc="<?= htmlspecialchars($mod['mod_desc'] ?? $mod['module']) ?>">
                                     <?= htmlspecialchars($mod['module']) ?>
                                 </option>
-                                <option value="other" data-desc="Use this for issues not listed above.">Other...</option>
-                            <?php endforeach; ?>
+
+                            <?php endforeach; ?><option value="other" data-desc="Use this for issues not listed above.">Other...</option>
                         </select>
                         <div id="mod-desc-panel"
                             class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl animate-fade-in">
