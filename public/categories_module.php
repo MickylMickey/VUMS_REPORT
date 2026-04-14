@@ -59,10 +59,9 @@ $user = checkAuth('Admin');
 
                 <button onclick="openGenericModal('addCategoryModal', 'addCategoryContainer')"
                     data-tooltip="Add new category"
-                    class="w-full md:w-auto bg-blue-600 text-white px-5 py-1.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-50">
-                    <i class="fa-solid fa-plus mr-1"></i>New Category
-
-
+                    class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                    <i class="fa-solid fa-plus mr-1"></i>
+                    New Category
                 </button>
             </div>
 
@@ -104,7 +103,7 @@ $user = checkAuth('Admin');
                                     <button
                                         onclick="openEditCategoryModal('<?= $cat['cat_id'] ?>', '<?= addslashes($cat['category']) ?>', '<?= addslashes($cat['cat_desc'] ?? '') ?>')"
                                         data-tooltip="Edit category"
-                                        class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">
+                                        class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                                         Edit
                                     </button>
                                 </td>
@@ -135,8 +134,9 @@ $user = checkAuth('Admin');
                 </div>
 
                 <button onclick="openGenericModal('addModuleModal', 'addModuleContainer')" data-tooltip="Add new module"
-                    class="w-full md:w-auto bg-blue-600 text-white px-5 py-1.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-50">
-                    <i class="fa-solid fa-plus mr-2"></i>New Module
+                    class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                    <i class="fa-solid fa-plus mr-2"></i>
+                    New Module
                 </button>
             </div>
 
@@ -177,7 +177,7 @@ $user = checkAuth('Admin');
                                     <button
                                         onclick="openEditModuleModal('<?= $mod['mod_id'] ?>', '<?= addslashes($mod['module']) ?>', '<?= addslashes($mod['mod_desc'] ?? '') ?>')"
                                         data-tooltip="Edit module"
-                                        class="text-blue-600 hover:text-blue-800 font-bold text-xs px-2 py-1 hover:bg-blue-50 rounded-lg transition-all">
+                                        class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                                         Edit
                                     </button>
                                 </td>

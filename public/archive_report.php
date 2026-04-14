@@ -165,7 +165,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     data-severity="<?= htmlspecialchars($archive['sev_id']) ?>">
                                     <td class="px-6 py-4">
                                         <span
-                                            class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs uppercase">
+                                            class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-medium uppercase">
                                             <?= htmlspecialchars($archive['ref_num']) ?>
                                         </span>
                                     </td>
@@ -181,7 +181,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <p class="text-sm text-slate-500 max-w-[200px] truncate"
+                                        <p class="text-medium text-slate-500 max-w-[200px] truncate"
                                             title="<?= htmlspecialchars($archive['report_desc']) ?>">
                                             <?= htmlspecialchars($archive['report_desc']) ?>
                                         </p>
@@ -195,7 +195,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="text-xs font-medium text-slate-500 italic"><?= htmlspecialchars($archive['status_desc']) ?></span>
+                                            class="text-m font-medium text-slate-500 italic"><?= htmlspecialchars($archive['status_desc']) ?></span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-400">
                                         <?= date('M d, Y', strtotime($archive['report_updated_at'])) ?>
@@ -274,7 +274,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <input type="text" id="sugSearchInput" name="sug_q" placeholder="Search users or suggestion..."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     </div>
-                    <button id="resetSugBtn"
+                    <button id="resetSugBtn" data-tooltip="Reset suggestion search"
                         class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
@@ -314,7 +314,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         <?= htmlspecialchars($sug['username']) ?>
                                     </span>
                                 </div>
-                                <span class="text-[10px] text-slate-300">
+                                <span class="text-[15px] text-slate-300">
                                     Archived by: <?= htmlspecialchars($sug['updater_name'] ?? 'System') ?>
                                 </span>
                             </div>
