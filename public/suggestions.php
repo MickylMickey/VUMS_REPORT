@@ -48,7 +48,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <div class="mt-10 px-6 pb-24 min-h-[75vh]">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h2 class="text-3xl font-extrabold text-slate-800">Community Suggestions</h2>
+                <h2 class="text-2xl font-extrabold text-slate-800">Community Suggestions</h2>
                 <p class="text-slate-500 text-sm mt-1">Share your ideas to improve the system.</p>
             </div>
             <button onclick="toggleModal(true)"
@@ -147,35 +147,38 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <p class="text-slate-500 font-medium">No suggestions found. Be the first to suggest something!</p>
             </div>
         <?php endif; ?>
-    </div> <footer class="mt-auto bg-slate-900 text-white">
-        <div class="max-w-7xl mx-auto px-6 py-4 md:py-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+    </div> <footer style="margin-top:auto; background-color:#3b82f6; color:white;">
+    <div style="max-width:80rem; margin:0 auto; padding:1rem 1.5rem;">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+
+           
+            <div class="text-center md:text-left space-y-1">
+                <h2 class="text-2xl font-extrabold tracking-tight text-black-400">
+                    Vinculum Technologies Inc.
+                </h2>
                 
-                <div class="text-center md:text-left space-y-1">
-                    <h2 class="text-2xl font-extrabold tracking-tight text-blue-400">
-                        Vinculum Technologies Inc.
-                    </h2>
-                    
-                </div>
-
-                <div class="hidden md:block w-px h-12 bg-slate-700/50"></div>
-
-                <div class="text-center md:text-right space-y-1">
-                    <p class="text-sm text-slate-300">
-                        © <?= date("Y"); ?> <span class="font-bold text-white uppercase tracking-wider">Vinculum</span>.
-                        All rights reserved.
-                    </p>
-
-                    <div class="flex justify-center md:justify-end gap-4 text-[11px] uppercase tracking-widest text-slate-500">
-                        <span class="bg-slate-800 px-2 py-0.5 rounded text-blue-400">System v1.0</span>
-                        <span>-</span>
-                        <span>VUMS REPORTING SYSTEM</span>
-                    </div>
-                </div>
-
             </div>
+
+        
+            <div class="hidden md:block w-px h-12 bg-slate-700"></div>
+
+           
+            <div class="text-center md:text-right space-y-1">
+                <p class="text-sm text-slate-300">
+                    © <span class="font-bold text-white">Vinculum</span>
+                 
+                </p>
+
+                <div class="flex justify-center md:justify-end gap-4 text-[11px] uppercase tracking-widest text-white-500">
+                    <span>System v1.0</span>
+                    <span>-</span>
+                    <span>VUMS REPORTING System</span>
+                </div>
+            </div>
+
         </div>
-    </footer>
+    </div>
+</footer>
 
     <div id="projectModal"
         class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">

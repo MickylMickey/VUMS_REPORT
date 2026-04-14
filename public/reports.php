@@ -140,23 +140,23 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             <table class="min-w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50/50 border-b border-slate-100">
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Ref Number</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Reporter</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Category & Module</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Severity</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Description</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider">
                             Status</th>
                         <th
-                            class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">
+                            class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider text-center">
                             Image</th>
                         <?php if ($isAdmin): ?>
-                            <th class="px-6 py-4 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-right text-[13px] font-bold text-black-400 uppercase tracking-wider">
                                 Action</th>
                         <?php endif; ?>
                     </tr>
