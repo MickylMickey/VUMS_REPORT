@@ -108,16 +108,14 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]"
-     data-tooltip="Search archived reports">
-                        <i 
-                        class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="searchInput" placeholder="Search by Reporter or Description . . ."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                     </div>
 
                     <select id="severityFilter"
-                    data-tooltip="Filter reports by severity"
                         class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
                         <option value="">All Severities</option>
                         <?php foreach ($severities as $severity): ?>
@@ -128,8 +126,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </select>
 
                     <button id="resetBtn"
-                    class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all h-[40px] flex items-center justify-center"
-                    data-tooltip="Reset Filters">
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all h-[40px] flex items-center justify-center"
+                        title="Reset Filters">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
                 </div>
@@ -270,15 +268,13 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="flex gap-2">
-                    <div class="relative min-w-[280px]"
-                    data-tooltip="Search suggestions">
+                    <div class="relative min-w-[280px]">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="sugSearchInput" name="sug_q" placeholder="Search users or suggestion..."
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     </div>
-                    <button id="resetSugBtn"
-                    data-tooltip="Reset suggestion search"
+                    <button id="resetSugBtn" data-tooltip="Reset suggestion search"
                         class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
@@ -326,56 +322,53 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                     <?php endforeach; ?>
                 <?php endif; ?>
-                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                    <p class="text-sm text-slate-500">
-                        Showing <span class="font-medium text-slate-700">
-                            <?= $s_offset + 1 ?>
-                        </span>
-                        to <span class="font-medium text-slate-700">
-                            <?= min($s_offset + $s_limit, $s_totalRecords) ?>
-                        </span>
-                        of <span class="font-medium text-slate-700">
-                            <?= $s_totalRecords ?>
-                        </span> users
-                    </p>
-
-                    <div class="flex gap-2">
-                        <?php if ($s_page > 1): ?>
-                            <a href="?s_page=<?= $s_page - 1 ?>&limit=<?= $s_limit ?>"
-                                class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                                Previous
-                            </a>
-                        <?php endif; ?>
-
-                        <div class="hidden sm:flex gap-1">
-                            <?php for ($i = 1; $i <= $s_totalPages; $i++): ?>
-                                <a href="?s_page=<?= $i ?>&s_limit=<?= $s_limit ?>"
-                                    class="px-3 py-2 text-sm font-medium rounded-lg border transition-all <?= $i == $s_page ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' ?>">
-                                    <?= $i ?>
-                                </a>
-                            <?php endfor; ?>
-                        </div>
-
-                        <?php if ($s_page < $s_totalPages): ?>
-                            <a href="?s_page=<?= $s_page ?>&s_page=<?= $s_page + 1 ?>&limit=<?= $s_limit ?>"
-                                class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                                Next
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
                 <div id="noSugResults"
                     class="hidden col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400">
                     No suggestions match your search.
                 </div>
+
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <p class="text-sm text-slate-500">
+                    Showing <span class="font-medium text-slate-700">
+                        <?= $s_offset + 1 ?>
+                    </span>
+                    to <span class="font-medium text-slate-700">
+                        <?= min($s_offset + $s_limit, $s_totalRecords) ?>
+                    </span>
+                    of <span class="font-medium text-slate-700">
+                        <?= $s_totalRecords ?>
+                    </span> users
+                </p>
+
+                <div class="flex gap-2">
+                    <?php if ($s_page > 1): ?>
+                        <a href="?s_page=<?= $s_page - 1 ?>&s_limit=<?= $s_limit ?>"
+                            class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                            Previous
+                        </a>
+                    <?php endif; ?>
+
+                    <div class="hidden sm:flex gap-1">
+                        <?php for ($i = 1; $i <= $s_totalPages; $i++): ?>
+                            <a href="?s_page=<?= $i ?>&s_limit=<?= $s_limit ?>"
+                                class="px-3 py-2 text-sm font-medium rounded-lg border transition-all <?= $i == $s_page ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' ?>">
+                                <?= $i ?>
+                            </a>
+                        <?php endfor; ?>
+                    </div>
+
+                    <?php if ($s_page < $s_totalPages): ?>
+                        <a href="?s_page=<?= $s_page ?>&s_page=<?= $s_page + 1 ?>&limit=<?= $s_limit ?>"
+                            class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                            Next
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </section>
-        <div id="tooltip"
-    class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
-</div>
     </main>
 </body>
 <script src="js/archive_module.js"></script>
-<script src="js/tooltip.js"></script>
 
 </html>

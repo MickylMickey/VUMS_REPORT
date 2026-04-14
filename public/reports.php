@@ -409,10 +409,10 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                 <div style="display: flex; align-items: center; gap: 12px; padding-top: 16px;">
                     <button type="button" onclick="closeAddModal()"
-                        style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold; background-color: #10b981; color: white; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
-                        onmouseover="this.style.backgroundColor='#059669'"
-                        onmouseout="this.style.backgroundColor='#10b981'">
-                        Discard
+                        style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold; background-color: #fb2424; color: white; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+                        onmouseover="this.style.backgroundColor='#c01c1c'"
+                        onmouseout="this.style.backgroundColor='#fb2424'">
+                        Cancel
                     </button>
 
                     <button type="submit"
@@ -528,8 +528,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                 <div class="flex items-center gap-3 pt-2">
                     <button type="button" onclick="closeEditModal()"
-                        class="flex-1 px-4 py-3 text-sm font-bold text-slate-500 rounded-2xl hover:bg-slate-100 transition-colors">
-                        Discard
+                        class="flex-1 px-4 py-3 text-sm font-bold text-white rounded-2xl bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">
+                        Cancel
                     </button>
                     <button type="submit"
                         class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">

@@ -176,15 +176,14 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                 <button
                                                     onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
                                                     data-tooltip="Edit user details"
-                                                   class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
+                                                    class="hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200">
                                                     Edit
                                                 </button>
                                                 <?php if (!$isSelf): ?>
-                                                    <button 
-                                                     onclick="openArchiveUserModal('<?= $user_id ?>')"
-                                                    data-tooltip="Archive this user"
-                                                    class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
-                                                    Archive
+                                                    <button onclick="openArchiveUserModal('<?= $user_id ?>')"
+                                                        data-tooltip="Archive this user"
+                                                        class="hidden md:flex bg-red-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-red-700 transition-all items-center shadow-lg shadow-red-200">
+                                                        Archive
                                                     </button>
                                                 <?php endif; ?>
                                             </div>
@@ -265,7 +264,8 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     </button>
                 </div>
 
-                <form action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data" class="p-6">
+                <form id="addUserForm" action="/../controllers/add_user.php" method="POST" enctype="multipart/form-data"
+                    class="p-6">
                     <div class="space-y-6">
 
                         <div class="space-y-3">
@@ -279,22 +279,35 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 <div class="col-span-1">
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">Username <span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" name="username" required
+                                    <input type="text" name="username" data-required="true"
+                                        data-error="Username is required."
+                                        data-check-url="/check-availability.php?field=username&value="
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                                 <div class="col-span-1">
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">Password <span
                                             class="text-red-500">*</span></label>
-                                    <input type="password" name="password" required
+                                    <input type="password" name="password" data-required="true"
+                                        data-error="Password is required."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-700 mb-1">Email Address <span
                                         class="text-red-500">*</span></label>
-                                <input type="email" name="email" required
+                                <input type="email" name="email" data-required="true" data-error="Email is required."
+                                    data-check-url="/check-availability.php?field=email&value="
                                     class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                <div>
+                                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                </div>
                             </div>
                         </div>
 
@@ -309,33 +322,49 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 <div>
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">First
                                         Name</label>
-                                    <input type="text" name="fname" required
+                                    <input type="text" name="fname" data-required="true"
+                                        data-error="First Name is required."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">Last Name</label>
-                                    <input type="text" name="lname" required
+                                    <input type="text" name="lname" data-required="true"
+                                        data-error="Last Name is required."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">Middle
                                         Name</label>
-                                    <input type="text" name="mname" required
+                                    <input type="text" name="mname" data-required="true"
+                                        data-error="Middle Name is required."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">Birthdate</label>
-                                    <input type="date" name="birthday" required
+                                    <input type="date" name="birthday" data-required="true"
+                                        data-error="Birthdate is required."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3 items-end">
                                 <div>
                                     <label class="block text-[11px] font-semibold text-slate-700 mb-1">User Role</label>
-                                    <select name="user_role" required
+                                    <select name="user_role" data-required="true" data-error="User Role is required."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none">
                                         <option value="" disabled selected>Select Role</option>
                                         <?php foreach ($roleOptions as $option): ?>
@@ -344,6 +373,9 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div>
+                                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
@@ -360,7 +392,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                     <div class="mt-8 flex justify-end items-center gap-3 pt-4 border-t border-slate-100">
                         <button type="button" onclick="toggleAddModal(false)"
-                            class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all">Cancel</button>
+                            class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">Cancel</button>
                         <button type="submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-bold shadow-md shadow-blue-100 transition-all">
                             Save User
@@ -394,8 +426,13 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <div>
                         <label
                             class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">Username</label>
-                        <input type="text" name="username" id="username_edit" required
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                        <input type="text" name="username" id="username_edit" data-required="true"
+                            data-error="Username is required."
+                            data-check-url="/check-availability.php?field=username&value=" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2
+                            focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                        <div>
+                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                        </div>
                     </div>
 
                     <div>
@@ -428,8 +465,8 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                     <div class="pt-4 flex justify-end items-center gap-3">
                         <button type="button" onclick="toggleEditModal(false)"
-                            class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800 transition-all">
-                            Cancel
+                            class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">Cancel
+
                         </button>
                         <button type="submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-100 transition-all">
@@ -448,5 +485,12 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 <script src="js/removeNotification.js" defer></script>
 <script src="js/user_list.js"></script>
 <script src="js/tooltip.js"></script>
+<script src="js/inputValidation.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        initFormValidation("addUserForm"),
+            initFormValidation("EditUserForm");
+    });
+</script>
 
 </html>

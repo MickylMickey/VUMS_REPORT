@@ -172,14 +172,18 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </button>
             </div>
 
-            <form action="../controllers/add_suggestions.php" method="POST" enctype="multipart/form-data"
-                class="p-6 space-y-5">
+            <form id="suggestionForm" action="../controllers/add_suggestions.php" method="POST"
+                enctype="multipart/form-data" class="p-6 space-y-5">
 
                 <div class="space-y-1.5">
                     <label class="text-[13px] font-semibold text-slate-600 ml-1">Describe your Suggestion</label>
                     <textarea name="suggestion_desc" id="suggestion_desc" rows="4"
                         class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
-                        placeholder="Tell us what's on your mind..." required></textarea>
+                        placeholder="Tell us what's on your mind..." data-required="true"
+                        data-error="Description is required."></textarea>
+                    <div>
+                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                    </div>
                 </div>
 
                 <div class="space-y-1.5">
@@ -197,8 +201,10 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                 <div class="flex items-center gap-3 pt-2">
                     <button type="button" onclick="toggleModal(false)"
-                        class="flex-1 px-4 py-3 text-sm font-bold text-slate-500 rounded-2xl hover:bg-slate-100 transition-colors">
-                        Discard
+                        style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold; background-color: #fb2424; color: white; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+                        onmouseover="this.style.backgroundColor='#c01c1c'"
+                        onmouseout="this.style.backgroundColor='#fb2424'">
+                        Cancel
                     </button>
                     <button type="submit"
                         class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
@@ -220,5 +226,11 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <script src="js/removeNotification.js" defer></script>
 <script src="js/suggestions.js"></script>
 <script src="js/tooltip.js"></script>
+<script src="js/inputValidation.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        initFormValidation("suggestionForm");
+    });
+</script>
 
 </html>

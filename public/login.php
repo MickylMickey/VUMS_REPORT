@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
     </div>
 
     <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        <div class="h-1.5 bg-blue-700"></div>
+        <div class="h-1.5 bg-blue-500"></div>
         <div class="p-8">
             <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Login</h2>
 
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_COOKIE['auth_token'])) {
                 </div>
 
                 <button type="submit"
-                    class="w-full py-3.5 rounded-lg bg-[#413072] hover:bg-[#34265b] text-white font-semibold shadow-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
+                    class="w-full py-3.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
                     Sign In
                 </button>
             </form>
