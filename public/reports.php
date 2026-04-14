@@ -14,9 +14,15 @@ $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
 
 // 1. Define your filters first
-$where = "r.status_id != ?";
-$params = [0];
-$types = "i";
+if ($isAdmin) {
+    $where = "r.status_id != ?";
+    $params = [0];
+    $types = "i";
+} else {
+    $where = "r.status_id != ? AND r.user_id = ?";
+    $params = [0, $current_user_id];
+    $types = "is";
+}
 
 // 2. RUN PAGINATION FIRST to generate $limit and $offset
 $pagination = getPaginationData(
@@ -239,9 +245,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                         data-cat="<?= $report['cat_id'] ?? 'other' ?>"
                                         data-mod="<?= $report['mod_id'] ?? 'other' ?>" data-sev="<?= $report['sev_id'] ?>"
                                         data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
-
-                                        <i class="fa-solid fa-pen-to-square mr-2"></i>
-                                        Edit
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
                                 </td>
                             <?php endif; ?>
@@ -271,7 +275,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 </span>
                 of <span class="font-medium text-slate-700">
                     <?= $totalRecords ?>
-                </span> users
+                </span> reports
             </p>
 
             <div class="flex gap-2">

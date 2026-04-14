@@ -44,7 +44,8 @@ $user = checkAuth('Admin');
                             <p class="text-slate-500 text-sm">Monitor and manage Categories.</p>
                         </div>
 
-                        <div class="relative w-full md:w-72 lg:w-80" data-tooltip="Search for categories by code, name, or description">
+                        <div class="relative w-full md:w-72 lg:w-80"
+                            data-tooltip="Search for categories by code, name, or description">
                             <i
                                 class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
 
@@ -106,7 +107,6 @@ $user = checkAuth('Admin');
                                             data-tooltip="Edit category details"
                                             class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
                                             <i class="fa-solid fa-pen-to-square"></i>
-                                            <span>Edit</span>
                                         </button>
                                     </td>
                                 </tr>
@@ -124,7 +124,8 @@ $user = checkAuth('Admin');
                             <p class="text-slate-500 text-sm">Monitor and manage Modules.</p>
                         </div>
 
-                        <div class="relative w-full md:w-72" data-tooltip="Search for modules by code, name, or description">
+                        <div class="relative w-full md:w-72"
+                            data-tooltip="Search for modules by code, name, or description">
                             <i
                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                             <input type="text" id="moduleSearch" onkeyup="filterTable('moduleSearch', 'moduleTable')"
@@ -180,7 +181,6 @@ $user = checkAuth('Admin');
                                             data-tooltip="Edit module details"
                                             class="hidden md:flex items-center gap-x-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 h-8 rounded-lg font-medium text-xs transition-all shadow-sm">
                                             <i class="fa-solid fa-pen-to-square"></i>
-                                            <span>Edit</span>
                                         </button>
                                     </td>
                                 </tr>
@@ -206,22 +206,30 @@ $user = checkAuth('Admin');
             <button onclick="closeGenericModal('addCategoryModal', 'addCategoryContainer')"
                 class="hover:text-gray-200"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form action="../controllers/add_category.php" method="POST" class="p-6 space-y-4">
+        <form id="addCategoryForm" action="../controllers/add_category.php" method="POST" class="p-6 space-y-4">
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Category Code</label>
-                <input type="text" name="category" required
+                <input type="text" name="category" data-required="true" data-error="Category Code is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                <textarea name="cat_desc" rows="3" required
+                <textarea name="cat_desc" rows="3" data-required="true" data-error="Category Description is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div style="display: flex; gap: 12px; padding-top: 8px;">
                 <button type="button" onclick="closeGenericModal('addCategoryModal', 'addCategoryContainer')"
-                    style="flex: 1; padding: 12px 0; background-color: #10b981; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
-                    onmouseover="this.style.backgroundColor='#059669'"
-                    onmouseout="this.style.backgroundColor='#10b981'">
+                    style="flex: 1; padding: 12px 0; background-color: #fb2424; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+                    onmouseover="this.style.backgroundColor='#c01c1c'"
+                    onmouseout="this.style.backgroundColor='#fb2424'">
                     Close
                 </button>
 
@@ -247,22 +255,30 @@ $user = checkAuth('Admin');
             <button onclick="closeGenericModal('addModuleModal', 'addModuleContainer')"><i
                     class="fa-solid fa-xmark"></i></button>
         </div>
-        <form action="../controllers/add_module.php" method="POST" class="p-6 space-y-4">
+        <form id="AddModuleForm" action="../controllers/add_module.php" method="POST" class="p-6 space-y-4">
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Module Code</label>
-                <input type="text" name="module" required
+                <input type="text" name="module" data-required="true" data-error="Module Code is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                <textarea name="mod_desc" rows="3" required
+                <textarea name="mod_desc" rows="3" data-required="true" data-error="Module Description is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div style="display: flex; gap: 12px; padding-top: 8px;">
                 <button type="button" onclick="closeGenericModal('addModuleModal', 'addModuleContainer')"
-                    style="flex: 1; padding: 12px 0; background-color: #10b981; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
-                    onmouseover="this.style.backgroundColor='#059669'"
-                    onmouseout="this.style.backgroundColor='#10b981'">
+                    style="flex: 1; padding: 12px 0; background-color: #fb2424; color: white; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; transition: background-color 0.2s;"
+                    onmouseover="this.style.backgroundColor='#c01c1c'"
+                    onmouseout="this.style.backgroundColor='#fb2424'">
                     Close
                 </button>
 
@@ -288,21 +304,31 @@ $user = checkAuth('Admin');
             <button onclick="closeEditCategoryModal()" class="hover:text-gray-200"><i
                     class="fa-solid fa-xmark"></i></button>
         </div>
-        <form id="editForm" action="../controllers/edit_category.php" method="POST" class="p-6 space-y-4">
+        <form id="editFormCategory" action="../controllers/edit_category.php" method="POST" class="p-6 space-y-4">
             <input type="hidden" name="cat_id" id="edit_cat_id">
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Category Name</label>
-                <input type="text" name="edit_category" id="edit_category_input" required
+                <input type="text" name="edit_category" id="edit_category_input" data-required="true"
+                    data-error="Category name is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                <input type="text" name="edit_cat_desc" id="edit_cat_desc_input" required
+                <input type="text" name="edit_cat_desc" id="edit_cat_desc_input" data-required="true"
+                    data-error="Category description is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div class="flex justify-end gap-2 pt-2">
                 <button type="button" onclick="closeEditCategoryModal()"
-                    class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl transition">Cancel</button>
+                    class="bg-[#fb2424] hover:bg-[#c01c1c] text-white px-4 py-2 rounded-xl transition">Cancel</button>
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition">Save
                     Changes</button>
@@ -322,21 +348,31 @@ $user = checkAuth('Admin');
             <button onclick="closeEditModuleModal()" class="hover:text-gray-200"><i
                     class="fa-solid fa-xmark"></i></button>
         </div>
-        <form id="editForm" action="../controllers/edit_module.php" method="POST" class="p-6 space-y-4">
+        <form id="editFormModule" action="../controllers/edit_module.php" method="POST" class="p-6 space-y-4">
             <input type="hidden" name="module_id" id="edit_module_id">
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Module Name</label>
-                <input type="text" name="edit_module_name" id="edit_module_name_input" required
+                <input type="text" name="edit_module_name" id="edit_module_name_input" data-required="true"
+                    data-error="Module name is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div>
                 <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                <input type="text" name="edit_module_desc" id="edit_module_desc_input" required
+                <input type="text" name="edit_module_desc" id="edit_module_desc_input" data-required="true"
+                    data-error="Module description is required."
                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all">
+                <div>
+                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                </div>
             </div>
+
             <div class="flex justify-end gap-2 pt-2">
                 <button type="button" onclick="closeEditModuleModal()"
-                    class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl transition">Cancel</button>
+                    class="bg-[#fb2424] hover:bg-[#c01c1c] text-white px-4 py-2 rounded-xl transition">Cancel</button>
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition">Save
                     Changes</button>
@@ -356,7 +392,7 @@ $user = checkAuth('Admin');
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         initFormValidation("addCategoryForm"),
-            initFormValidation("addModuleForm"),
+            initFormValidation("AddModuleForm"),
             initFormValidation("editFormCategory"),
             initFormValidation("editFormModule");
     });

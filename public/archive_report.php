@@ -10,9 +10,15 @@ $severities = fetchAllFromTable($conn, 'severity');
 $visibility = new reportArchiveVisibility($conn);
 
 // 1. Define your filters first
-$where = "ra.status_id != ?";
-$params = [0];
-$types = "i";
+if ($isAdmin) {
+    $where = "ra.status_id != ?";
+    $params = [0];
+    $types = "i";
+} else {
+    $where = "ra.status_id != ? AND ra.user_id = ?";
+    $params = [0, $current_user_id];
+    $types = "is";
+}
 
 // 2. RUN PAGINATION FIRST to generate $limit and $offset
 $pagination = getPaginationData(
@@ -111,20 +117,13 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <div class="relative flex-grow md:flex-grow-0 md:min-w-[300px]">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input 
-    type="text" 
-    id="searchInput" 
-    placeholder="Search by Reporter or Description . . ." 
-    data-tooltip="Type to search reports and descriptions"
-    class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
->
+                        <input type="text" id="searchInput" placeholder="Search by Reporter or Description . . ."
+                            data-tooltip="Type to search reports and descriptions"
+                            class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                     </div>
 
-                   <select 
-    id="severityFilter"
-    data-tooltip="Filter reports by severity"
-    class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]"
->
+                    <select id="severityFilter" data-tooltip="Filter reports by severity"
+                        class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer h-[40px]">
                         <option value="">All Severities</option>
                         <?php foreach ($severities as $severity): ?>
                             <option value="<?= htmlspecialchars($severity['sev_id']) ?>">
@@ -234,7 +233,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         </span>
                         of <span class="font-medium text-slate-700">
                             <?= $totalRecords ?>
-                        </span> users
+                        </span> Reports
                     </p>
 
                     <div class="flex gap-2">
@@ -279,14 +278,9 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <div class="relative min-w-[280px]">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input 
-    type="text" 
-    id="sugSearchInput" 
-    name="sug_q" 
-    placeholder="Search users or suggestion..."
-    data-tooltip="Search by username or suggestion"
-    class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
->
+                        <input type="text" id="sugSearchInput" name="sug_q" placeholder="Search users or suggestion..."
+                            data-tooltip="Search by username or suggestion"
+                            class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <button id="resetSugBtn" data-tooltip="Reset Filters"
                         class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
@@ -352,7 +346,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </span>
                     of <span class="font-medium text-slate-700">
                         <?= $s_totalRecords ?>
-                    </span> users
+                    </span> Suggestions
                 </p>
 
                 <div class="flex gap-2">
@@ -383,8 +377,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </section>
     </main>
     <div id="tooltip"
-    class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
-</div>
+        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+    </div>
 </body>
 <script src="js/archive_module.js"></script>
 <script src="js/tooltip.js"></script>
