@@ -282,7 +282,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             data-tooltip="Search by username or suggestion"
                             class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     </div>
-                    <button id="resetSugBtn" data-tooltip="Reset Filters"
+                    <button id="resetSugBtn" data-tooltip="Reset suggestion search"
                         class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-xl transition-all">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
@@ -376,11 +376,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
         </section>
     </main>
+    <?php include "templates/footer.php"; ?>
     <div id="tooltip"
         class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
     </div>
 </body>
 <script src="js/archive_module.js"></script>
-<script src="js/tooltip.js"></script>
+
 
 </html>

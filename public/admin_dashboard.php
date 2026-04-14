@@ -30,31 +30,32 @@ $user_role = $userData->role;
     <title>Admin Dashboard</title>
 </head>
 
-<body class="pt-24">
+<body class="bg-[#f8fafc] min-h-screen flex flex-col antialiased text-slate-900 pt-24">
     <div>
         <?php include "templates/navbar.php"; ?>
     </div>
 
-
-    <!-- Your content -->
-    <!-- Show success message if they just logged in -->
-    <div class="max-w-4xl mx-auto mt-4">
-        <?= showValidation() ?>
-    </div>
-
-    <div class="p-8">
-        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-
-        <div class="mt-6 p-6 bg-white rounded-xl shadow-sm border border-slate-200">
-            <h2 class="font-semibold mb-2">User Info (Decoded from JWT):</h2>
-            <pre class="bg-slate-100 p-4 rounded text-xs"><?php print_r($user); ?></pre>
+    <main class="flex-grow">
+        <div class="max-w-4xl mx-auto mt-4 px-8">
+            <?= showValidation() ?>
         </div>
 
-        <!--  <a href="../controllers/logout_handler.php" class="text-red-500 hover:text-red-700 font-medium">
-            <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
-        </a>
-        -->
+        <div class="p-8">
+            <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+
+            <div class="mt-6 p-6 bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <h2 class="font-semibold mb-2 text-slate-700">User Info (Decoded from JWT):</h2>
+                <pre class="bg-slate-50 p-4 rounded-lg text-xs font-mono text-slate-600 border border-slate-100"><?php print_r($userData); ?></pre>
+            </div>
+
+            </div>
+    </main>
+
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
     </div>
+
+    <?php ob_end_flush(); ?>
 </body>
 
 </html>
