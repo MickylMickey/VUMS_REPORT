@@ -529,14 +529,14 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
             bg-slate-900/70 backdrop-blur-sm 
             opacity-0 transition-all duration-300">
 
-    <!-- Modal -->
+
     <div id="archiveModalContent"
          class="bg-white w-full max-w-md mx-4 
                 rounded-3xl shadow-2xl 
                 transform scale-95 opacity-0 transition-all duration-300 
                 overflow-hidden">
 
-        <!-- Header -->
+       
         <div class="px-6 pt-6 pb-4 text-center">
             <div class="mx-auto flex items-center justify-center w-14 h-14 
                         rounded-full  text-red-600 mb-4">
