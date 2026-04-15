@@ -127,7 +127,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
 
             <div class="mt-8 pt-6 flex justify-center w-full"> 
     <button
-        data-tooltip="Configurate your profile details"
+        data-tooltip="Edit profile information"
         class="relative group w-fit flex items-center justify-center gap-2 px-6 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl shadow-sm hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200"
         onclick="openEditUserModal(
             '<?= htmlspecialchars($userData['user_id'] ?? '') ?>', 
@@ -147,7 +147,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
         </div>
     </div>
 
-    <div class="lg:col-span-2 space-y-6 max-h-[80vh] overflow-y-auto pr-2">
+    <div class="lg:col-span-2 self-start space-y-6 max-h-[80vh] overflow-y-auto pr-2">
 
     
     <div 
@@ -173,7 +173,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                     <i class="fa-solid fa-user"></i>
                 </div>
                 <div>
-                    <p class="text-xs text-slate-500">First Name</p>
+                    <p class="text-[15px] text-slate-500">First Name</p>
                     <p class="font-semibold text-slate-800">
                         <?= htmlspecialchars($userData['user_first_name'] ?? 'N/A') ?>
                     </p>
@@ -186,7 +186,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                     <i class="fa-solid fa-circle-user"></i>
                 </div>
                 <div>
-                    <p class="text-xs text-slate-500">Middle Name</p>
+                    <p class="text-[15px] text-slate-500">Middle Name</p>
                     <p class="font-semibold text-slate-800">
                         <?= htmlspecialchars($userData['user_middle_name'] ?? 'N/A') ?>
                     </p>
@@ -199,7 +199,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                     <i class="fa-solid fa-id-card"></i>
                 </div>
                 <div>
-                    <p class="text-xs text-slate-500">Last Name</p>
+                    <p class="text-[15px] text-slate-500">Last Name</p>
                     <p class="font-semibold text-slate-800">
                         <?= htmlspecialchars($userData['user_last_name'] ?? 'N/A') ?>
                     </p>
@@ -282,7 +282,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                 class="px-8 py-5 flex justify-between items-center bg-white z-10 shrink-0">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800 tracking-tight">Edit User Profile</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Update personal details and account settings</p>
+                    <p class="text-[15px] text-slate-500 mt-0.5">Update personal details and account settings</p>
                 </div>
                 <button onclick="closeEditUserModal()"
                     class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
@@ -319,7 +319,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                 <input type="file" id="user_image" name="user_image" accept="image/*"
                                     class="hidden">
                             </div>
-                            <p class="text-[11px] text-slate-400 font-medium text-center w-32">Allowed: JPG, PNG
+                            <p class="text-[15px] text-slate-400 font-medium text-center w-32">Allowed: JPG, PNG
                             </p>
                         </div>
 

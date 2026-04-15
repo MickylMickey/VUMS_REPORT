@@ -35,7 +35,10 @@ if (!empty($user->user_prof)) {
             <a href="reports.php" class="hover:text-black transition-colors">Reports</a>
             <a href="suggestions.php" class="hover:text-black transition-colors">Suggestions</a>
             <a href="archive_report.php" class="hover:text-black transition-colors">Completed Tickets</a>
+
             <?php if ($isAdmin): ?>
+                <a href="archive_list.php" class="hover:text-black transition-colors">Archived Users</a>
+
                 <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
                 <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
             <?php endif; ?>
@@ -66,8 +69,6 @@ if (!empty($user->user_prof)) {
         </div>
     </div>
 </nav>
-
-
 
 <script src="/public/js/navbar.js"></script>
 <script src="/public/js/secret-key.js"></script>

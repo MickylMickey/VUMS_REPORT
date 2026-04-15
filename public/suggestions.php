@@ -118,7 +118,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <label class="text-[15px] font-bold text-slate-400 uppercase tracking-wider ml-1">
                                 Status</label>
                             <select
-                                class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                                class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none"
                                 data-report-id="<?= $sug['suggestion_id'] ?>">
                                 <?php foreach ($statusOptions as $status): ?>
                                     <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
