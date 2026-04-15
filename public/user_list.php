@@ -3,21 +3,22 @@ require_once __DIR__ . "/../init.php";
 ob_start();
 
 $user = checkAuth('Admin');
+// Siguraduhin na ang $role ay nakuha mula sa session o checkAuth
+$role = $_SESSION['user_role_id'] ?? ''; 
 $isAdmin = RoleHelper::isAdmin($role);
 $isUser = RoleHelper::isUser($role);
 $userVisibility = new UserVisibility($conn);
 $roleOptions = fetchRoles($conn);
 
-
-// 1. Define your filters first
-$where = "u.user_status_id != ?";
-$params = [0];
+// 1. Define your filters (Active users only)
+$where = "u.user_status_id = ?";
+$params = [1]; // 1 ang status para sa Active
 $types = "i";
 
-// 2. RUN PAGINATION FIRST to generate $limit and $offset
+// 2. RUN PAGINATION FIRST
 $pagination = getPaginationData(
     $conn,
-    "users u", // Use the alias 'u' to match your $where clause
+    "users u INNER JOIN user_profile up ON u.user_id = up.user_id",
     $_GET['limit'] ?? 10,
     $_GET['page'] ?? 1,
     $where,
@@ -25,14 +26,14 @@ $pagination = getPaginationData(
     $types
 );
 
-// 3. NOW you can extract these (this fixes the 'Undefined variable' warning)
+// 3. Extract pagination values
 $limit = $pagination['limit'];
 $offset = $pagination['offset'];
 $totalPages = $pagination['totalPages'];
 $totalRecords = $pagination['totalRecords'];
 $page = $pagination['page'];
 
-// 4. FINALLY, fetch the users using those fresh variables
+// 4. Fetch the users using dynamic limit and offset
 $users = $userVisibility->getVisibleUsers($limit, $offset);
 ?>
 
@@ -190,32 +191,47 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                             <!-- ACTIONS -->
                                             <td class="px-6 py-4 whitespace-nowrap text-right">
-                                                <div
-                                                    class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-all duration-300">
+    <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-all duration-300">
 
-                                                    <a href="../public/user_profile.php?u=<?= $user_id ?>"
-                                                        data-tooltip="View profile details"
-                                                        class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 text-xs font-bold hover:bg-emerald-600 hover:text-white hover:shadow-md hover:shadow-emerald-200 active:scale-95 transition-all">
-                                                        <i class="fa-solid fa-eye"></i>
-                                                    </a>
+        <!-- VIEW -->
+        <a href="../public/user_profile.php?u=<?= $user_id ?>"
+           data-tooltip="View profile details"
+           class="inline-flex items-center justify-center w-12 h-12 rounded-xl
+                  bg-emerald-50 text-emerald-600 border border-emerald-100
+                  hover:bg-emerald-600 hover:text-white hover:shadow-lg hover:shadow-emerald-200
+                  active:scale-95 transition-all duration-200">
 
-                                                    <button
-                                                        onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
-                                                        data-tooltip="Edit account"
-                                                        class="hidden md:inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-200 active:scale-95 transition-all">
-                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                    </button>
+            <i class="fa-solid fa-user-shield text-lg"></i>
+        </a>
 
-                                                    <?php if (!$isSelf): ?>
-                                                        <button onclick="openArchiveUserModal('<?= $user_id ?>')"
-                                                            data-tooltip="Archive account"
-                                                            class="hidden md:inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 text-xs font-bold hover:bg-rose-600 hover:text-white hover:shadow-md hover:shadow-rose-200 active:scale-95 transition-all">
-                                                            <i class="fa-solid fa-box-archive"></i>
-                                                        </button>
-                                                    <?php endif; ?>
+        <!-- EDIT -->
+        <button
+            onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
+            data-tooltip="Edit account"
+            class="hidden md:inline-flex items-center justify-center w-12 h-12 rounded-xl
+                   bg-blue-50 text-blue-600 border border-blue-100
+                   hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200
+                   active:scale-95 transition-all duration-200">
 
-                                                </div>
-                                            </td>
+            <i class="fa-solid fa-pen-to-square text-lg"></i>
+        </button>
+
+        <!-- ARCHIVE -->
+        <?php if (!$isSelf): ?>
+            <button
+                onclick="openArchiveUserModal('<?= $user['user_id'] ?>')"
+                data-tooltip="Archive this account"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-xl
+                       bg-red-50 text-red-600 border border-red-100
+                       hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-200
+                       active:scale-95 transition-all duration-200">
+
+                <i class="fa-solid fa-box-archive text-lg"></i>
+            </button>
+        <?php endif; ?>
+
+    </div>
+</td>
 
                                         </tr>
                                     <?php endforeach; endif; ?>
@@ -506,6 +522,68 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
     <div class="mt-auto">
         <?php include "templates/footer.php"; ?>
     </div>
+
+    <!-- Overlay -->
+<div id="archiveUserModal"
+     class="fixed inset-0 z-[200] hidden items-center justify-center 
+            bg-slate-900/70 backdrop-blur-sm 
+            opacity-0 transition-all duration-300">
+
+    <!-- Modal -->
+    <div id="archiveModalContent"
+         class="bg-white w-full max-w-md mx-4 
+                rounded-3xl shadow-2xl 
+                transform scale-95 opacity-0 transition-all duration-300 
+                overflow-hidden">
+
+        <!-- Header -->
+        <div class="px-6 pt-6 pb-4 text-center">
+            <div class="mx-auto flex items-center justify-center w-14 h-14 
+                        rounded-full  text-red-600 mb-4">
+                <i class="fa-solid fa-box-archive text-xl"></i>
+            </div>
+
+            <h3 class="text-xl font-semibold text-gray-900">
+                Archive User
+            </h3>
+            <p class="text-sm text-gray-500 mt-1">
+                This action will archive the selected user. You can restore them later.
+            </p>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Actions -->
+        <form action="../controllers/archive_user.php"
+              method="POST"
+              class="px-6 py-5 flex gap-3">
+
+            <input type="hidden" name="user_id" id="archiveUserId">
+
+            <button type="button"
+        onclick="closeArchiveUserModal()"
+        class="flex-1 py-2.5 rounded-xl 
+               border border-gray-300 
+               bg-white text-gray-700 font-medium
+               hover:bg-gray-50 hover:border-gray-400
+               transition-all duration-200">
+    Cancel
+</button>
+
+            <!-- Confirm -->
+            <button type="submit"
+                    class="flex-1 py-2.5 rounded-xl 
+                           bg-red-600 text-white font-semibold
+                           shadow-md shadow-red-200
+                           hover:bg-red-700 hover:shadow-lg hover:shadow-red-300
+                           active:scale-[0.98]
+                           transition-all duration-200">
+                Confirm
+            </button>
+        </form>
+    </div>
+</div>
 </body>
 
 <?php ob_end_flush(); ?>

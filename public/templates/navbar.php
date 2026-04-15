@@ -28,18 +28,21 @@ if (!empty($user->user_prof)) {
         </div>
 
         <div class="hidden md:flex gap-14 text-md font-medium text-gray-600">
-            <a href="<?= $isAdmin ? 'admin_dashboard.php' : 'user_dashboard.php' ?>"
-                class="hover:text-black transition-colors">
-                Dashboard
-            </a>
-            <a href="reports.php" class="hover:text-black transition-colors">Reports</a>
-            <a href="suggestions.php" class="hover:text-black transition-colors">Suggestions</a>
-            <a href="archive_report.php" class="hover:text-black transition-colors">Completed Tickets</a>
-            <?php if ($isAdmin): ?>
-                <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
-                <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
-            <?php endif; ?>
-        </div>
+    <a href="<?= $isAdmin ? 'admin_dashboard.php' : 'user_dashboard.php' ?>"
+        class="hover:text-black transition-colors">
+        Dashboard
+    </a>
+    <a href="reports.php" class="hover:text-black transition-colors">Reports</a>
+    <a href="suggestions.php" class="hover:text-black transition-colors">Suggestions</a>
+    <a href="archive_report.php" class="hover:text-black transition-colors">Completed Tickets</a>
+    
+    <?php if ($isAdmin): ?>
+        <a href="archive_list.php" class="hover:text-black transition-colors">Archived Users</a>
+        
+        <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
+        <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
+    <?php endif; ?>
+</div>
 
         <div class="relative inline-block text-left">
             <button id="profileButton"
@@ -66,7 +69,5 @@ if (!empty($user->user_prof)) {
         </div>
     </div>
 </nav>
-
-
 
 <script src="/public/js/navbar.js"></script>

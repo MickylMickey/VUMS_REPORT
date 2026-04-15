@@ -9,9 +9,9 @@ class UserVisibility
         $this->conn = $conn;
     }
 
-    public function getVisibleUsers(?int $limit = null, ?int $offset = null): array
+    // Nagdagdag tayo ng $status = 1 para by default, Active users lang ang kukunin niya
+    public function getVisibleUsers(?int $limit = null, ?int $offset = null, int $status = 1): array
     {
-        // Inside your getVisibleUsers method, make sure the SELECT includes the email
         $sql = "SELECT u.user_id, u.username, u.user_role_id, 
                up.user_first_name, up.user_middle_name, up.user_last_name, 
                up.email, up.user_prof, 
@@ -19,9 +19,8 @@ class UserVisibility
         FROM users u
         INNER JOIN user_profile up ON u.user_id = up.user_id
         INNER JOIN user_role r ON u.user_role_id = r.user_role_id
-        WHERE u.user_status_id IN (1, 2, 3)
-            ORDER BY (r.role_name = 'Admin') DESC, u.username ASC, 
-            u.username ASC"; // Secondarily sort by name A-Z";
+        WHERE u.user_status_id = $status
+            ORDER BY (r.role_name = 'Admin') DESC, u.username ASC"; 
 
         if ($limit !== null) {
             $limit = max(0, (int) $limit);
@@ -34,7 +33,6 @@ class UserVisibility
 
         $result = $this->conn->query($sql);
         if (!$result) {
-            // Log error or return empty array
             return [];
         }
         return $result->fetch_all(MYSQLI_ASSOC);

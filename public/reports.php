@@ -178,10 +178,10 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             </td>
 
                             <td class="px-6 py-4">
-                                <div class="text-sm font-semibold text-slate-700">
+                                <div class="text-medium font-semibold text-slate-700">
                                     <?= htmlspecialchars($report['reporter_name']) ?>
                                 </div>
-                                <div class="text-[11px] text-slate-400">System User</div>
+                                <div class="text-[12px] text-slate-400">System User</div>
                             </td>
 
                             <td class="px-6 py-4">
@@ -220,7 +220,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                             <td class="px-6 py-4">
                                 <select
-                                    class="status-updater bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                                    class="status-updater bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-semibold text-slate-600 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
                                     data-report-id="<?= $report['report_id'] ?>" data-user-id="<?= $current_user_id ?>">
                                     <?php foreach ($statusOptions as $status): ?>
                                         <option value="<?= $status['status_id'] ?>"
