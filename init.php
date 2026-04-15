@@ -1,6 +1,10 @@
 <?php
-ob_clean();
-session_start();
+if (ob_get_length())
+    ob_clean();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Config and autoload
 require_once __DIR__ . "/config/config.php";

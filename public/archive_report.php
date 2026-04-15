@@ -108,7 +108,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <div class="flex items-center gap-3">
                     <div
                         class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                        <i class="fa-solid fa-box-archive"></i>
+                        <i class="fa-solid fa-box-archive" id="card1" onclick="handleCardClick('card1')"></i>
                     </div>
                     <h2 class="text-xl font-bold">System Reports Archive</h2>
                 </div>

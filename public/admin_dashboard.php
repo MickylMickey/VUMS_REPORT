@@ -5,31 +5,6 @@ ob_start();
 $userData = checkAuth('Admin');
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
-
-// dashboard_stats.php
-
-// 1. Get the main 4 metrics
-$statsQuery = "SELECT 
-    COUNT(CASE WHEN sev_id = 1 AND status_id != 3 THEN 1 END) AS critical_count,
-    COUNT(CASE WHEN status_id IN (1, 2) THEN 1 END) AS active_count,
-    COUNT(CASE WHEN status_id = 1 THEN 1 END) AS pending_count,
-    COUNT(CASE WHEN status_id = 3 AND DATE(report_updated_at) = CURDATE() THEN 1 END) AS resolved_today
-FROM report";
-
-$result = $conn->query($statsQuery);
-$data = $result->fetch_assoc();
-
-// 2. Get 'Trend' (Reports created in last 24 hours)
-$trendQuery = "SELECT COUNT(*) as recent FROM report WHERE report_created_at >= NOW() - INTERVAL 1 DAY";
-$trendResult = $conn->query($trendQuery);
-$trendData = $trendResult->fetch_assoc();
-
-// Variables for your HTML
-$critical = $data['critical_count'] ?? 0;
-$active = $data['active_count'] ?? 0;
-$pending = $data['pending_count'] ?? 0;
-$resolved = $data['resolved_today'] ?? 0;
-$newToday = $trendData['recent'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -44,76 +19,230 @@ $newToday = $trendData['recent'] ?? 0;
 </head>
 
 <body class="bg-[#f8fafc] min-h-screen flex flex-col antialiased text-slate-900 pt-24">
-    <div>
-        <?php include "templates/navbar.php"; ?>
-    </div>
 
-    <main class="flex-grow p-20">
-        <div class="max-w-4xl mx-auto mt-4 px-8">
+    <?php include "templates/navbar.php"; ?>
+    <main class="flex-grow p-6 md:p-8 lg:p-10 space-y-6 max-w-[1600px] mx-auto w-full bg-slate-50">
+
+        <div class="empty:hidden">
             <?= showValidation() ?>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
 
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl">
-                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            <div
+                class="xl:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col border-r border-slate-100 last:border-0 px-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-red-50 flex items-center justify-center">
+                            <i class="fa-solid fa-fire text-[10px] text-red-600"></i>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Critical</p>
                     </div>
-                    <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-lg">+2 since
-                        yesterday</span>
+                    <h3 id="stat-critical" class="text-2xl font-black text-red-600">0</h3>
                 </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-900"><?= $critical ?></h3>
-                    <p class="text-sm font-medium text-slate-500">Critical Alerts</p>
+                <div class="flex flex-col border-r border-slate-100 last:border-0 px-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-orange-50 flex items-center justify-center">
+                            <i class="fa-solid fa-triangle-exclamation text-[10px] text-orange-500"></i>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">High</p>
+                    </div>
+                    <h3 id="stat-high" class="text-2xl font-black text-orange-500">0</h3>
+                </div>
+                <div class="flex flex-col border-r border-slate-100 last:border-0 px-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-yellow-50 flex items-center justify-center">
+                            <i class="fa-solid fa-circle-exclamation text-[10px] text-yellow-600"></i>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Medium</p>
+                    </div>
+                    <h3 id="stat-medium" class="text-2xl font-black text-yellow-500">0</h3>
+                </div>
+                <div class="flex flex-col px-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center">
+                            <i class="fa-solid fa-shield-check text-[10px] text-green-600"></i>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Low</p>
+                    </div>
+                    <h3 id="stat-low" class="text-2xl font-black text-green-500">0</h3>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                        <i class="fa-solid fa-envelope-open-text text-xl"></i>
+            <div
+                class="xl:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 bg-blue-600 p-5 rounded-2xl shadow-lg shadow-blue-200">
+                <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
+                    <p
+                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt-lightning text-blue-200 opacity-70"></i> Active
+                    </p>
+                    <h3 id="stat-active" class="text-2xl font-black text-white">0</h3>
+                </div>
+                <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
+                    <p
+                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-blue-200 opacity-70"></i> Pending
+                    </p>
+                    <h3 id="stat-pending" class="text-2xl font-black text-white">0</h3>
+                </div>
+                <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
+                    <p
+                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-spinner fa-spin-pulse text-blue-200 opacity-70"></i> Progress
+                    </p>
+                    <h3 id="stat-in-progress" class="text-2xl font-black text-white">0</h3>
+                </div>
+                <div class="flex flex-col px-2">
+                    <p
+                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-blue-200 opacity-70"></i> Resolved
+                    </p>
+                    <h3 id="stat-resolved" class="text-2xl font-black text-white">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-blue-500"></i> Monthly Report Trends
+                        </h3>
+                        <div class="flex space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                            <span class="text-xs text-slate-500 uppercase font-bold tracking-tighter">Volume</span>
+                        </div>
+                    </div>
+                    <div class="h-[300px]">
+                        <canvas id="trendChart"></canvas>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-900"><?= $active ?></h3>
-                    <p class="text-sm font-medium text-slate-500">Active Reports</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-indigo-500"></i> Category Distribution
+                        </h3>
+                        <div class="h-[250px]">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-emerald-500"></i> Queue Status
+                        </h3>
+                        <div class="h-[250px]">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl">
-                        <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+            <div class="lg:col-span-4 h-[760px]">
+                <div
+                    class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
+                    <div class="flex items-center justify-between mb-6 flex-none">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-blue-50 rounded-xl">
+                                <i class="fa-solid fa-cubes text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800">Module Distribution</h3>
+                                <p class="text-xs text-slate-400">System performance per sector</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 px-3 py-1 rounded-full">
+                            <span id="overall-total" class="text-lg font-black text-blue-600">0</span>
+                        </div>
+                    </div>
+
+                    <div id="module-container" class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                        <div class="space-y-4">
+                            <div
+                                class="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-server text-slate-400"></i>
+                                    <span class="text-sm font-semibold text-slate-700">Network Node Alpha</span>
+                                </div>
+                                <span class="text-xs font-bold text-blue-500">98%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-900"><?= $pending ?></h3>
-                    <p class="text-sm font-medium text-slate-500">Pending Triage</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1">
+                <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-medal text-amber-500"></i> Top Personnel
+                </h3>
+                <div class="overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                                <th class="pb-3 text-left font-bold">User</th>
+                                <th class="pb-3 text-right font-bold">Reports</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reporter-list" class="divide-y divide-slate-50">
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                        <i class="fa-solid fa-check-double text-xl"></i>
-                    </div>
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">84% Rate</span>
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-tower-broadcast text-red-500"></i> Critical Reports
+                    </h3>
+                    <span
+                        class="flex items-center gap-2 text-[10px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-bold animate-pulse">
+                        <span class="w-1.5 h-1.5 bg-red-600 rounded-full"></span> LIVE FEED
+                    </span>
                 </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-900"><?= $resolved ?></h3>
-                    <p class="text-sm font-medium text-slate-500">Resolved Today</p>
+                <div id="critical-list" class="space-y-3">
                 </div>
             </div>
-
         </div>
     </main>
 
-    <div class="mt-auto">
-        <?php include "templates/footer.php"; ?>
-    </div>
-
+    <?php include "templates/footer.php"; ?>
     <?php ob_end_flush(); ?>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.min.js"></script>
+    <script src="js/charts.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("Dashboard initialized");
+            initDashboard();
+        });
+    </script>
+
 </body>
+<style>
+    /* Custom thin scrollbar for the module list */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+    }
+</style>
 
 </html>

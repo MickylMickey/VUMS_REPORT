@@ -70,3 +70,4 @@ if (!empty($user->user_prof)) {
 
 
 <script src="/public/js/navbar.js"></script>
+<script src="/public/js/secret-key.js"></script>
