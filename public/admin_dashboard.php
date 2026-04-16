@@ -5,6 +5,7 @@ ob_start();
 $userData = checkAuth('Admin');
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
+
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +26,28 @@ $user_role = $userData->role;
 
         <div class="empty:hidden">
             <?= showValidation() ?>
+        </div>
+        <?php
+        $username = ucfirst($userData->username ?? 'User');
+        ?>
+
+        <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-lg flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-black">
+                    Hello, <?= htmlspecialchars($username) ?>
+                </h2>
+                <p class="text-sm text-blue-100 mt-1">
+                    Welcome back, <?= htmlspecialchars($username) ?>. Here's what's happening today.
+            </div>
+
+            <div class="hidden md:flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-xs text-blue-200 uppercase tracking-widest">Today</p>
+                    <p class="font-bold">
+                        <?= date('F d, Y') ?>
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -88,14 +111,14 @@ $user_role = $userData->role;
                 <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
                     <p
                         class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-spinner fa-spin-pulse text-blue-200 opacity-70"></i> Progress
+                        <i class="fa-solid fa-spinner fa-spin-pulse text-blue-200 opacity-70"></i> In-Progress
                     </p>
                     <h3 id="stat-in-progress" class="text-2xl font-black text-white">0</h3>
                 </div>
                 <div class="flex flex-col px-2">
                     <p
                         class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check text-blue-200 opacity-70"></i> Resolved
+                        <i class="fa-solid fa-circle-check text-blue-200 opacity-70"></i> Resolved Today
                     </p>
                     <h3 id="stat-resolved" class="text-2xl font-black text-white">0</h3>
                 </div>

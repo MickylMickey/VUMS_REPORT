@@ -3,8 +3,7 @@ require_once __DIR__ . "/../init.php";
 ob_start();
 
 $user = checkAuth('Admin');
-// Siguraduhin na ang $role ay nakuha mula sa session o checkAuth
-$role = $_SESSION['user_role_id'] ?? ''; 
+$role = $_SESSION['user_role_id'] ?? '';
 $isAdmin = RoleHelper::isAdmin($role);
 $isUser = RoleHelper::isUser($role);
 $userVisibility = new UserVisibility($conn);
@@ -12,7 +11,7 @@ $roleOptions = fetchRoles($conn);
 
 // 1. Define your filters (Active users only)
 $where = "u.user_status_id = ?";
-$params = [1]; // 1 ang status para sa Active
+$params = [1];
 $types = "i";
 
 // 2. RUN PAGINATION FIRST
@@ -51,14 +50,14 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 <body class="bg-[#f8fafc] min-h-screen flex flex-col antialiased text-slate-900 pt-24">
     <div><?php include "templates/navbar.php"; ?>
     </div>
-    <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
-        <div class="pointer-events-auto">
-            <?= showValidation() ?>
-        </div>
-    </div>
 
     <main class="flex-grow">
         <div class="container mx-auto p-6">
+            <div id="validationBlock" class="fixed bottom-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+                <div class="pointer-events-auto">
+                    <?= showValidation() ?>
+                </div>
+            </div>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
@@ -105,28 +104,28 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-separate border-spacing-0">
                             <thead>
-    <tr style="background-color: #3b82f6;">
-        <th
-            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
-            User Details
-        </th>
+                                <tr style="background-color: #3b82f6;">
+                                    <th
+                                        style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
+                                        User Details
+                                    </th>
 
-        <th
-            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
-            Username
-        </th>
+                                    <th
+                                        style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
+                                        Username
+                                    </th>
 
-        <th
-            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
-            Access Level
-        </th>
+                                    <th
+                                        style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb;">
+                                        Access Level
+                                    </th>
 
-        <th
-            style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb; text-align: right;">
-            Actions
-        </th>
-    </tr>
-</thead>
+                                    <th
+                                        style="padding: 16px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: white; border-bottom: 1px solid #2563eb; text-align: right;">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
                             <tbody class="divide-y divide-slate-100">
                                 <?php if (!empty($users)):
                                     foreach ($users as $user):
@@ -191,47 +190,44 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                             <!-- ACTIONS -->
                                             <td class="px-6 py-4 whitespace-nowrap text-right">
-    <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-all duration-300">
+                                                <div
+                                                    class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-all duration-300">
 
-        <!-- VIEW -->
-        <a href="../public/user_profile.php?u=<?= $user_id ?>"
-           data-tooltip="View profile details"
-           class="inline-flex items-center justify-center w-12 h-12 rounded-xl
+                                                    <!-- VIEW -->
+                                                    <a href="../public/user_profile.php?u=<?= $user_id ?>"
+                                                        data-tooltip="View profile details" class="inline-flex items-center justify-center w-12 h-12 rounded-xl
                   bg-emerald-50 text-emerald-600 border border-emerald-100
                   hover:bg-emerald-600 hover:text-white hover:shadow-lg hover:shadow-emerald-200
                   active:scale-95 transition-all duration-200">
 
-            <i class="fa-solid fa-user-shield text-lg"></i>
-        </a>
+                                                        <i class="fa-solid fa-user-shield text-lg"></i>
+                                                    </a>
 
-        <!-- EDIT -->
-        <button
-            onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
-            data-tooltip="Edit account"
-            class="hidden md:inline-flex items-center justify-center w-12 h-12 rounded-xl
+                                                    <!-- EDIT -->
+                                                    <button
+                                                        onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
+                                                        data-tooltip="Edit account" class="hidden md:inline-flex items-center justify-center w-12 h-12 rounded-xl
                    bg-blue-50 text-blue-600 border border-blue-100
                    hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200
                    active:scale-95 transition-all duration-200">
 
-            <i class="fa-solid fa-pen-to-square text-lg"></i>
-        </button>
+                                                        <i class="fa-solid fa-pen-to-square text-lg"></i>
+                                                    </button>
 
-        <!-- ARCHIVE -->
-        <?php if (!$isSelf): ?>
-            <button
-                onclick="openArchiveUserModal('<?= $user['user_id'] ?>')"
-                data-tooltip="Archive this account"
-                class="inline-flex items-center justify-center w-12 h-12 rounded-xl
+                                                    <!-- ARCHIVE -->
+                                                    <?php if (!$isSelf): ?>
+                                                        <button onclick="openArchiveUserModal('<?= $user['user_id'] ?>')"
+                                                            data-tooltip="Archive this account" class="inline-flex items-center justify-center w-12 h-12 rounded-xl
                        bg-red-50 text-red-600 border border-red-100
                        hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-200
                        active:scale-95 transition-all duration-200">
 
-                <i class="fa-solid fa-box-archive text-lg"></i>
-            </button>
-        <?php endif; ?>
+                                                            <i class="fa-solid fa-box-archive text-lg"></i>
+                                                        </button>
+                                                    <?php endif; ?>
 
-    </div>
-</td>
+                                                </div>
+                                            </td>
 
                                         </tr>
                                     <?php endforeach; endif; ?>
@@ -524,66 +520,59 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
     </div>
 
     <!-- Overlay -->
-<div id="archiveUserModal"
-     class="fixed inset-0 z-[200] hidden items-center justify-center 
+    <div id="archiveUserModal" class="fixed inset-0 z-[200] hidden items-center justify-center 
             bg-slate-900/70 backdrop-blur-sm 
             opacity-0 transition-all duration-300">
 
 
-    <div id="archiveModalContent"
-         class="bg-white w-full max-w-md mx-4 
+        <div id="archiveModalContent" class="bg-white w-full max-w-md mx-4 
                 rounded-3xl shadow-2xl 
                 transform scale-95 opacity-0 transition-all duration-300 
                 overflow-hidden">
 
-       
-        <div class="px-6 pt-6 pb-4 text-center">
-            <div class="mx-auto flex items-center justify-center w-14 h-14 
+
+            <div class="px-6 pt-6 pb-4 text-center">
+                <div class="mx-auto flex items-center justify-center w-14 h-14 
                         rounded-full  text-red-600 mb-4">
-                <i class="fa-solid fa-box-archive text-xl"></i>
+                    <i class="fa-solid fa-box-archive text-xl"></i>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-900">
+                    Archive User
+                </h3>
+                <p class="text-sm text-gray-500 mt-1">
+                    This action will archive the selected user. You can restore them later.
+                </p>
             </div>
 
-            <h3 class="text-xl font-semibold text-gray-900">
-                Archive User
-            </h3>
-            <p class="text-sm text-gray-500 mt-1">
-                This action will archive the selected user. You can restore them later.
-            </p>
-        </div>
+            <!-- Divider -->
+            <div class="border-t border-gray-100"></div>
 
-        <!-- Divider -->
-        <div class="border-t border-gray-100"></div>
+            <!-- Actions -->
+            <form action="../controllers/archive_user.php" method="POST" class="px-6 py-5 flex gap-3">
 
-        <!-- Actions -->
-        <form action="../controllers/archive_user.php"
-              method="POST"
-              class="px-6 py-5 flex gap-3">
+                <input type="hidden" name="user_id" id="archiveUserId">
 
-            <input type="hidden" name="user_id" id="archiveUserId">
-
-            <button type="button"
-        onclick="closeArchiveUserModal()"
-        class="flex-1 py-2.5 rounded-xl 
+                <button type="button" onclick="closeArchiveUserModal()" class="flex-1 py-2.5 rounded-xl 
                border border-gray-300 
                bg-white text-gray-700 font-medium
                hover:bg-gray-50 hover:border-gray-400
                transition-all duration-200">
-    Cancel
-</button>
+                    Cancel
+                </button>
 
-            <!-- Confirm -->
-            <button type="submit"
-                    class="flex-1 py-2.5 rounded-xl 
+                <!-- Confirm -->
+                <button type="submit" class="flex-1 py-2.5 rounded-xl 
                            bg-red-600 text-white font-semibold
                            shadow-md shadow-red-200
                            hover:bg-red-700 hover:shadow-lg hover:shadow-red-300
                            active:scale-[0.98]
                            transition-all duration-200">
-                Confirm
-            </button>
-        </form>
+                    Confirm
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 </body>
 
 <?php ob_end_flush(); ?>

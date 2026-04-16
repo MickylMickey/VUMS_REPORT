@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../init.php";
-
+$userData = checkAuth('Admin');
 // Tandaan: Ang init.php mo ay dapat may session_start() na.
 // Kung wala, magdagdag ng session_start() dito.
 
@@ -17,13 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
         $stmt->bind_param("is", $activeStatus, $user_id);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "User has been successfully restored to active status.";
+            setValidation('success', 'User has been successfully restored to active status.');
         } else {
-            $_SESSION['error'] = "Database error: " . $stmt->error;
+            setValidation('error', "Database error: " . $stmt->error);
         }
         $stmt->close();
     } else {
-        $_SESSION['error'] = "Failed to prepare the database statement.";
+        setValidation('error', "Failed to prepare the database statement.");
     }
 
     // Pagkatapos ng restore, ibalik si Admin sa archived_list.php

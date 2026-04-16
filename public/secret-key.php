@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <h1>CONGRATSSS <3 </h1>
+    <h1>SER REIGN PICS BOLD <3 </h1>
 </body>
 
 </html>
