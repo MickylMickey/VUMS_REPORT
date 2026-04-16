@@ -135,7 +135,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             </div>
         </div>
 
-
+        <pre><?php print_r($reports[0]['report_img']); ?></pre>
         <div class="overflow-x-auto bg-white rounded-b-2xl shadow-sm border border-slate-100">
             <table class="min-w-full table-auto border-collapse">
                 <thead>
@@ -154,7 +154,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             Status</th>
                         <th
                             class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider text-center">
-                            Image</th>
+                            Image/Videos</th>
                         <?php if ($isAdmin): ?>
                             <th class="px-6 py-4 text-right text-[13px] font-bold text-black-400 uppercase tracking-wider">
                                 Action</th>
@@ -231,17 +231,35 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 </select>
                             </td>
 
-                            <td class="px-6 py-4 text-center">
-                                <?php if ($report['report_img']): ?>
-                                    <a href="uploads/<?= $report['report_img'] ?>"
-                                        download="<?= 'report_' . $report['report_id'] . '.png' ?>" title="Download Image"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition-all">
-                                        <i class="fa-solid fa-download text-xs"></i> </a>
-                                <?php else: ?>
-                                    <span class="text-slate-300 text-[15px] italic">No image</span>
-                                <?php endif; ?>
-                            </td>
-
+   <td class="px-6 py-4 text-center">
+    <?php 
+        $mediaFile = isset($report['report_img']) ? trim($report['report_img']) : ''; 
+        
+        if (!empty($mediaFile)): 
+            $fileExt = strtolower(pathinfo($mediaFile, PATHINFO_EXTENSION));
+            $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+            
+            // Hanapin kung saang folder naka-link ang file
+            $folderPath = in_array($fileExt, $videoExtensions) ? "Videos/" : "uploads/";
+            $finalPath = $folderPath . $mediaFile;
+    ?>
+        <div class="flex items-center justify-center">
+            <a href="<?= htmlspecialchars($finalPath) ?>" download 
+               class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm group">
+                
+                <?php if (in_array($fileExt, $videoExtensions)): ?>
+                    <i class="fa-solid fa-file-video text-sm"></i>
+                <?php else: ?>
+                    <i class="fa-solid fa-file-image text-sm"></i>
+                <?php endif; ?>
+                
+                <span class="text-xs font-bold uppercase">Download</span>
+            </a>
+        </div>
+    <?php else: ?>
+        <span class="text-slate-300 text-[13px] italic">No media</span>
+    <?php endif; ?>
+</td>
                             <?php if ($isAdmin): ?>
                                 <td class="px-6 py-4 text-right">
                                     <button
@@ -256,18 +274,6 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
-                <tbody id="reportsTableBody" class="divide-y divide-slate-100">
-                    <tr id="noResultsRow" class="hidden">
-                        <td colspan="100%" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center justify-center text-slate-400">
-                                <i class="fa-solid fa-magnifying-glass text-4xl mb-4 opacity-20"></i>
-                                <p class="text-sm font-medium">No reports found matching your criteria</p>
-                                <p class="text-xs">Try adjusting your filters or search term</p>
-                            </div>
-                        </td>
-                    </tr>
-
-                </tbody>
             </table>
         </div>
         <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
@@ -433,8 +439,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                     <p class="text-[13px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
                         description box!</p>
 
-                    <input type="file" name="rep_img" id="rep_img_input" accept="image/*"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
+                  <input type="file" name="rep_img" id="rep_img_input" accept="image/*,video/*" 
+    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
 
                     <div id="paste-preview-container" class="hidden mt-4 relative inline-block">
                         <img id="paste-preview"

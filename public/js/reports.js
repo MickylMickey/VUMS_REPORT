@@ -195,36 +195,49 @@ document.querySelectorAll(".edit-report-btn").forEach((button) => {
 });
 // 5. Add Report Form Submission
 // Locate this section in your reports.js
+// 5. Add Report Form Submission
 if (addReportForm) {
   addReportForm.addEventListener("submit", function (e) {
     const submitBtn = this.querySelector('button[type="submit"]');
     const severityOptions = this.querySelectorAll('input[name="sev_id"]');
     const severityError = document.getElementById("severity-error");
+    const fileInput = document.getElementById('rep_img_input');
 
+    // 1. Check Severity (Existing logic)
     const isChecked = Array.from(severityOptions).some((r) => r.checked);
-
     if (!isChecked) {
       e.preventDefault();
       if (severityError) severityError.classList.remove("hidden");
       return false;
     }
 
-    // --- CRITICAL FIX START ---
-    // If the code reaches here, it's valid.
-    // We update the UI to show it's loading.
+    // 2. NEW: Check File Size (25MB Limit)
+    if (fileInput.files.length > 0) {
+      const maxSize = 25 * 1024 * 1024; // 25MB in bytes
+      const fileSize = fileInput.files[0].size;
+
+      if (fileSize > maxSize) {
+        e.preventDefault();
+        // Gumamit tayo ng alert o kaya yung existing showToast function mo
+        showToast(
+          '<i class="fas fa-exclamation-triangle mr-2"></i>Masyadong malaki ang file! Max 25MB lang.',
+          "bg-red-500 text-white"
+        );
+        return false;
+      }
+    }
+
+    // 3. UI Loading State (Existing logic)
     submitBtn.style.pointerEvents = "none";
     submitBtn.classList.add("opacity-70", "cursor-not-allowed");
     submitBtn.innerHTML =
       '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
 
-    // Since inputValidation.js likely called preventDefault(),
-    // we use a tiny timeout to call the native submit() method,
-    // which bypasses jQuery/JS listeners and goes straight to the PHP handler.
+    // Submit the form
     const form = this;
     setTimeout(() => {
       form.submit();
     }, 100);
-    // --- CRITICAL FIX END ---
   });
 }
 

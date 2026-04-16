@@ -4,7 +4,6 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once __DIR__ . "/../init.php";
 
-
 ob_start();
 $userData = checkAuth();
 
@@ -24,24 +23,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // 3. Handle Image Upload (Keep your existing logic)
+    // 3. Handle Media Upload (Linking to specific folders)
     $image_path = null;
     if (isset($_FILES['rep_img']) && $_FILES['rep_img']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = __DIR__ . "/../public/uploads/";
-        if (!is_dir($upload_dir))
+        $file_name = $_FILES['rep_img']['name'];
+        $file_tmp = $_FILES['rep_img']['tmp_name'];
+        $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        
+        $video_extensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+
+        // LINKING LOGIC: Doon ba sa Videos o sa Uploads folder?
+        if (in_array($file_extension, $video_extensions)) {
+            $upload_dir = __DIR__ . "/../public/Videos/";
+        } else {
+            $upload_dir = __DIR__ . "/../public/uploads/";
+        }
+
+        if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
-        $file_extension = pathinfo($_FILES['rep_img']['name'], PATHINFO_EXTENSION);
+        }
+
         $new_filename = time() . "_" . bin2hex(random_bytes(5)) . "." . $file_extension;
         $target_file = $upload_dir . $new_filename;
-        if (getimagesize($_FILES['rep_img']['tmp_name'])) {
-            if (move_uploaded_file($_FILES['rep_img']['tmp_name'], $target_file)) {
-                $image_path = $new_filename;
-            }
+
+        if (move_uploaded_file($file_tmp, $target_file)) {
+            $image_path = $new_filename; // Ang filename lang ang mase-save sa DB
         }
     }
 
     // 4. Convert "other" to literal NULL or Integer
-
     $db_cat_id = (strcasecmp($cat_id, "other") === 0) ? null : (int) $cat_id;
     $db_mod_id = (strcasecmp($mod_id, "other") === 0) ? null : (int) $mod_id;
     $db_sev_id = (strcasecmp($sev_id, "other") === 0) ? 99 : (int) $sev_id;
@@ -51,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $modName = "xxx";
     $sevChar = "xxx";
 
-    // Query names using the NULL-safe spaceship operator (<=>)
     $queryNames = "
         SELECT 
             (SELECT category FROM category WHERE cat_id <=> ?) as cat_name,
@@ -88,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
-        // MySQLi bind_param handles NULL values correctly if the variable passed is null
         $stmt->bind_param("siiisss", $user_id, $db_cat_id, $db_mod_id, $db_sev_id, $ref_num, $report_desc, $image_path);
 
         if ($stmt->execute()) {
@@ -101,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setValidation('error', "Preparation Error: " . $conn->error);
     }
 
-    // Ensure NO output happened before this line
     header("Location: ../public/reports.php");
     exit();
 }
