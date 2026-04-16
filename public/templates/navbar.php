@@ -35,19 +35,21 @@ if (!empty($user->user_prof)) {
             <a href="reports.php" class="hover:text-black transition-colors">Reports</a>
             <a href="suggestions.php" class="hover:text-black transition-colors">Suggestions</a>
             <a href="archive_report.php" class="hover:text-black transition-colors">Completed Tickets</a>
+            <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
 
             <?php if ($isAdmin): ?>
+                <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
                 <a href="archive_list.php" class="hover:text-black transition-colors">Archived Users</a>
 
-                <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
-                <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
+             
+                
             <?php endif; ?>
         </div>
 
         <div class="relative inline-block text-left">
             <button id="profileButton"
                 class="flex items-center focus:outline-none hover:opacity-80 transition-opacity cursor-pointer">
-                <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" img src="<?= $profilePic ?>"
+                <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200" src="<?= $profilePic ?>"
                     alt="User Profile">
             </button>
 

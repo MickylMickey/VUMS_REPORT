@@ -405,31 +405,52 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                         </div>
 
                         <div class="grid grid-cols-2 gap-3 items-end">
-                            <div>
-                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">User Role</label>
-                                <select name="user_role" data-required="true" data-error="User Role is required."
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none">
-                                    <option value="" disabled selected>Select Role</option>
-                                    <?php foreach ($roleOptions as $option): ?>
-                                        <option value="<?= $option['user_role_id'] ?>">
-                                            <?= $option['role_name'] ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div>
-                                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
-                                        text-[15px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm flex
-                                        items-center justify-center gap-2">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <span>Profile Picture</span>
-                                    <input type="file" name="prof_pic" class="hidden">
-                                </label>
-                            </div>
-                        </div>
+
+    <!-- USER ROLE -->
+    <div>
+        <label class="block text-[15px] font-semibold text-slate-700 mb-1">
+            User Role
+        </label>
+
+        <select name="user_role"
+            data-required="true"
+            data-error="User Role is required."
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm
+                   focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none"
+            style="color:#64748b;"
+            onchange="this.style.color = this.value ? '#0f172a' : '#64748b'">
+
+            <option value="" selected disabled hidden>
+                Choose Role
+            </option>
+
+            <?php foreach ($roleOptions as $option): ?>
+                <option value="<?= $option['user_role_id'] ?>">
+                    <?= $option['role_name'] ?>
+                </option>
+            <?php endforeach; ?>
+
+        </select>
+
+        <div>
+            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+        </div>
+    </div>
+
+    <!-- PROFILE PICTURE -->
+    <div>
+        <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
+                      text-[15px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm
+                      flex items-center justify-center gap-2">
+
+            <i class="fa-solid fa-camera"></i>
+            <span>Profile Picture</span>
+
+            <input type="file" name="prof_pic" class="hidden">
+        </label>
+    </div>
+
+</div>
                     </div>
                 </div>
 
@@ -451,8 +472,8 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
             class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-200 opacity-0 scale-95 duration-300">
             <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900">Edit User Account</h3>
-                    <p class="text-xs text-slate-500">Update account credentials and system access.</p>
+                    <h3 class="text-lg font-bold text-slate-900">Update Account</h3>
+                    <p class="text-[15px] text-slate-500">Update account credentials and system access.</p>
                 </div>
                 <button onclick="toggleEditModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -504,14 +525,18 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                 </div>
 
                 <div class="pt-4 flex justify-end items-center gap-3">
-                    <button type="button" onclick="toggleEditModal(false)"
-                        class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">Cancel
+                    <button type="button"
+    onclick="toggleEditModal(false)"
+    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
+           bg-[#fb2424] hover:bg-[#c01c1c] transition-all duration-200">
+    Cancel
+</button>
 
-                    </button>
-                    <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-100 transition-all">
-                        Save Changes
-                    </button>
+<button type="submit"
+    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
+           bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all">
+    Save Changes
+</button>
                 </div>
             </form>
         </div>

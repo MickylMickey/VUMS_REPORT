@@ -69,73 +69,82 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     default => 'bg-slate-50 text-slate-600 border-slate-100'
                 };
                 ?>
-                <div
-                    class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
-                    <div class="p-5 border-b border-slate-50 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm overflow-hidden border-2 border-slate-100">
-                                <?php if (!empty($sug['reporter_profile_pic'])): ?>
-                                    <img src="img/prof_pic/<?= htmlspecialchars($sug['reporter_profile_pic']) ?>"
-                                        alt="<?= htmlspecialchars($sug['username']) ?>" class="w-full h-full object-cover">
-                                <?php else: ?>
-                                    <?= substr(htmlspecialchars($sug['username']), 0, 1) ?>
-                                <?php endif; ?>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-800 leading-none"><?= htmlspecialchars($sug['username']) ?>
-                                </h3>
-                                <span class="text-[15px] text-slate-400 mt-1 block">
-                                    <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
-                                </span>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-[15px] font-bold border <?= $statusColor ?>">
-                            <?= htmlspecialchars($sug['status_desc']) ?>
-                        </span>
-                    </div>
+                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
+    <div class="p-5 border-b border-slate-50 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm overflow-hidden border-2 border-slate-100">
+                <?php if (!empty($sug['reporter_profile_pic'])): ?>
+                    <img src="img/prof_pic/<?= htmlspecialchars($sug['reporter_profile_pic']) ?>"
+                        alt="<?= htmlspecialchars($sug['username']) ?>" class="w-full h-full object-cover">
+                <?php else: ?>
+                    <?= substr(htmlspecialchars($sug['username']), 0, 1) ?>
+                <?php endif; ?>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-800 leading-none"><?= htmlspecialchars($sug['username']) ?></h3>
+                <span class="text-[15px] text-slate-400 mt-1 block">
+                    <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
+                </span>
+            </div>
+        </div>
+        <span class="px-3 py-1 rounded-full text-[15px] font-bold border <?= $statusColor ?>">
+            <?= htmlspecialchars($sug['status_desc']) ?>
+        </span>
+    </div>
 
-                    <div class="p-5 flex-grow">
-                        <p class="text-slate-600 text-sm leading-relaxed italic break-all">
-                            "<?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>"
-                        </p>
+    <div class="p-5 flex-grow">
+        <p class="text-slate-600 text-sm leading-relaxed italic break-all">
+            "<?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>"
+        </p>
 
-                        <?php if (!empty($sug['suggestion_img'])): ?>
-                            <div class="mt-4 overflow-hidden rounded-2xl border border-slate-100 relative group/img">
-                                <img src="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>"
-                                    class="w-full h-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
-                                    alt="Attachment">
-                                <a href="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>" target="_blank"
-                                    class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold backdrop-blur-[2px]">
-                                    <i class="fa-solid fa-expand mr-2"></i> View Image
-                                </a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+        <?php if (!empty($sug['suggestion_img'])): ?>
+            <div class="mt-4 overflow-hidden rounded-2xl border border-slate-100 relative group/img">
+                <img src="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>"
+                    class="w-full h-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
+                    alt="Attachment">
+                <a href="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>" target="_blank"
+                    class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold backdrop-blur-[2px]">
+                    <i class="fa-solid fa-expand mr-2"></i> View Image
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
 
-                    <div class="p-4 bg-slate-50/50 rounded-b-3xl mt-auto space-y-3">
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[15px] font-bold text-slate-400 uppercase tracking-wider ml-1">
-                                Status</label>
-                            <select
-                                class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none"
-                                data-report-id="<?= $sug['suggestion_id'] ?>">
-                                <?php foreach ($statusOptions as $status): ?>
-                                    <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($status['status_desc']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+    <div class="p-4 bg-slate-50/50 rounded-b-3xl mt-auto space-y-3">
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[15px] font-bold text-slate-400 uppercase tracking-wider ml-1">Status</label>
+            
+            <?php 
+            // 🔥 ACCESS CONTROL LOGIC
+            $isOwner = ($sug['user_id'] == $current_user_id);
+            $isAdmin = ($user_role === 'Admin');
 
-                        <?php if ($sug['suggestion_updated_by']): ?>
-                            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 text-[15px] text-slate-400">
-                                <i class="fa-solid fa-user-check"></i>
-                                <span>Modified by <strong><?= htmlspecialchars($sug['updater_name']) ?></strong></span>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+            if ($isAdmin || $isOwner): ?>
+                <select
+                    class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none cursor-pointer"
+                    data-report-id="<?= $sug['suggestion_id'] ?>">
+                    <?php foreach ($statusOptions as $status): ?>
+                        <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($status['status_desc']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php else: ?>
+                <div class="w-full bg-slate-100 border border-slate-200 rounded-xl p-2 text-medium font-semibold text-slate-500 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-[10px] opacity-60"></i>
+                    <span><?= htmlspecialchars($sug['status_desc']) ?></span>
                 </div>
+            <?php endif; ?>
+        </div>
+
+        <?php if ($sug['suggestion_updated_by']): ?>
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 text-[15px] text-slate-400">
+                <i class="fa-solid fa-user-check"></i>
+                <span>Modified by <strong><?= htmlspecialchars($sug['updater_name']) ?></strong></span>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
             <?php endforeach; ?>
         </div>
 

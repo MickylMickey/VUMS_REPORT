@@ -1,38 +1,47 @@
 <?php
 require_once __DIR__ . "/../init.php";
 
-ob_start();
-use Ramsey\Uuid\Uuid;
+session_start();
 
-// 1. Initialize variables for logging
+ob_start();
+
+// 1. Identify user from token (optional logging)
 $userId = null;
 $username = "Unknown User";
 
-// 2. Identify who is logging out (before we destroy the cookie)
 if (isset($_COOKIE['auth_token'])) {
     $decoded = JwtHelper::verifyToken($_COOKIE['auth_token']);
     if ($decoded && isset($decoded->data)) {
-        $userId = $decoded->data->user_id;
-        $username = $decoded->data->username;
+        $userId = $decoded->data->user_id ?? null;
+        $username = $decoded->data->username ?? "Unknown User";
     }
 }
 
-
-
-// 4. Clear the Auth Cookie
-// We set the expiration to the past (time() - 3600) to tell the browser to delete it
-setcookie("auth_token", "", time() - 3600, "/");
-
-// 5. Clear any legacy PHP Sessions (just in case)
+// 2. Clear session properly
+$_SESSION = [];
 session_unset();
 session_destroy();
+
+// 3. Clear session cookie (PHP session)
 if (isset($_COOKIE[session_name()])) {
     setcookie(session_name(), '', time() - 3600, '/');
 }
 
-// 6. Set a success message for the login page
+// 4. Clear auth token cookie (IMPORTANT FIX)
+$isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+
+setcookie("auth_token", "", [
+    "expires" => time() - 3600,
+    "path" => "/",
+    "domain" => "",
+    "secure" => $isSecure,
+    "httponly" => true,
+    "samesite" => "Lax",
+]);
+
+// 5. Feedback message
 setValidation("success", "You have been logged out successfully.");
 
-// 7. Redirect to login
+// 6. Redirect
 header("Location: /public/login.php");
 exit();
