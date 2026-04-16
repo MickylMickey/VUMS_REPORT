@@ -97,25 +97,52 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             "<?= nl2br(htmlspecialchars($sug['suggestion_desc'])) ?>"
         </p>
 
-        <?php if (!empty($sug['suggestion_img'])): ?>
-            <div class="mt-4 overflow-hidden rounded-2xl border border-slate-100 relative group/img">
-                <img src="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>"
-                    class="w-full h-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
-                    alt="Attachment">
-                <a href="uploads/suggestions/<?= htmlspecialchars($sug['suggestion_img']) ?>" target="_blank"
-                    class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold backdrop-blur-[2px]">
-                    <i class="fa-solid fa-expand mr-2"></i> View Image
-                </a>
-            </div>
-        <?php endif; ?>
-    </div>
+       <?php if (!empty($sug['suggestion_img'])): ?>
+    <?php 
+        $mediaFile = trim($sug['suggestion_img']);
+        $fileExt = strtolower(pathinfo($mediaFile, PATHINFO_EXTENSION));
+        $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+        $isVideo = in_array($fileExt, $videoExtensions);
+        
+        // Path linking: Kung gagamit ka ng hiwalay na folder, 
+        // siguraduhin na tumutugma ito sa iyong add_suggestions.php controller
+        $finalPath = "uploads/suggestions/" . $mediaFile; 
+    ?>
 
-    <div class="p-4 bg-slate-50/50 rounded-b-3xl mt-auto space-y-3">
+    <div class="mt-4 overflow-hidden rounded-2xl border border-slate-100 relative group/img bg-black">
+    <?php if ($isVideo): ?>
+        <video 
+            src="<?= htmlspecialchars($finalPath) ?>" 
+            muted 
+            loop 
+            class="w-full h-32 object-cover opacity-80 group-hover/img:opacity-100 transition-opacity"
+            onmouseover="this.play()" 
+            onmouseout="this.pause(); this.currentTime = 0;">
+        </video>
+        
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/img:opacity-0 transition-opacity">
+            <i class="fa-solid fa-play text-white text-2xl shadow-lg"></i>
+        </div>
+    <?php else: ?>
+        <img src="<?= htmlspecialchars($finalPath) ?>"
+            class="w-full h-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
+            alt="Attachment">
+    <?php endif; ?>
+
+    <a href="<?= htmlspecialchars($finalPath) ?>" target="_blank"
+        class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2 backdrop-blur-[2px]">
+        <i class="fa-solid <?= $isVideo ? 'fa-expand' : 'fa-expand' ?> text-xl"></i>
+        <span class="text-xs font-bold"><?= $isVideo ? 'Full View' : 'View Image' ?></span>
+    </a>
+</div>
+        <?php endif; ?>
+
+    </div> <div class="p-4 bg-slate-50/50 rounded-b-3xl mt-auto space-y-3">
         <div class="flex flex-col gap-1.5">
             <label class="text-[15px] font-bold text-slate-400 uppercase tracking-wider ml-1">Status</label>
             
             <?php 
-            // 🔥 ACCESS CONTROL LOGIC
+          
             $isOwner = ($sug['user_id'] == $current_user_id);
             $isAdmin = ($user_role === 'Admin');
 
@@ -201,63 +228,59 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             onclick="toggleModal(false)"></div>
 
         <div id="projectModalContainer"
-            class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
+    class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
 
-            <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
-                <div>
-                    <h2 class="text-xl font-bold tracking-tight">New Suggestion</h2>
-                    <p class="text-blue-100 text-medium mt-0.5">Share your ideas to improve the system.</p>
-                </div>
-                <button onclick="toggleModal(false)"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
-                    <i class="fa-solid fa-xmark"></i>
+    <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
+        <div>
+            <h2 class="text-xl font-bold tracking-tight">New Suggestion</h2>
+            <p class="text-blue-100 text-medium mt-0.5">Share your ideas to improve the system.</p>
+        </div>
+        <button onclick="toggleModal(false)"
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <form id="suggestionForm" action="../controllers/add_suggestions.php" method="POST"
+        enctype="multipart/form-data" class="p-6 space-y-5">
+
+        <div class="space-y-1.5">
+            <label class="text-[17px] font-semibold text-slate-600 ml-1">Describe your Suggestion</label>
+            <textarea name="suggestion_desc" id="suggestion_desc" rows="4"
+                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
+                placeholder="Tell us what's on your mind..." data-required="true"
+                data-error="Description is required."></textarea>
+        </div>
+
+        <div class="space-y-1.5">
+            <label class="text-[17px] font-semibold text-slate-600 ml-1">Attach Media (Optional)</label>
+            <p class="text-[13px] text-slate-400 ml-1 mb-1">Upload an image or a short video clip.</p>
+            
+            <input type="file" name="suggestion_img" id="suggestion_img_input" accept="image/*,video/*"
+                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
+            
+            <div id="paste-preview-container" class="hidden mt-4 relative inline-block">
+                <img id="paste-preview" class="max-h-40 w-auto rounded-xl border-2 border-blue-100 shadow-md object-cover" src="">
+                <button id="clear-preview-btn" type="button" onclick="clearPastedImage()"
+                    class="hidden absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
             </div>
-
-            <form id="suggestionForm" action="../controllers/add_suggestions.php" method="POST"
-                enctype="multipart/form-data" class="p-6 space-y-5">
-
-                <div class="space-y-1.5">
-                    <label class="text-[17px] font-semibold text-slate-600 ml-1">Describe your Suggestion</label>
-                    <textarea name="suggestion_desc" id="suggestion_desc" rows="4"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
-                        placeholder="Tell us what's on your mind..." data-required="true"
-                        data-error="Description is required."></textarea>
-                    <div>
-                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                    </div>
-                </div>
-
-                <div class="space-y-1.5">
-                    <label class="text-[17px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
-                    <p class="text-[15px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into the
-                        description box!</p>
-                    <input type="file" name="suggestion_img" id="suggestion_img_input" accept="image/*"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
-                    <div id="paste-preview-container" class="hidden mt-4 relative inline-block">
-                        <img id="paste-preview"
-                            class="max-h-40 w-auto rounded-xl border-2 border-blue-100 shadow-md object-cover" src="">
-                        <button id="clear-preview-btn" type="button" onclick="clearPastedImage()"
-                            class="hidden absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors">
-                            <i class="fa-solid fa-xmark text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="button" onclick="toggleModal(false)"
-                        class="flex-1 px-4 py-3 text-sm font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-2xl transition-all duration-200">
-                        Cancel
-                    </button>
-
-                    <button type="submit"
-                        class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
-                        Submit Suggestion
-                    </button>
-                </div>
-            </form>
         </div>
-    </div>
+
+        <div class="flex items-center gap-3 pt-2">
+            <button type="button" onclick="toggleModal(false)"
+                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-2xl transition-all duration-200">
+                Cancel
+            </button>
+
+            <button type="submit"
+                class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                Submit Suggestion
+            </button>
+        </div>
+    </form>
+</div>
 
     <div id="tooltip"
         class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-[200] px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">

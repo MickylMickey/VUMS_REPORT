@@ -5,6 +5,7 @@ ob_start();
 $userData = checkAuth('User');
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
+$username = $userData->username;
 
 $sql = "SELECT us.*, 
                st.status_desc, 
