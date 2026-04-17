@@ -102,7 +102,7 @@ function executeStatusUpdate() {
             select.setAttribute('data-last-value', statusId);
             showToast(
                 '<i class="fas fa-check-circle mr-2"></i>Status updated successfully!',
-                "bg-green-500/80 text-white"
+                "success"
             );
 
             // Row removal animation for Resolved (3) or Closed (4)
@@ -117,7 +117,7 @@ function executeStatusUpdate() {
                 }
             }
         } else {
-            showToast("Update failed: " + data.error, "bg-red-500 text-white");
+            showToast("Update failed: " + data.error, "error"); 
             select.value = originalValue; // Reset dropdown
         }
     })
@@ -205,17 +205,49 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * 4. TOAST NOTIFICATION (Modernized)
  */
-function showToast(message, bgColor) {
-    const toast = document.createElement("div");
-    toast.className = `fixed top-24 right-5 ${bgColor} bg-opacity-90 backdrop-blur-md px-8 py-4 rounded-[2rem] shadow-2xl z-[200] transition-all duration-300 transform translate-x-10 opacity-0 font-bold`;
-    toast.innerHTML = message;
-    document.body.appendChild(toast);
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
     
-    setTimeout(() => toast.classList.remove('translate-x-10', 'opacity-0'), 10);
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 100px; /* ITINAAS KO ITO (Dati 30px) */
+        right: 30px;
+        padding: 1.25rem 2.5rem;
+        border-radius: 1.5rem;
+        color: white;
+        font-weight: 800;
+        z-index: 100000; /* PINAKAMATAAS NA LAYER */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(100px);
+        opacity: 0;
+    `;
+
+    // CHECK NATIN DITO: 
+    // Siguraduhin na ang 'type' ay exactly 'success' (small letters)
+    if (type === 'success') {
+    toast.style.backgroundColor = '#059669'; // Emerald Green
+    toast.innerHTML = message; // "message" na lang, wala nang emoji sa unahan
+    } else {
+        toast.style.backgroundColor = '#e11d48'; // SOLID RED
+    toast.innerHTML = message;
+    }
+
+    document.body.appendChild(toast);
+
     setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-x-10');
-        setTimeout(() => toast.remove(), 300);
-    }, 3500);
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
+    }, 100);
+
+    setTimeout(() => {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+    }, 5000); // GINAWA KONG 4 SECONDS PARA MAS MABASA
 }
 
 /**
