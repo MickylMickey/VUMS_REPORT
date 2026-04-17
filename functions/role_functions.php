@@ -4,6 +4,7 @@ class RoleHelper
 {
     // Available roles
     const ADMIN = 'Admin';
+    const HR = 'HR';
     const USER = 'User';
 
 
@@ -11,6 +12,11 @@ class RoleHelper
     public static function isAdmin($role): bool
     {
         return $role === self::ADMIN;
+    }
+    // Function to check if the current role is HR
+    public static function isHR($role): bool
+    {
+        return $role === self::HR;
     }
 
     // Function to check if the current role is user

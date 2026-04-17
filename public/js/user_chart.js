@@ -32,7 +32,33 @@ async function initUserDashboard() {
         if (document.getElementById("stat-in-progress")) animateValue("stat-in-progress", stats.in_progress);
       }
 
-      // --- 3. CHARTS ---
+      if (data.reporters) {
+        const list = document.getElementById("reporter-list");
+        list.innerHTML = data.reporters
+          .map(
+            (user) => `
+        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+            <td class="py-4 font-bold text-slate-800">${user.username}</td>
+            <td class="py-4 text-right">
+                <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold text-xs">
+                    ${user.total}
+                </span>
+            </td>
+        </tr>
+    `,
+          )
+          .join("");
+      }
+
+      const el = document.getElementById("totalUsers");
+
+      if (!el) return;
+
+      if (result.status === "success") {
+        el.textContent = result.data?.total_users ?? 0;
+      } else {
+        el.textContent = "0";
+      }
 
       // --- 4. STATUS PIE CHART (USER-SCOPED) ---
       if (data.statuses) {

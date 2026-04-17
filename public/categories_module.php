@@ -21,7 +21,7 @@ $user = checkAuth('Admin');
 <body class="bg-gray-50 text-slate-900 min-h-screen flex flex-col antialiased pt-24">
     <div>
         <?php include "templates/navbar.php"; ?>
-        <div id="validationBlock" class="fixed top-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+        <div id="validationBlock" class="fixed bottom-28 right-5 z-[250] flex flex-col gap-3 pointer-events-none">
             <div class="pointer-events-auto">
                 <?= showValidation() ?>
             </div>

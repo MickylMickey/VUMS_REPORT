@@ -5,6 +5,7 @@ $user = checkAuth();
 $role = $user->role;
 $isAdmin = RoleHelper::isAdmin($role);
 $isUser = RoleHelper::isUser($role);
+$isHr = RoleHelper::isHr($role);
 // Define the base folder where images are stored
 $uploadPath = "/public/img/prof_pic/";
 
@@ -39,6 +40,8 @@ if (!empty($user->user_prof)) {
 
             <?php if ($isAdmin): ?>
                 <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
+            <?php endif; ?>
+            <?php if ($isAdmin || $isHr): ?>
                 <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
                 <a href="archive_list.php" class="hover:text-black transition-colors">Archived Users</a>
 

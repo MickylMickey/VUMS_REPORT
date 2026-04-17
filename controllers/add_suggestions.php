@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // 3. Handle Image Upload
+    // 3. Handle Media Upload (Image & Video)
     $image_path = null;
     if (isset($_FILES['suggestion_img']) && $_FILES['suggestion_img']['error'] === UPLOAD_ERR_OK) {
         $upload_dir = __DIR__ . "/../public/uploads/suggestions/";
@@ -26,14 +27,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mkdir($upload_dir, 0777, true);
         }
 
-        $file_extension = pathinfo($_FILES['suggestion_img']['name'], PATHINFO_EXTENSION);
-        $new_filename = "sug_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $file_extension;
-        $target_file = $upload_dir . $new_filename;
+        $file_name = $_FILES['suggestion_img']['name'];
+        $file_tmp = $_FILES['suggestion_img']['tmp_name'];
+        $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        
+        // Listahan ng mga tinatanggap na format
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
 
-        if (getimagesize($_FILES['suggestion_img']['tmp_name'])) {
-            if (move_uploaded_file($_FILES['suggestion_img']['tmp_name'], $target_file)) {
+        if (in_array($file_extension, $allowed_extensions)) {
+            $new_filename = "sug_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $file_extension;
+            $target_file = $upload_dir . $new_filename;
+
+            // Inalis natin ang getimagesize() para payagan ang video
+            if (move_uploaded_file($file_tmp, $target_file)) {
                 $image_path = $new_filename;
             }
+        } else {
+            setValidation('error', "Invalid file type. Please upload an image or video.");
+            header("Location: ../public/suggestions.php");
+            exit();
         }
     }
 

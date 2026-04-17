@@ -2,10 +2,11 @@
 require_once __DIR__ . "/../init.php";
 ob_start();
 
-$user = checkAuth('Admin');
-$role = $_SESSION['user_role_id'] ?? '';
+$user = checkAuth(['Admin', 'HR']);
+$role = $user->role ?? null;
 $isAdmin = RoleHelper::isAdmin($role);
 $isUser = RoleHelper::isUser($role);
+$isHr = RoleHelper::isHr($role);
 $userVisibility = new UserVisibility($conn);
 $roleOptions = fetchRoles($conn);
 
@@ -53,7 +54,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
     <main class="flex-grow">
         <div class="container mx-auto p-6">
-            <div id="validationBlock" class="fixed bottom-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+            <div id="validationBlock" class="fixed bottom-28 right-5 z-[200] flex flex-col gap-3 pointer-events-none">
                 <div class="pointer-events-auto">
                     <?= showValidation() ?>
                 </div>
@@ -205,7 +206,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                                     <!-- EDIT -->
                                                     <button
-                                                        onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['email']) ?>')"
+                                                        onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['user_role_id']) ?>')"
                                                         data-tooltip="Edit account" class="hidden md:inline-flex items-center justify-center w-12 h-12 rounded-xl
                    bg-blue-50 text-blue-600 border border-blue-100
                    hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200
@@ -402,51 +403,47 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                         <div class="grid grid-cols-2 gap-3 items-end">
 
-    <!-- USER ROLE -->
-    <div>
-        <label class="block text-[15px] font-semibold text-slate-700 mb-1">
-            User Role
-        </label>
+                            <!-- USER ROLE -->
+                            <div>
+                                <label class="block text-[15px] font-semibold text-slate-700 mb-1">
+                                    User Role
+                                </label>
 
-        <select name="user_role"
-            data-required="true"
-            data-error="User Role is required."
-            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm
-                   focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none"
-            style="color:#64748b;"
-            onchange="this.style.color = this.value ? '#0f172a' : '#64748b'">
+                                <select name="user_role" data-required="true" data-error="User Role is required." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm
+                   focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none" style="color:#64748b;"
+                                    onchange="this.style.color = this.value ? '#0f172a' : '#64748b'">
 
-            <option value="" selected disabled hidden>
-                Choose Role
-            </option>
+                                    <option value="" selected disabled hidden>
+                                        Choose Role
+                                    </option>
 
-            <?php foreach ($roleOptions as $option): ?>
-                <option value="<?= $option['user_role_id'] ?>">
-                    <?= $option['role_name'] ?>
-                </option>
-            <?php endforeach; ?>
+                                    <?php foreach ($roleOptions as $option): ?>
+                                        <option value="<?= $option['user_role_id'] ?>">
+                                            <?= $option['role_name'] ?>
+                                        </option>
+                                    <?php endforeach; ?>
 
-        </select>
+                                </select>
 
-        <div>
-            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-        </div>
-    </div>
+                                <div>
+                                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                </div>
+                            </div>
 
-    <!-- PROFILE PICTURE -->
-    <div>
-        <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
+                            <!-- PROFILE PICTURE -->
+                            <div>
+                                <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
                       text-[15px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm
                       flex items-center justify-center gap-2">
 
-            <i class="fa-solid fa-camera"></i>
-            <span>Profile Picture</span>
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Profile Picture</span>
 
-            <input type="file" name="prof_pic" class="hidden">
-        </label>
-    </div>
+                                    <input type="file" name="prof_pic" class="hidden">
+                                </label>
+                            </div>
 
-</div>
+                        </div>
                     </div>
                 </div>
 
@@ -502,7 +499,8 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                             class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
                             <option value="" disabled>Select a role</option>
                             <?php foreach ($roleOptions as $option): ?>
-                                <option value="<?= htmlspecialchars($option['user_role_id']) ?>">
+                                <option value="<?= htmlspecialchars($option['user_role_id']) ?>"
+                                    <?= ($option['role_name'] == $user['role_name']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($option['role_name']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -521,18 +519,15 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                 </div>
 
                 <div class="pt-4 flex justify-end items-center gap-3">
-                    <button type="button"
-    onclick="toggleEditModal(false)"
-    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
+                    <button type="button" onclick="toggleEditModal(false)" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
            bg-[#fb2424] hover:bg-[#c01c1c] transition-all duration-200">
-    Cancel
-</button>
+                        Cancel
+                    </button>
 
-<button type="submit"
-    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
+                    <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
            bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all">
-    Save Changes
-</button>
+                        Save Changes
+                    </button>
                 </div>
             </form>
         </div>

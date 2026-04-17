@@ -4,7 +4,7 @@ require_once __DIR__ . "/../init.php";
 
 // 1. JWT Authentication
 // Assuming checkAuth() populates the user data or returns the user object
-$userData = checkAuth('User'); // Change 'User' to the appropriate role if needed
+$userData = checkAuth(['User', 'HR']); // Change 'User' to the appropriate role if needed
 $userId = $userData->user_id;
 
 ob_clean();
@@ -15,11 +15,7 @@ $response = [
     'data' => []
 ];
 
-try {
-    // 2. Category Totals (User-Specific)
-    // We filter the JOIN to only count reports belonging to this user
-
-    // 3. Status & Severity Stats (User-Specific)
+try {    // 3. Status & Severity Stats (User-Specific)
     $statsQuery = "SELECT 
         (SELECT COUNT(*) FROM report WHERE sev_id = 1 AND user_id = '$userId') AS critical,
         (SELECT COUNT(*) FROM report WHERE sev_id = 2 AND user_id = '$userId') AS high,
@@ -72,8 +68,20 @@ try {
                           LIMIT 5;";
 
     $response['data']['critical_reports'] = $conn->query($criticalListQuery)->fetch_all(MYSQLI_ASSOC);
-
     $response['status'] = 'success';
+
+    $reporterQuery = "SELECT 
+                    u.username, 
+                    COUNT(r.report_id) as total 
+                  FROM users u 
+                  JOIN report r ON u.user_id = r.user_id 
+                  GROUP BY u.user_id 
+                  ORDER BY total DESC 
+                  LIMIT 5";
+    $response['data']['reporters'] = $conn->query($reporterQuery)->fetch_all(MYSQLI_ASSOC);
+
+    $totalUsersQuery = "SELECT COUNT(*) AS total_users FROM users";
+    $response['data']['total_users'] = $conn->query($totalUsersQuery)->fetch_assoc()['total_users'];
 
 } catch (Exception $e) {
     $response['message'] = $e->getMessage();

@@ -38,11 +38,21 @@ function checkAuth($requiredRole = null)
     $userData = $decoded->data;
 
     // 3. Role check
-    if ($requiredRole && ($userData->role ?? null) !== $requiredRole) {
-        setValidation("error", "Access denied.");
-        header("Location: /index.php");
-        exit();
+    if ($requiredRole) {
+
+        $allowedRoles = is_array($requiredRole)
+            ? $requiredRole
+            : [$requiredRole];
+
+        $userRole = $userData->role ?? null;
+
+        if (!in_array($userRole, $allowedRoles)) {
+            setValidation("error", "Access denied.");
+            header("Location: /index.php");
+            exit();
+        }
     }
+
 
     // 4. Sync session (safe)
     $_SESSION['user_id'] = $userData->user_id ?? null;

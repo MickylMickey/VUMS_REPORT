@@ -2,8 +2,8 @@
 require_once __DIR__ . "/../init.php";
 ob_start();
 
-$user = checkAuth('Admin');
-$role = $_SESSION['user_role_id'] ?? '';
+$user = checkAuth(['Admin', 'HR']);
+$role = $user->role ?? null;
 $userVisibility = new UserVisibility($conn);
 
 
@@ -62,7 +62,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset, 2);
                         class="w-full pl-11 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm">
                 </div>
                 <div id="validationBlock"
-                    class="fixed bottom-28 right-5 z-[100] flex flex-col gap-3 pointer-events-none">
+                    class="fixed bottom-28 right-5 z-[200] flex flex-col gap-3 pointer-events-none">
                     <div class="pointer-events-auto">
                         <?= showValidation() ?>
                     </div>
