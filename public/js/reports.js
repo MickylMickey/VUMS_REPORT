@@ -1,4 +1,9 @@
 const currentUserId = "<?= $current_user_id ?>";
+
+// Global Variables for Status Change
+let pendingStatusChange = null;
+
+// Modal Elements
 const editModal = document.getElementById("editModal");
 const editContainer = document.getElementById("editModalContainer");
 const editBackdrop = document.getElementById("editModalBackdrop");
@@ -7,308 +12,305 @@ const addReportForm = document.getElementById("addReportForm");
 const addContainer = document.getElementById("addModalContainer");
 const addBackdrop = document.getElementById("addModalBackdrop");
 
+/**
+ * 1. STATUS CONFIRMATION MODAL LOGIC (NEW)
+ */
+function toggleStatusModal(show) {
+    const modal = document.getElementById("statusConfirmModal");
+    const container = document.getElementById("statusConfirmContainer");
+    if (!modal || !container) return;
 
-function openModal() {
-  editModal.classList.remove("hidden");
-}
-function closeModal() {
-  editModal.classList.add("hidden");
-}
-function closeAddModal() {
-  addModal.classList.add("hidden");
+    if (show) {
+        modal.style.display = "flex";
+        setTimeout(() => {
+            container.style.opacity = "1";
+            container.style.transform = "scale(1)";
+        }, 10);
+    } else {
+        container.style.opacity = "0";
+        container.style.transform = "scale(0.95)";
+        setTimeout(() => {
+            modal.style.display = "none";
+        }, 300);
+    }
 }
 
+// Listen for dropdown changes using Event Delegation
+document.addEventListener("change", function(e) {
+    if (e.target.classList.contains("status-updater") && e.isTrusted) {
+        const select = e.target;
+        const reportId = select.getAttribute("data-report-id");
+        const statusId = select.value;
+        const userId = select.getAttribute("data-user-id");
+        const originalValue = select.getAttribute("data-last-value") || select.defaultValue;
 
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeModal();
-    closeAddModal();
-  }
+        pendingStatusChange = { select, reportId, statusId, userId, originalValue };
+
+        const confirmBtn = document.getElementById("confirmStatusBtn");
+        const modal = document.getElementById("statusConfirmModal");
+
+        toggleStatusModal(true);
+
+        // Timer Logic (3 seconds)
+        let timeLeft = 3;
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = "0.6";
+        confirmBtn.innerText = `Yes (${timeLeft}s)`;
+
+        if (modal.dataset.timerId) clearInterval(Number(modal.dataset.timerId));
+
+        const timer = setInterval(() => {
+            timeLeft--;
+            if (timeLeft > 0) {
+                confirmBtn.innerText = `Yes (${timeLeft}s)`;
+            } else {
+                clearInterval(timer);
+                confirmBtn.disabled = false;
+                confirmBtn.style.opacity = "1";
+                confirmBtn.innerText = "Yes, Change it";
+            }
+        }, 1000);
+
+        modal.dataset.timerId = timer;
+    }
 });
 
+/**
+ * 2. AJAX UPDATE EXECUTION
+ */
+function executeStatusUpdate() {
+    if (!pendingStatusChange) return;
+    const { select, reportId, statusId, userId, originalValue } = pendingStatusChange;
 
-document.querySelectorAll(".status-updater").forEach((select) => {
-  select.addEventListener("change", function () {
-    const reportId = this.getAttribute("data-report-id");
-    const statusId = this.value;
-    const userId = this.getAttribute("data-user-id");
-
-  
-    this.style.opacity = "0.5";
-    this.disabled = true;
+    select.style.opacity = "0.5";
+    select.disabled = true;
 
     fetch("../controllers/quick_update_status.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "X-Requested-With": "XMLHttpRequest",
-      },
-      body: `report_id=${reportId}&status_id=${statusId}&updated_by=${userId}`,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        body: `report_id=${reportId}&status_id=${statusId}&updated_by=${userId}`,
     })
-      .then((response) => response.json())
-      .then((data) => {
-        this.style.opacity = "1";
-        this.disabled = false; 
+    .then((response) => response.json())
+    .then((data) => {
+        select.style.opacity = "1";
+        select.disabled = false;
 
         if (data.success) {
-          showToast(
-            '<i class="fas fa-check-circle mr-2"></i>Status updated successfully!',
-            "bg-green-500/80 text-white",
-          );
+            select.setAttribute('data-last-value', statusId);
+            showToast(
+                '<i class="fas fa-check-circle mr-2"></i>Status updated successfully!',
+                "bg-green-500/80 text-white"
+            );
 
-          
-
-          const statusToRemove = ["3", "4"];
-
-          if (statusToRemove.includes(statusId)) {
-            const row = this.closest("tr");
-
-            // Start the fade out
-            row.style.transition = "all 0.5s ease";
-            row.style.opacity = "0";
-            row.style.transform = "translateX(20px)";
-
-            // Remove from DOM after animation finishes
-            setTimeout(() => {
-              row.remove();
-            }, 500);
-          }
-          // --- NEW ANIMATION LOGIC END ---
+            // Row removal animation for Resolved (3) or Closed (4)
+            const statusToRemove = ["3", "4"];
+            if (statusToRemove.includes(statusId)) {
+                const row = select.closest("tr") || select.closest(".report-row");
+                if (row) {
+                    row.style.transition = "all 0.5s ease";
+                    row.style.opacity = "0";
+                    row.style.transform = "translateX(20px)";
+                    setTimeout(() => row.remove(), 500);
+                }
+            }
         } else {
-          showToast("Update failed: " + data.error, "bg-red-500");
-          location.reload();
+            showToast("Update failed: " + data.error, "bg-red-500 text-white");
+            select.value = originalValue; // Reset dropdown
         }
-      })
-      .catch((err) => {
+    })
+    .catch((err) => {
         console.error("Fetch Error:", err);
-        this.disabled = false;
-        this.style.opacity = "1";
-      });
-  });
-});
-
-// Helper function for toast notifications
-function showToast(message, bgColor) {
-  const toast = document.createElement("div");
-  toast.className = `fixed top-24 right-5 ${bgColor} text-white px-6 py-3 rounded-xl shadow-lg z-[110] transition-all duration-300`;
-  toast.innerHTML = message;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+        select.disabled = false;
+        select.style.opacity = "1";
+        select.value = originalValue;
+    });
 }
 
-// 2. Animated Control Functions
-function openAddModal() {
-  // Show the hidden wrapper first
-  addModal.classList.remove("hidden");
+/**
+ * 3. DOM CONTENT LOADED (Listeners for Buttons & Filters)
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    // Confirm Status "Yes" Button
+    document.getElementById("confirmStatusBtn")?.addEventListener("click", () => {
+        toggleStatusModal(false);
+        executeStatusUpdate();
+    });
 
-  // Use a 10ms delay to allow the browser to register the 'hidden' removal
-  // before applying the transition classes
-  setTimeout(() => {
-    addContainer.classList.remove("scale-95", "opacity-0");
-    addContainer.classList.add("scale-100", "opacity-100");
-    addBackdrop.classList.remove("opacity-0");
-    addBackdrop.classList.add("opacity-100");
-  }, 10);
+    // Confirm Status "Cancel" Button
+    document.getElementById("cancelStatusBtn")?.addEventListener("click", () => {
+        if (pendingStatusChange) {
+            pendingStatusChange.select.value = pendingStatusChange.originalValue;
+        }
+        const modal = document.getElementById("statusConfirmModal");
+        if (modal.dataset.timerId) clearInterval(Number(modal.dataset.timerId));
+        toggleStatusModal(false);
+        pendingStatusChange = null;
+    });
+
+    // --- Original Filtering Logic ---
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const moduleFilter = document.getElementById("moduleFilter");
+    const severityFilter = document.getElementById("severityFilter");
+    const resetBtn = document.getElementById("resetBtn");
+    const rows = document.querySelectorAll(".report-row");
+    const noResultsRow = document.getElementById("noResultsRow");
+
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const catVal = categoryFilter.value;
+        const modVal = moduleFilter.value;
+        const sevVal = severityFilter.value;
+        let visibleCount = 0;
+
+        rows.forEach((row) => {
+            const ref = row.getAttribute("data-ref").toLowerCase();
+            const reporter = row.getAttribute("data-reporter").toLowerCase();
+            const desc = row.getAttribute("data-desc").toLowerCase();
+            const catId = row.getAttribute("data-cat");
+            const modId = row.getAttribute("data-mod");
+            const sevId = row.getAttribute("data-sev");
+
+            const matchesSearch = searchTerm === "" || ref.includes(searchTerm) || reporter.includes(searchTerm) || desc.includes(searchTerm);
+            const matchesCat = catVal === "" || catId === catVal;
+            const matchesMod = modVal === "" || modId === modVal;
+            const matchesSev = sevVal === "" || sevId === sevVal;
+
+            if (matchesSearch && matchesCat && matchesMod && matchesSev) {
+                row.classList.remove("hidden");
+                visibleCount++;
+            } else {
+                row.classList.add("hidden");
+            }
+        });
+        if (noResultsRow) noResultsRow.classList.toggle("hidden", visibleCount !== 0);
+    }
+
+    searchInput?.addEventListener("input", applyFilters);
+    categoryFilter?.addEventListener("change", applyFilters);
+    moduleFilter?.addEventListener("change", applyFilters);
+    severityFilter?.addEventListener("change", applyFilters);
+    resetBtn?.addEventListener("click", () => {
+        searchInput.value = "";
+        categoryFilter.value = "";
+        moduleFilter.value = "";
+        severityFilter.value = "";
+        applyFilters();
+    });
+});
+
+/**
+ * 4. TOAST NOTIFICATION (Modernized)
+ */
+function showToast(message, bgColor) {
+    const toast = document.createElement("div");
+    toast.className = `fixed top-24 right-5 ${bgColor} bg-opacity-90 backdrop-blur-md px-8 py-4 rounded-[2rem] shadow-2xl z-[200] transition-all duration-300 transform translate-x-10 opacity-0 font-bold`;
+    toast.innerHTML = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.classList.remove('translate-x-10', 'opacity-0'), 10);
+    setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-10');
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}
+
+/**
+ * 5. MODAL CONTROL FUNCTIONS (ADD & EDIT)
+ */
+function openAddModal() {
+    addModal.classList.remove("hidden");
+    setTimeout(() => {
+        addContainer.classList.remove("scale-95", "opacity-0");
+        addContainer.classList.add("scale-100", "opacity-100");
+        addBackdrop.classList.remove("opacity-0");
+        addBackdrop.classList.add("opacity-100");
+    }, 10);
 }
 
 function closeAddModal() {
-  // Reverse the animation first
-  addContainer.classList.remove("scale-100", "opacity-100");
-  addContainer.classList.add("scale-95", "opacity-0");
-  addBackdrop.classList.remove("opacity-100");
-  addBackdrop.classList.add("opacity-0");
-
-  // Wait for the 300ms transition to finish before adding 'hidden' back
-  setTimeout(() => {
-    addModal.classList.add("hidden");
-  }, 300);
+    addContainer.classList.remove("scale-100", "opacity-100");
+    addContainer.classList.add("scale-95", "opacity-0");
+    addBackdrop.classList.remove("opacity-100");
+    addBackdrop.classList.add("opacity-0");
+    setTimeout(() => addModal.classList.add("hidden"), 300);
 }
 
-// Update your Escape key listener to use the animated functions
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeAddModal();
-    // If you have an edit modal, apply the same logic there
-    if (typeof closeEditModal === "function") closeEditModal();
-  }
-});
-
 function openEditModal() {
-  // 1. Show the hidden wrapper
-  editModal.classList.remove("hidden");
-
-  // 2. Trigger animation (after 10ms to let browser register removal of hidden)
-  setTimeout(() => {
-    editContainer.classList.remove("scale-95", "opacity-0");
-    editContainer.classList.add("scale-100", "opacity-100");
-    editBackdrop.classList.remove("opacity-0");
-    editBackdrop.classList.add("opacity-100");
-  }, 10);
+    editModal.classList.remove("hidden");
+    setTimeout(() => {
+        editContainer.classList.remove("scale-95", "opacity-0");
+        editContainer.classList.add("scale-100", "opacity-100");
+        editBackdrop.classList.remove("opacity-0");
+        editBackdrop.classList.add("opacity-100");
+    }, 10);
 }
 
 function closeEditModal() {
-  // 1. Reverse the animation
-  editContainer.classList.remove("scale-100", "opacity-100");
-  editContainer.classList.add("scale-95", "opacity-0");
-  editBackdrop.classList.remove("opacity-100");
-  editBackdrop.classList.add("opacity-0");
-
-  // 2. Hide after the transition finishes (300ms)
-  setTimeout(() => {
-    editModal.classList.add("hidden");
-  }, 300);
+    editContainer.classList.remove("scale-100", "opacity-100");
+    editContainer.classList.add("scale-95", "opacity-0");
+    editBackdrop.classList.remove("opacity-100");
+    editBackdrop.classList.add("opacity-0");
+    setTimeout(() => editModal.classList.add("hidden"), 300);
 }
 
+// Edit Button Populating Logic
 document.querySelectorAll(".edit-report-btn").forEach((button) => {
-  button.addEventListener("click", function () {
-    // Populate standard fields
-    document.getElementById("edit_report_id").value =
-      this.getAttribute("data-id");
-    document.getElementById("edit_cat_id").value =
-      this.getAttribute("data-cat");
-    document.getElementById("edit_mod_id").value =
-      this.getAttribute("data-mod");
-    document.getElementById("edit_desc").value = this.getAttribute("data-desc");
+    button.addEventListener("click", function () {
+        document.getElementById("edit_report_id").value = this.getAttribute("data-id");
+        document.getElementById("edit_cat_id").value = this.getAttribute("data-cat");
+        document.getElementById("edit_mod_id").value = this.getAttribute("data-mod");
+        document.getElementById("edit_desc").value = this.getAttribute("data-desc");
 
-    // Handle the Severity Radios
-    const severityId = this.getAttribute("data-sev");
+        const severityId = this.getAttribute("data-sev");
+        const radioToSelect = editModal.querySelector(`input[name="sev_id"][value="${severityId}"]`);
+        if (radioToSelect) radioToSelect.checked = true;
 
-    // Find the radio button inside the Edit Modal that matches the ID
-    const radioToSelect = editModal.querySelector(
-      `input[name="sev_id"][value="${severityId}"]`,
-    );
-
-    if (radioToSelect) {
-      radioToSelect.checked = true;
-    } else {
-      // Fallback: If no match found, uncheck all to prevent stale data
-      editModal
-        .querySelectorAll('input[name="sev_id"]')
-        .forEach((r) => (r.checked = false));
-    }
-
-    openEditModal();
-  });
+        openEditModal();
+    });
 });
-// 5. Add Report Form Submission
-// Locate this section in your reports.js
-// 5. Add Report Form Submission
+
+/**
+ * 6. FORM SUBMISSION (ADD REPORT)
+ */
 if (addReportForm) {
-  addReportForm.addEventListener("submit", function (e) {
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const severityOptions = this.querySelectorAll('input[name="sev_id"]');
-    const severityError = document.getElementById("severity-error");
-    const fileInput = document.getElementById('rep_img_input');
+    addReportForm.addEventListener("submit", function (e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const severityOptions = this.querySelectorAll('input[name="sev_id"]');
+        const fileInput = document.getElementById('rep_img_input');
 
-    // 1. Check Severity (Existing logic)
-    const isChecked = Array.from(severityOptions).some((r) => r.checked);
-    if (!isChecked) {
-      e.preventDefault();
-      if (severityError) severityError.classList.remove("hidden");
-      return false;
-    }
+        const isChecked = Array.from(severityOptions).some((r) => r.checked);
+        if (!isChecked) {
+            e.preventDefault();
+            document.getElementById("severity-error")?.classList.remove("hidden");
+            return false;
+        }
 
-    // 2. NEW: Check File Size (25MB Limit)
-    if (fileInput.files.length > 0) {
-      const maxSize = 25 * 1024 * 1024; // 25MB in bytes
-      const fileSize = fileInput.files[0].size;
+        if (fileInput?.files.length > 0) {
+            if (fileInput.files[0].size > 25 * 1024 * 1024) {
+                e.preventDefault();
+                showToast('<i class="fas fa-exclamation-triangle mr-2"></i>Max 25MB only!', "bg-red-500 text-white");
+                return false;
+            }
+        }
 
-      if (fileSize > maxSize) {
-        e.preventDefault();
-        // Gumamit tayo ng alert o kaya yung existing showToast function mo
-        showToast(
-          '<i class="fas fa-exclamation-triangle mr-2"></i>Masyadong malaki ang file! Max 25MB lang.',
-          "bg-red-500 text-white"
-        );
-        return false;
-      }
-    }
-
-    // 3. UI Loading State (Existing logic)
-    submitBtn.style.pointerEvents = "none";
-    submitBtn.classList.add("opacity-70", "cursor-not-allowed");
-    submitBtn.innerHTML =
-      '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
-
-    // Submit the form
-    const form = this;
-    setTimeout(() => {
-      form.submit();
-    }, 100);
-  });
+        submitBtn.style.pointerEvents = "none";
+        submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
+        
+        const form = this;
+        setTimeout(() => form.submit(), 100);
+    });
 }
 
-//6. Filtering Logic
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("searchInput"); // Ensure your input has this ID
-  const categoryFilter = document.getElementById("categoryFilter");
-  const moduleFilter = document.getElementById("moduleFilter");
-  const severityFilter = document.getElementById("severityFilter");
-  const resetBtn = document.getElementById("resetBtn");
-
-  const rows = document.querySelectorAll(".report-row");
-  const noResultsRow = document.getElementById("noResultsRow");
-
-  function applyFilters() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    const catVal = categoryFilter.value;
-    const modVal = moduleFilter.value;
-    const sevVal = severityFilter.value;
-
-    let visibleCount = 0;
-
-    rows.forEach((row) => {
-      // 1. Get all data
-      const ref = row.getAttribute("data-ref").toLowerCase();
-      const reporter = row.getAttribute("data-reporter").toLowerCase();
-      const desc = row.getAttribute("data-desc").toLowerCase();
-      const catId = row.getAttribute("data-cat");
-      const modId = row.getAttribute("data-mod");
-      const sevId = row.getAttribute("data-sev");
-
-      // 2. Search Logic (Ref OR Reporter OR Description)
-      const matchesSearch =
-        searchTerm === "" ||
-        ref.includes(searchTerm) ||
-        reporter.includes(searchTerm) ||
-        desc.includes(searchTerm);
-
-      // 3. Filter Logic
-      const matchesCat = catVal === "" || catId === catVal;
-      const matchesMod = modVal === "" || modId === modVal;
-      const matchesSev = sevVal === "" || sevId === sevVal;
-
-      // 4. Combine everything
-      if (matchesSearch && matchesCat && matchesMod && matchesSev) {
-        row.classList.remove("hidden"); // Using Tailwind's 'hidden' class
-        visibleCount++;
-      } else {
-        row.classList.add("hidden");
-      }
-    });
-
-    // 5. Handle "No Results" display
-    if (visibleCount === 0) {
-      noResultsRow.classList.remove("hidden");
-    } else {
-      noResultsRow.classList.add("hidden");
+// Global Key Listeners
+window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeAddModal();
+        closeEditModal();
+        toggleStatusModal(false);
     }
-  }
-
-  // Listeners
-  searchInput.addEventListener("input", applyFilters);
-  categoryFilter.addEventListener("change", applyFilters);
-  moduleFilter.addEventListener("change", applyFilters);
-  severityFilter.addEventListener("change", applyFilters);
-
-  resetBtn.addEventListener("click", () => {
-    searchInput.value = "";
-    categoryFilter.value = "";
-    moduleFilter.value = "";
-    severityFilter.value = "";
-    applyFilters();
-  });
 });
