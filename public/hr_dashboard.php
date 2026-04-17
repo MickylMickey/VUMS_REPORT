@@ -6,6 +6,8 @@ $userData = checkAuth('HR');
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 $username = $userData->username;
+
+
 $sql = "SELECT us.*, 
                st.status_desc, 
                updater.username AS updater_name,
@@ -22,9 +24,7 @@ $sql = "SELECT us.*,
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,184 +32,11 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-</head>
+    <title>HR Dashboard</title>
 
-<body class="bg-[#f8fafc] pt-24 min-h-screen antialiased text-slate-900">
-    <?php include "templates/navbar.php"; ?>
-
-    <main class="max-w-[1600px] mx-auto p-4 lg:p-8">
-
-        <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-5 auto-rows-auto">
-
-            <div
-                class="md:col-span-4 lg:col-span-9 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 rounded-[2rem] shadow-xl shadow-blue-100 flex items-center justify-between overflow-hidden relative group">
-                <div class="relative z-10">
-                    <h2 class="text-3xl md:text-4xl font-bold text-white tracking-tight">
-                        Hello, <?= htmlspecialchars(ucfirst($username)) ?>
-                    </h2>
-                    <p class="text-blue-100 mt-2 text-lg opacity-90">
-                        Here's your dashboard overview for <span
-                            class="font-semibold text-white"><?= date('F d, Y') ?></span>
-                    </p>
-                </div>
-                <i
-                    class="fa-solid fa- rocket absolute right-[-20px] top-[-20px] text-[12rem] text-white/10 -rotate-12 group-hover:rotate-0 transition-transform duration-700"></i>
-            </div>
-
-            <div
-                class="md:col-span-2 lg:col-span-3 bg-indigo-50 border border-indigo-100 p-8 rounded-[2rem] flex flex-col justify-between relative overflow-hidden">
-                <div>
-                    <p class="text-indigo-600 text-xs font-black uppercase tracking-[0.2em] mb-1">Your Total Reports</p>
-                    <div id="overall-total" class="text-6xl font-black text-indigo-900 leading-none">0</div>
-                </div>
-                <div class="mt-4 flex items-center gap-2 text-indigo-500 font-bold text-sm">
-                    <span class="flex h-2 w-2 rounded-full bg-indigo-500"></span>
-                    Live Data
-                </div>
-            </div>
-
-            <div class="md:col-span-2 lg:col-span-3 bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Priority Breakdown</h3>
-                <div class="space-y-5">
-                    <?php
-                    $priorities = [
-                        ['label' => 'Critical', 'id' => 'stat-critical', 'color' => 'bg-rose-500'],
-                        ['label' => 'High', 'id' => 'stat-high', 'color' => 'bg-orange-400'],
-                        ['label' => 'Medium', 'id' => 'stat-medium', 'color' => 'bg-amber-400'],
-                        ['label' => 'Low', 'id' => 'stat-low', 'color' => 'bg-emerald-400'],
-                    ];
-                    foreach ($priorities as $p): ?>
-                        <div class="flex justify-between items-center group">
-                            <span class="flex items-center gap-3 text-slate-600 font-bold text-sm">
-                                <div class="w-2.5 h-2.5 rounded-full <?= $p['color'] ?> ring-4 ring-slate-50"></div>
-                                <?= $p['label'] ?>
-                            </span>
-                            <span id="<?= $p['id'] ?>"
-                                class="font-black text-slate-900 bg-slate-50 px-3 py-1 rounded-lg group-hover:bg-slate-100 transition-colors">0</span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <div class="md:col-span-4 lg:col-span-6 bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm">
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Community Suggestions</h2>
-                    <a href="suggestions.php"
-                        class="bg-slate-50 hover:bg-slate-100 text-indigo-600 px-4 py-2 rounded-xl text-xs font-black transition-all">VIEW
-                        ALL</a>
-                </div>
-
-                <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                    <?php foreach ($suggestions as $sug):
-                        $statusColor = match ((int) $sug['status_id']) {
-                            1 => 'bg-amber-50 text-amber-600 border-amber-100',
-                            2 => 'bg-blue-50 text-blue-600 border-blue-100',
-                            3 => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                            default => 'bg-slate-50 text-slate-600 border-slate-100'
-                        };
-                        ?>
-                        <div
-                            class="bg-slate-50/50 p-5 rounded-2xl border border-transparent hover:border-slate-200 hover:bg-white transition-all duration-300">
-                            <div class="flex gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex-shrink-0 flex items-center justify-center font-bold text-indigo-600 overflow-hidden shadow-sm">
-                                    <?php if (!empty($sug['reporter_profile_pic'])): ?>
-                                        <img src="img/prof_pic/<?= htmlspecialchars($sug['reporter_profile_pic']) ?>"
-                                            class="w-full h-full object-cover">
-                                    <?php else: ?>
-                                        <?= substr($sug['username'], 0, 1) ?>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start">
-                                        <span
-                                            class="font-bold text-slate-800 text-sm"><?= htmlspecialchars($sug['username']) ?></span>
-                                        <span
-                                            class="px-2 py-0.5 rounded-md text-[9px] font-black border <?= $statusColor ?>">
-                                            <?= htmlspecialchars($sug['status_desc']) ?>
-                                        </span>
-                                    </div>
-                                    <p class="text-slate-500 text-xs mt-1 italic line-clamp-2 leading-relaxed">
-                                        "<?= htmlspecialchars($sug['suggestion_desc']) ?>"
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <div
-                class="md:col-span-2 lg:col-span-3 bg-rose-50 border border-rose-100 p-8 rounded-[2rem] flex flex-col h-full">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xs font-black text-rose-700 uppercase tracking-widest">Critical Action</h3>
-                    <span class="relative flex h-3 w-3">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                    </span>
-                </div>
-
-                <div id="critical-list" class="space-y-3 overflow-y-auto pr-1 custom-scrollbar">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100">
-                        <p class="font-bold text-rose-900 text-sm">System Outage</p>
-                        <p class="text-xs text-rose-600/80 mt-1 line-clamp-2">API gateway reporting 500 errors...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="md:col-span-2 lg:col-span-3 bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm">
-                <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest mb-6">Status Distribution</h3>
-                <div class="h-40">
-                    <canvas id="statusChart"></canvas>
-                </div>
-            </div>
-
-            <div
-                class="md:col-span-2 lg:col-span-3 bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm flex flex-col justify-center">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Workflow Status</h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-50 p-5 rounded-[1.5rem] border border-slate-100">
-                        <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Pending</p>
-                        <p id="stat-pending" class="text-2xl font-black text-slate-800">0</p>
-                    </div>
-                    <div class="bg-indigo-50 p-5 rounded-[1.5rem] border border-indigo-100">
-                        <p class="text-[10px] font-black text-indigo-400 uppercase mb-1">In-Progress</p>
-                        <p id="stat-in-progress" class="text-2xl font-black text-indigo-700">0</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="md:col-span-2 lg:col-span-3 bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm">
-                <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-medal text-amber-500"></i> Top Reporter
-                </h3>
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
-                            <th class="pb-3 text-left">User</th>
-                            <th class="pb-3 text-right">Reports</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reporter-list" class="divide-y divide-slate-50">
-                    </tbody>
-                </table>
-            </div>
-
-            <div
-                class="md:col-span-2 lg:col-span-3 bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm flex flex-col justify-between">
-                <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">User Count</h3>
-                <div class="mt-4">
-                    <div id="totalUsers" class="text-4xl font-black text-slate-900">--</div>
-                    <p class="text-xs text-slate-400 font-bold mt-1 uppercase">Registered Users</p>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Custom scrollbar for the critical alerts list */
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
@@ -219,22 +46,233 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
+            background: #f1f5f9;
             border-radius: 10px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
-
-        /* Ensures cards stay consistent height in the same row if needed */
-        .grid-flow-row-dense {
-            grid-auto-flow: row dense;
+            background: #e2e8f0;
         }
     </style>
+</head>
+
+<body class="bg-slate-50 pt-24 min-h-screen">
+    <?php include "templates/navbar.php"; ?>
+
+    <main class="max-w-[1600px] mx-auto p-4 lg:p-8">
+
+        <!-- HEADER BENTO SECTION -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+            <!-- Welcome Banner -->
+            <div
+                class="lg:col-span-8 bg-indigo-600 rounded-[2.5rem] p-8 md:p-12 text-white relative overflow-hidden shadow-xl shadow-indigo-100">
+                <div class="relative z-10">
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-3">
+                        Welcome back, <?= htmlspecialchars(ucfirst($username)) ?>!
+                    </h1>
+                    <p class="text-indigo-100 text-lg md:text-xl opacity-90 max-w-xl leading-relaxed">
+                        Manage your reports and community suggestions in one place. Here is your overview for today.
+                    </p>
+                </div>
+                <!-- Decorative Icon -->
+                <i
+                    class="fa-solid fa-rocket absolute -right-10 -bottom-10 text-[18rem] text-white/10 -rotate-12 pointer-events-none"></i>
+            </div>
+
+            <!-- Date Card -->
+            <div
+                class="lg:col-span-4 bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col justify-center items-center text-center shadow-sm">
+                <p class="text-slate-400 uppercase tracking-[0.2em] text-xs font-bold mb-2"><?= date('l') ?></p>
+                <h2 class="text-4xl font-black text-slate-800"><?= date('M d, Y') ?></h2>
+                <div
+                    class="mt-6 px-5 py-2.5 bg-emerald-50 rounded-full text-xs font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    System Active
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN GRID AREA -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- COLUMN 1: TOTALS & PRIORITY -->
+            <div class="lg:col-span-3 flex flex-col gap-6">
+                <!-- Total Reports Card -->
+                <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Total Reports</p>
+                    <div id="overall-total" class="text-7xl font-black italic">0</div>
+                    <div
+                        class="mt-4 flex items-center text-emerald-400 text-[10px] font-black uppercase tracking-widest">
+                        <i class="fa-solid fa-arrow-trend-up mr-2"></i> Live Tracking
+                    </div>
+                </div>
+
+                <!-- Priority Breakdown Card -->
+                <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+                    <h3
+                        class="text-xs font-black text-slate-400 uppercase tracking-widest mb-8 border-b border-slate-50 pb-4">
+                        Priority Breakdown</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <span class="flex items-center gap-3 text-slate-600 font-bold text-sm">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span> Critical
+                            </span>
+                            <span id="stat-critical" class="font-black text-slate-900 text-xl">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="flex items-center gap-3 text-slate-600 font-bold text-sm">
+                                <span class="w-3 h-3 rounded-full bg-orange-500"></span> High
+                            </span>
+                            <span id="stat-high" class="font-black text-slate-900 text-xl">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="flex items-center gap-3 text-slate-600 font-bold text-sm">
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span> Medium
+                            </span>
+                            <span id="stat-medium" class="font-black text-slate-900 text-xl">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="flex items-center gap-3 text-slate-600 font-bold text-sm">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Low
+                            </span>
+                            <span id="stat-low" class="font-black text-slate-900 text-xl">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: SUGGESTIONS & TOP REPORTERS -->
+            <div class="lg:col-span-6 flex flex-col gap-6">
+                <!-- Recent Suggestions Section -->
+                <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-xl font-black text-slate-800 tracking-tight">Recent Suggestions</h2>
+                        <a href="suggestions.php"
+                            class="bg-slate-100 hover:bg-slate-200 p-2 px-5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">View
+                            All</a>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <?php foreach ($suggestions as $sug):
+                            $statusColor = match ((int) $sug['status_id']) {
+                                1 => 'bg-amber-100 text-amber-700',
+                                2 => 'bg-blue-100 text-blue-700',
+                                3 => 'bg-emerald-100 text-emerald-700',
+                                default => 'bg-slate-100 text-slate-600'
+                            };
+                            ?>
+                            <div
+                                class="p-5 rounded-3xl bg-slate-50/50 border border-slate-100 flex gap-5 items-center hover:bg-white hover:shadow-md hover:border-transparent transition-all duration-300">
+                                <div
+                                    class="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
+                                    <?php if (!empty($sug['reporter_profile_pic'])): ?>
+                                        <img src="img/prof_pic/<?= htmlspecialchars($sug['reporter_profile_pic']) ?>"
+                                            class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                        <span
+                                            class="font-black text-indigo-400 text-lg"><?= substr($sug['username'], 0, 1) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="flex-grow min-w-0">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <h4 class="font-black text-slate-800 text-sm truncate">
+                                            <?= htmlspecialchars($sug['username']) ?>
+                                        </h4>
+                                        <span
+                                            class="text-[9px] px-2 py-1 rounded-lg font-black uppercase tracking-tighter <?= $statusColor ?>">
+                                            <?= htmlspecialchars($sug['status_desc']) ?>
+                                        </span>
+                                    </div>
+                                    <p class="text-slate-500 text-xs line-clamp-2 italic leading-relaxed">
+                                        "<?= htmlspecialchars($sug['suggestion_desc']) ?>"</p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- Top Reporters Section -->
+                <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+                    <h2 class="text-xl font-black text-slate-800 mb-6 tracking-tight">Top Reporters</h2>
+                    <div class="overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr
+                                    class="text-slate-400 text-[10px] uppercase tracking-[0.2em] border-b border-slate-100">
+                                    <th class="pb-4 font-black">Reporter Name</th>
+                                    <th class="pb-4 text-right font-black">Report Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reporter-list" class="divide-y divide-slate-50">
+                                <!-- user_chat.js populates this -->
+                                <tr>
+                                    <td colspan="2" class="py-10 text-center text-slate-400 text-xs italic">Loading
+                                        database records...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 3: CHART & URGENT LIST -->
+            <div class="lg:col-span-3 flex flex-col gap-6">
+                <!-- Status Distribution (Chart) -->
+                <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8 text-center">Status
+                        Distribution</h3>
+                    <div class="h-44 relative">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Small Workflow Counters -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-sm">
+                        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Pending</p>
+                        <p id="stat-pending" class="text-3xl font-black text-slate-800">0</p>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-sm">
+                        <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Resolved</p>
+                        <p id="stat-resolved" class="text-3xl font-black text-slate-800">0</p>
+                    </div>
+                </div>
+
+                <!-- Critical Alerts (Urgent Alerts) -->
+                <div class="bg-white border border-rose-100 rounded-[2.5rem] p-6 shadow-sm shadow-rose-50">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xs font-black text-rose-600 uppercase tracking-widest flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Urgent Alerts
+                        </h3>
+                        <span class="flex h-2 w-2 relative">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                        </span>
+                    </div>
+                    <!-- user_chat.js populates this container -->
+                    <div id="critical-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        <p class="text-xs text-slate-400 text-center py-4 italic">Scanning for critical issues...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="mt-12">
+        <?php include "templates/footer.php"; ?>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.3.2/dist/countUp.umd.js"></script>
+    <!-- Your Provided user_chat.js -->
+    <script src="js/user_chart.js" defer></script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/countup.js@2.3.2/dist/countUp.umd.js"></script>
-<script src="js/user_chart.js"></script>
 
 </html>

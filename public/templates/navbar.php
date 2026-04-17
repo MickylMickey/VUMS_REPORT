@@ -29,7 +29,7 @@ if (!empty($user->user_prof)) {
         </div>
 
         <div class="hidden md:flex gap-14 text-md font-medium text-gray-600">
-            <a href="<?= $isAdmin ? 'admin_dashboard.php' : 'user_dashboard.php' ?>"
+            <a href="<?= $isAdmin ? 'admin_dashboard.php' : ($isHr ? 'hr_dashboard.php' : 'user_dashboard.php') ?>"
                 class="hover:text-black transition-colors">
                 Dashboard
             </a>

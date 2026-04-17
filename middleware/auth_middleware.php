@@ -39,20 +39,17 @@ function checkAuth($requiredRole = null)
 
     // 3. Role check
     if ($requiredRole) {
-
-        $allowedRoles = is_array($requiredRole)
-            ? $requiredRole
-            : [$requiredRole];
-
         $userRole = $userData->role ?? null;
 
+        // Convert a single string to an array so we can use in_array() for everything
+        $allowedRoles = is_array($requiredRole) ? $requiredRole : [$requiredRole];
+
         if (!in_array($userRole, $allowedRoles)) {
-            setValidation("error", "Access denied.");
+            setValidation("error", "Access denied: Insufficient permissions.");
             header("Location: /index.php");
             exit();
         }
     }
-
 
     // 4. Sync session (safe)
     $_SESSION['user_id'] = $userData->user_id ?? null;

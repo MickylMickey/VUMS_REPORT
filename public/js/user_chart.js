@@ -1,6 +1,5 @@
 async function initUserDashboard() {
   try {
-    // 1. Fetch from the user-specific endpoint
     const response = await fetch("../functions/user-data-api.php");
 
     if (!response.ok) {
@@ -17,7 +16,7 @@ async function initUserDashboard() {
         animateValue("overall-total", data.overall);
       }
 
-      // --- 2. STAT CARDS (USER-SCOPED) ---
+      // --- 2. STAT CARDS ---
       if (data.stats) {
         const stats = data.stats;
         animateValue("stat-critical", stats.critical);
@@ -25,47 +24,45 @@ async function initUserDashboard() {
         animateValue("stat-pending", stats.pending);
         animateValue("stat-resolved", stats.resolved_today);
 
-        // Optional: High/Medium/Low cards if they exist in your User UI
+        // Optional cards: check existence to avoid null errors
         if (document.getElementById("stat-high")) animateValue("stat-high", stats.high);
         if (document.getElementById("stat-medium")) animateValue("stat-medium", stats.medium);
         if (document.getElementById("stat-low")) animateValue("stat-low", stats.low);
         if (document.getElementById("stat-in-progress")) animateValue("stat-in-progress", stats.in_progress);
       }
 
-      if (data.reporters) {
-        const list = document.getElementById("reporter-list");
-        list.innerHTML = data.reporters
+      // --- 3. HR-SPECIFIC DATA (TOTAL USERS) ---
+      // This only runs if the 'totalUsers' element is present in the HTML
+      const totalUsersEl = document.getElementById("totalUsers");
+      if (totalUsersEl && data.total_users !== undefined) {
+        totalUsersEl.textContent = data.total_users;
+      }
+
+      // --- 4. HR-SPECIFIC DATA (REPORTERS LIST) ---
+      const reporterList = document.getElementById("reporter-list");
+      if (reporterList && data.reporters) {
+        reporterList.innerHTML = data.reporters
           .map(
             (user) => `
-        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-            <td class="py-4 font-bold text-slate-800">${user.username}</td>
-            <td class="py-4 text-right">
-                <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold text-xs">
-                    ${user.total}
-                </span>
-            </td>
-        </tr>
-    `,
+              <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                  <td class="py-4 font-bold text-slate-800">${user.username}</td>
+                  <td class="py-4 text-right">
+                      <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold text-xs">
+                          ${user.total}
+                      </span>
+                  </td>
+              </tr>
+          `,
           )
           .join("");
       }
 
-      const el = document.getElementById("totalUsers");
-
-      if (!el) return;
-
-      if (result.status === "success") {
-        el.textContent = result.data?.total_users ?? 0;
-      } else {
-        el.textContent = "0";
-      }
-
-      // --- 4. STATUS PIE CHART (USER-SCOPED) ---
+      // --- 5. STATUS PIE CHART ---
       if (data.statuses) {
         renderStatusPieChart(data.statuses);
       }
 
-      // --- 5. MY CRITICAL REPORTS LIST ---
+      // --- 6. CRITICAL REPORTS LIST ---
       if (data.critical_reports) {
         const container = document.getElementById("critical-list");
         if (container) {
@@ -74,21 +71,21 @@ async function initUserDashboard() {
               ? data.critical_reports
                   .map(
                     (report) => `
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
-                    <div>
-                        <p class="text-sm font-semibold text-slate-800">${report.ref_num}</p>
-                        <p class="text-xs text-slate-500">${report.date}</p>
-                    </div>
-                    <span class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded-lg font-bold">Critical</span>
-                </div>
-              `,
+                  <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
+                      <div>
+                          <p class="text-sm font-semibold text-slate-800">${report.ref_num}</p>
+                          <p class="text-xs text-slate-500">${report.date}</p>
+                      </div>
+                      <span class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded-lg font-bold">Critical</span>
+                  </div>
+                `,
                   )
                   .join("")
               : `<p class="text-sm text-slate-400 text-center py-4">No pending critical reports.</p>`;
         }
       }
 
-      console.log("User Dashboard fully populated.");
+      console.log("Dashboard fully populated.");
     } else {
       console.error("API Error:", result.message);
     }
@@ -96,7 +93,6 @@ async function initUserDashboard() {
     console.error("Dashboard Init Failed:", err);
   }
 }
-
 /**
  * Renders the Status Doughnut Chart
  */
@@ -141,61 +137,28 @@ function renderStatusPieChart(statusData) {
 }
 
 /**
- * Reusable Helper: Animate numbers using CountUp.js
+ * Helper: Animate numbers
  */
 function animateValue(id, value) {
   const element = document.getElementById(id);
   if (!element) return;
 
-  const demo = new countUp.CountUp(id, value || 0, {
-    duration: 2,
-    useEasing: true,
-    useGrouping: true,
-  });
+  // Safety check for countUp library
+  if (typeof countUp !== "undefined") {
+    const demo = new countUp.CountUp(id, value || 0, {
+      duration: 2,
+      useEasing: true,
+      useGrouping: true,
+    });
 
-  if (!demo.error) {
-    demo.start();
+    if (!demo.error) {
+      demo.start();
+    } else {
+      element.innerText = value || 0;
+    }
   } else {
     element.innerText = value || 0;
   }
 }
 
-/**
- * Reusable Helper: Bar Chart
- */
-function renderBarChart(canvasId, labels, data, title) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-  if (window[canvasId] instanceof Chart) {
-    window[canvasId].destroy();
-  }
-
-  window[canvasId] = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: title,
-          data: data,
-          backgroundColor: "#4F46E5",
-          borderRadius: 6,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, grid: { display: false } },
-        x: { grid: { display: false } },
-      },
-    },
-  });
-}
-
-// Start
 document.addEventListener("DOMContentLoaded", initUserDashboard);

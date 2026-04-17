@@ -107,8 +107,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
                                 $isVideo = in_array($fileExt, $videoExtensions);
 
-                                // Path linking: Kung gagamit ka ng hiwalay na folder, 
-                                // siguraduhin na tumutugma ito sa iyong add_suggestions.php controller
+
                                 $finalPath = "uploads/suggestions/" . $mediaFile;
                                 ?>
 
@@ -188,39 +187,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             <?php endif; ?>
         </div>
-        <footer style=" background-color: #0a2550; color: white;">
-            <div class="max-w-7xl mx-auto px-2 py-4 md:py-3">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-8">
 
-
-                    <div class="text-center md:text-left space-y-1">
-                        <h2 class="text-2xl font-extrabold tracking-tight text-black-400">
-                            Vinculum Technologies Inc.
-                        </h2>
-
-                    </div>
-
-
-                    <div class="hidden md:block w-px h-12 bg-slate-700"></div>
-
-
-                    <div class="text-center md:text-right space-y-1">
-                        <p class="text-sm text-slate-300">
-                            © <span class="font-bold text-white">Vinculum</span>
-
-                        </p>
-
-                        <div
-                            class="flex justify-center md:justify-end gap-4 text-[11px] uppercase tracking-widest text-white-500">
-                            <span>System v1.0</span>
-                            <span>-</span>
-                            <span>VUMS REPORTING System</span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </footer>
 
         <div id="projectModal"
             class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
@@ -331,25 +298,28 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
         </div>
+    </div>
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
+    </div>
+</body>
+<?php ob_end_flush(); ?>
 
+<script>
+    const currentUserId = "<?= $current_user_id ?>";
+</script>
 
-        <?php ob_end_flush(); ?>
+<script src="js/removeNotification.js" defer></script>
+<script src="js/tooltip.js"></script>
+<script src="js/paste_image_suggestion.js"></script>
 
-        <script>
-            const currentUserId = "<?= $current_user_id ?>";
-        </script>
+<script src="js/inputValidation.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (typeof initFormValidation === "function") {
+            initFormValidation("suggestionForm");
+        }
+    });
+</script>
 
-        <script src="js/removeNotification.js" defer></script>
-        <script src="js/tooltip.js"></script>
-        <script src="js/paste_image_suggestion.js"></script>
-
-        <script src="js/inputValidation.js"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                if (typeof initFormValidation === "function") {
-                    initFormValidation("suggestionForm");
-                }
-            });
-        </script>
-
-        <script src="js/suggestions.js?v=5"></script>
+<script src="js/suggestions.js?v=5"></script>

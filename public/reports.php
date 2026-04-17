@@ -4,6 +4,8 @@ require_once __DIR__ . "/../init.php";
 ob_start();
 
 $userData = checkAuth();
+echo "Current Role in Token: " . ($userData->role ?? 'NONE');
+echo "<br>Current Session Role: " . ($_SESSION['role'] ?? 'NONE');
 $categoryOptions = fetchAllFromTable($conn, 'category');
 $moduleOptions = fetchAllFromTable($conn, 'module');
 $severityOptions = fetchAllFromTable($conn, 'severity');
@@ -12,6 +14,7 @@ $visibility = new BugVisibility($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
+var_dump($userData);
 
 // 1. Define your filters first
 if ($isAdmin) {
@@ -251,7 +254,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                             $fileExt = strtolower(pathinfo($mediaFile, PATHINFO_EXTENSION));
                                             $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
 
-                                            // Hanapin kung saang folder naka-link ang file
+
                                             $folderPath = in_array($fileExt, $videoExtensions) ? "Videos/" : "uploads/";
                                             $finalPath = $folderPath . $mediaFile;
                                             ?>
@@ -644,7 +647,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
             <p
                 style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
-                Sigurado ka bang gusto mong baguhin ang status ng report na ito?
+                Are you sure you want to update the status of this report?
             </p>
 
             <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
@@ -660,7 +663,9 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             </div>
         </div>
     </div>
-    <?php include "templates/footer.php"; ?>
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
+    </div>
 </body>
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
