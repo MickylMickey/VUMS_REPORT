@@ -241,6 +241,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </button>
     </div>
 
+
     <form id="suggestionForm" action="../controllers/add_suggestions.php" method="POST"
         enctype="multipart/form-data" class="p-6 space-y-5">
 
@@ -274,17 +275,50 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 Cancel
             </button>
 
-            <button type="submit"
-                class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
-                Submit Suggestion
-            </button>
+            <button type="submit" id="submitBtn"
+    class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+    <i id="loadingIcon" class="fa-solid fa-spinner fa-spin" style="display: none;"></i>
+    <span id="btnText">Submit Suggestion</span>
+</button>
         </div>
-    </form>
+ </form>
+</div> <!-- projectModalContainer -->
+</div> <!-- projectModal -->
+
+<div id="tooltip"
+class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-[200] px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
 </div>
 
-    <div id="tooltip"
-        class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-[200] px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+<div id="statusConfirmModal" class="hidden" style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1rem; background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+    
+    <div id="statusConfirmContainer" style="position: relative; background-color: rgba(255, 255, 255, 0.95); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 2.5rem; box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.3); transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; text-align: center;">
+        
+        <div style="margin: 0 auto 1.25rem; display: flex; height: 70px; width: 70px; align-items: center; justify-content: center; border-radius: 1.5rem; background: linear-gradient(135deg, #fffbeb 0%, #ffedd5 100%);">
+            <svg xmlns="http://www.w3.org/2000/svg" style="height: 35px; width: 35px; color: #f59e0b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+        </div>
+
+        <h3 style="font-size: 1.75rem; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -0.025em; line-height: 1.2;">
+            Confirm Update
+        </h3>
+
+        <p style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
+            Are you sure you want to update this record? This action will take effect immediately.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
+            <button id="confirmStatusBtn" disabled style="width: 100%; padding: 1rem; border-radius: 1.25rem; font-weight: 700; color: white; background-color: #2563eb; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); opacity: 0.6;">
+                Yes, Change it
+            </button>
+
+            <button id="cancelStatusBtn" style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: background-color 0.2s;">
+                Cancel
+            </button>
+        </div>
     </div>
+</div>
+
 
     <?php ob_end_flush(); ?>
 
@@ -293,13 +327,16 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </script>
 
     <script src="js/removeNotification.js" defer></script>
-    <script src="js/suggestions.js"></script>
     <script src="js/tooltip.js"></script>
     <script src="js/paste_image_suggestion.js"></script>
-    <script src="js/inputValidation.js" defer></script>
-
+    
+    <script src="js/inputValidation.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            initFormValidation("suggestionForm");
+            if (typeof initFormValidation === "function") {
+                initFormValidation("suggestionForm");
+            }
         });
     </script>
+
+   <script src="js/suggestions.js?v=5"></script>

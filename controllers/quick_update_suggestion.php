@@ -3,7 +3,7 @@ require_once __DIR__ . "/../init.php";
 ob_clean();
 header('Content-Type: application/json');
 
-// session_start should be called, but check if it's already active in init.php
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
