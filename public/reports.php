@@ -635,7 +635,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
         </h3>
 
         <p style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
-            Sigurado ka bang gusto mong baguhin ang status ng report na ito?
+            Are you sure you want to change the status of this report? 
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
@@ -643,8 +643,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 Yes (3s)
             </button>
 
-            <button id="cancelStatusBtn" style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: background-color 0.2s;">
-                Cancel
+            <button id="cancelStatusBtn" style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #fee2e2; color: #ef4444; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(239, 68, 68, 0.1);">
+                Maybe Later
             </button>
         </div>
     </div>

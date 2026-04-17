@@ -303,25 +303,26 @@ class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-[20
         </div>
 
         <h3 style="font-size: 1.75rem; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -0.025em; line-height: 1.2;">
-            Confirm Update
+            Confirm Status Update
         </h3>
 
         <p style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
-            Are you sure you want to update this record? This action will take effect immediately.
+            Are you sure you want to change the status of this suggestion?
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
-            <button id="confirmStatusBtn" disabled style="width: 100%; padding: 1rem; border-radius: 1.25rem; font-weight: 700; color: white; background-color: #2563eb; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); opacity: 0.6;">
-                Yes, Change it
+            <button id="confirmStatusBtn" disabled 
+                style="width: 100%; padding: 1.15rem; border-radius: 1.25rem; font-weight: 800; color: white; background-color: #1e40af; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.4); opacity: 0.6; letter-spacing: 0.025em;">
+                Yes, Change it (3s)
             </button>
 
-            <button id="cancelStatusBtn" style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: background-color 0.2s;">
-                Cancel
+            <button id="cancelStatusBtn" 
+                style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #fee2e2; color: #ef4444; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(239, 68, 68, 0.1);">
+                Maybe later
             </button>
         </div>
     </div>
 </div>
-
 
     <?php ob_end_flush(); ?>
 
