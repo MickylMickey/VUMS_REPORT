@@ -227,17 +227,18 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <select
-                                        class="status-updater bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-semibold text-slate-600 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
-                                        data-report-id="<?= $report['report_id'] ?>" data-user-id="<?= $current_user_id ?>">
-                                        <?php foreach ($statusOptions as $status): ?>
-                                            <option value="<?= $status['status_id'] ?>"
-                                                <?= $status['status_id'] == $report['status_id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($status['status_desc']) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </td>
+    <select
+        class="status-updater bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-semibold text-slate-600 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+        data-report-id="<?= $report['report_id'] ?>" 
+        data-user-id="<?= $current_user_id ?>"
+        data-last-value="<?= $report['status_id'] ?>" >
+        <?php foreach ($statusOptions as $status): ?>
+            <option value="<?= $status['status_id'] ?>" 
+                <?= $report['status_id'] == $status['status_id'] ? 'selected' : '' ?>> <?= htmlspecialchars($status['status_desc']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</td>
 
                                 <td class="px-6 py-4 text-center">
                                     <?php

@@ -148,14 +148,17 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             if ($isAdmin || $isOwner): ?>
                 <select
-                    class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none cursor-pointer"
-                    data-report-id="<?= $sug['suggestion_id'] ?>">
-                    <?php foreach ($statusOptions as $status): ?>
-                        <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($status['status_desc']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+    class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none cursor-pointer"
+    data-report-id="<?= $sug['suggestion_id'] ?>"
+    data-user-id="<?= $current_user_id ?>"
+    data-last-value="<?= $sug['status_id'] ?>" 
+>
+    <?php foreach ($statusOptions as $status): ?>
+        <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($status['status_desc']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
             <?php else: ?>
                 <div class="w-full bg-slate-100 border border-slate-200 rounded-xl p-2 text-medium font-semibold text-slate-500 flex items-center gap-2">
                     <i class="fa-solid fa-lock text-[10px] opacity-60"></i>
