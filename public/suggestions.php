@@ -144,12 +144,15 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     class="text-[15px] font-bold text-slate-400 uppercase tracking-wider ml-1">Status</label>
 
                                 <?php
+
                                 $isOwner = ($sug['user_id'] == $current_user_id);
                                 $isAdmin = ($user_role === 'Admin');
+
                                 if ($isAdmin || $isOwner): ?>
                                     <select
-                                        class="status-updater w-full bg-whiteborder border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none cursor-pointer"
-                                        data-report-id="<?= $sug['suggestion_id'] ?>">
+                                        class="status-updater w-full bg-white border border-slate-200 rounded-xl p-2 text-medium font-semibold focus:ring-2 focus:ring-blue-500 transition-all outline-none cursor-pointer"
+                                        data-report-id="<?= $sug['suggestion_id'] ?>" data-user-id="<?= $current_user_id ?>"
+                                        data-last-value="<?= $sug['status_id'] ?>">
                                         <?php foreach ($statusOptions as $status): ?>
                                             <option value="<?= $status['status_id'] ?>" <?= $status['status_id'] == $sug['status_id'] ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($status['status_desc']) ?>
@@ -277,12 +280,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                 <h3
                     style="font-size: 1.75rem; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -0.025em; line-height: 1.2;">
-                    Confirm Update
+                    Confirm Status Update
                 </h3>
 
                 <p
                     style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
-                    Are you sure you want to update this record? This action will take effect immediately.
+                    Are you sure you want to change the status of this suggestion?
                 </p>
 
                 <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
@@ -292,18 +295,20 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </button>
 
                     <button id="cancelStatusBtn"
-                        style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: background-color 0.2s;">
-                        Cancel
+                        style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #fee2e2; color: #ef4444; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(239, 68, 68, 0.1);">
+                        Maybe later
                     </button>
                 </div>
             </div>
         </div>
+
+        <?php ob_end_flush(); ?>
+
     </div>
     <div class="mt-auto">
         <?php include "templates/footer.php"; ?>
     </div>
 </body>
-<?php ob_end_flush(); ?>
 
 <script>
     const currentUserId = "<?= $current_user_id ?>";

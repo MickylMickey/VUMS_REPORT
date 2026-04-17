@@ -182,47 +182,81 @@ function executeStatusUpdate(select, suggestionId, statusId) {
     .then(data => {
         select.style.opacity = "1";
         select.disabled = false;
+        
         if (data.success) {
             select.setAttribute('data-last-value', statusId);
-            showToast('<i class="fas fa-check-circle mr-2"></i>Updated!', "bg-emerald-600");
+            
+            // GAMITIN ANG 'success' PARA MAG-MATCH SA COLOR LOGIC
+            showToast('<i class="fas fa-check-circle mr-2"></i>Status updated successfully!', "success");
             
             if (["3", "4"].includes(statusId)) {
                 const card = select.closest(".group");
                 if (card) {
+                    card.style.transition = "all 0.5s ease";
                     card.style.opacity = "0";
+                    card.style.transform = "translateX(20px)";
                     setTimeout(() => card.remove(), 500);
                 }
             }
         } else {
-            showToast("Error: " + (data.error || "Update failed"), "bg-rose-600");
+            // GAMITIN ANG 'error' PARA MAG-RED
+            showToast('<i class="fas fa-exclamation-circle mr-2"></i>Error: ' + (data.error || "Update failed"), "error");
             select.value = pendingStatusChange.originalValue;
         }
     })
     .catch(() => {
         select.style.opacity = "1";
         select.disabled = false;
-        select.value = pendingStatusChange.originalValue;
+        if (pendingStatusChange) select.value = pendingStatusChange.originalValue;
+        showToast('<i class="fas fa-wifi-slash mr-2"></i>Connection error', "error");
     });
 }
 
 /**
  * Modernized Toast Notification
  */
-function showToast(message, bgColor) {
-    const toast = document.createElement("div");
-    // Added backdrop-blur and mobile-style rounded corners
-    toast.className = `fixed top-24 right-5 ${bgColor} bg-opacity-90 backdrop-blur-md text-white px-8 py-4 rounded-[2rem] shadow-2xl z-[200] transition-all duration-300 transform translate-x-10 opacity-0 font-bold`;
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    
+    // Premium Design Styles
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 100px; /* Itinaas para hindi matakpan */
+        right: 30px;
+        padding: 1.25rem 2.5rem;
+        border-radius: 1.5rem;
+        color: white;
+        font-weight: 800;
+        z-index: 100000;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(100px);
+        opacity: 0;
+    `;
+
+    // Color Logic (Walang extra emojis dito dahil nagpasa na tayo ng FontAwesome icon sa taas)
+    if (type === 'success') {
+        toast.style.backgroundColor = '#059669'; // Emerald Green
+    } else {
+        toast.style.backgroundColor = '#e11d48'; // Rose/Red
+    }
+
     toast.innerHTML = message;
     document.body.appendChild(toast);
-    
-    // Animate in
+
+    // Animation: Slide Up & Fade In
     setTimeout(() => {
-        toast.classList.remove('translate-x-10', 'opacity-0');
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
     }, 10);
 
-    // Fade out and remove
+    // Auto Remove after 4 seconds
     setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-x-10');
-        setTimeout(() => toast.remove(), 300);
-    }, 3500);
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
 }
