@@ -5,7 +5,7 @@ ob_start();
 $userData = checkAuth('User');
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
-
+$username = $userData->username;
 $sql = "SELECT us.*, 
                st.status_desc, 
                updater.username AS updater_name,
@@ -22,6 +22,7 @@ $sql = "SELECT us.*,
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 
