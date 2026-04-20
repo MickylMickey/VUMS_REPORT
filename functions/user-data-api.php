@@ -2,10 +2,10 @@
 // functions/user-data-api.php
 require_once __DIR__ . "/../init.php";
 
-// 1. JWT Authentication
-// Assuming checkAuth() populates the user data or returns the user object
-$userData = checkAuth('User'); // Change 'User' to the appropriate role if needed
+// 1. JWT Authentication - Allow both User and HR roles
+$userData = checkAuth(['User', 'HR']);
 $userId = $userData->user_id;
+$userRole = $userData->role; // Assuming 'role' exists in your JWT/User object
 
 ob_clean();
 header('Content-Type: application/json');
@@ -21,21 +21,21 @@ try {
 
     // 3. Status & Severity Stats (User-Specific)
     $statsQuery = "SELECT 
-        (SELECT COUNT(*) FROM report WHERE sev_id = 1 AND user_id = '$userId') AS critical,
-        (SELECT COUNT(*) FROM report WHERE sev_id = 2 AND user_id = '$userId') AS high,
-        (SELECT COUNT(*) FROM report WHERE sev_id = 3 AND user_id = '$userId') AS medium,
-        (SELECT COUNT(*) FROM report WHERE sev_id = 4 AND user_id = '$userId') AS low,
-        (SELECT COUNT(*) FROM report WHERE status_id IN (1, 2) AND user_id = '$userId') AS active,
-        (SELECT COUNT(*) FROM report WHERE status_id = 1 AND user_id = '$userId') AS pending,
-        (SELECT COUNT(*) FROM report WHERE status_id = 2 AND user_id = '$userId') AS in_progress,
-        (
-            SELECT COUNT(*) 
-            FROM report_archive
-            WHERE status_id = 3
-              AND user_id = '$userId'
-              AND report_updated_at >= CURDATE()
-              AND report_updated_at < CURDATE() + INTERVAL 1 DAY
-        ) AS resolved_today;";
+    (SELECT COUNT(*) FROM report WHERE sev_id = 1 AND user_id = '$userId') AS critical,
+    (SELECT COUNT(*) FROM report WHERE sev_id = 2 AND user_id = '$userId') AS high,
+    (SELECT COUNT(*) FROM report WHERE sev_id = 3 AND user_id = '$userId') AS medium,
+    (SELECT COUNT(*) FROM report WHERE sev_id = 4 AND user_id = '$userId') AS low,
+    (SELECT COUNT(*) FROM report WHERE status_id IN (1, 2) AND user_id = '$userId') AS active,
+    (SELECT COUNT(*) FROM report WHERE status_id = 1 AND user_id = '$userId') AS pending,
+    (SELECT COUNT(*) FROM report WHERE status_id = 2 AND user_id = '$userId') AS in_progress,
+    (
+        SELECT COUNT(*) 
+        FROM report_archive
+        WHERE status_id = 3
+          AND user_id = '$userId'
+          AND report_updated_at >= CURDATE()
+          AND report_updated_at < CURDATE() + INTERVAL 1 DAY
+    ) AS resolved_today;";
 
     $statsResult = $conn->query($statsQuery);
     $response['data']['stats'] = $statsResult->fetch_assoc();
@@ -72,6 +72,26 @@ try {
                           LIMIT 5;";
 
     $response['data']['critical_reports'] = $conn->query($criticalListQuery)->fetch_all(MYSQLI_ASSOC);
+
+    $response['status'] = 'success';
+    if ($userRole === 'HR') {
+        // Fetch total number of users
+        $totalUsersQuery = "SELECT COUNT(*) AS total_users FROM users";
+        $userResult = $conn->query($totalUsersQuery);
+        $totalUsers = $userResult->fetch_assoc()['total_users'];
+
+        // Add it to the response only for HR
+        $response['data']['total_users'] = $totalUsers;
+
+        // Optional: Top Reporters (HR often needs to see who is most active)
+        $reporterQuery = "SELECT u.username, COUNT(r.report_id) as total 
+                          FROM users u 
+                          JOIN report r ON u.user_id = r.user_id 
+                          GROUP BY u.user_id 
+                          ORDER BY total DESC 
+                          LIMIT 5";
+        $response['data']['reporters'] = $conn->query($reporterQuery)->fetch_all(MYSQLI_ASSOC);
+    }
 
     $response['status'] = 'success';
 

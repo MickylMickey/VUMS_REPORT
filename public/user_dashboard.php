@@ -6,7 +6,6 @@ $userData = checkAuth('User');
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 $username = $userData->username;
-
 $sql = "SELECT us.*, 
                st.status_desc, 
                updater.username AS updater_name,
@@ -23,6 +22,7 @@ $sql = "SELECT us.*,
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 
@@ -202,8 +202,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
 
+
         </div>
     </main>
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
+    </div>
 </body>
 <style>
     /* Custom thin scrollbar to keep the Bento aesthetic */
@@ -228,6 +232,6 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/countup.js@2.3.2/dist/countUp.umd.js"></script>
-<script src="js/user_chart.js"></script>
+<script src="js/user_chart.js" defer></script>
 
 </html>

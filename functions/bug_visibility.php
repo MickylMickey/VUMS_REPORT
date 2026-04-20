@@ -36,9 +36,14 @@ class BugVisibility
         ";
 
         if ($user_role !== 'Admin') {
-            $sql .= " WHERE r.user_id = ?";
+            $sql .= " WHERE r.status_id != ? AND r.user_id = ?";
+            $params[] = 0;
             $params[] = $current_user_id;
-            $types .= "s";
+            $types .= "is";
+        } else {
+            $sql .= " WHERE r.status_id != ?";
+            $params[] = 0;
+            $types .= "i";
         }
 
         $sql .= " ORDER BY r.report_created_at ASC";

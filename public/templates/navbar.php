@@ -5,6 +5,7 @@ $user = checkAuth();
 $role = $user->role;
 $isAdmin = RoleHelper::isAdmin($role);
 $isUser = RoleHelper::isUser($role);
+$isHr = RoleHelper::isHr($role);
 // Define the base folder where images are stored
 $uploadPath = "/public/img/prof_pic/";
 
@@ -28,22 +29,22 @@ if (!empty($user->user_prof)) {
         </div>
 
         <div class="hidden md:flex gap-14 text-md font-medium text-gray-600">
-            <a href="<?= $isAdmin ? 'admin_dashboard.php' : 'user_dashboard.php' ?>"
+            <a href="<?= $isAdmin ? 'admin_dashboard.php' : ($isHr ? 'hr_dashboard.php' : 'user_dashboard.php') ?>"
                 class="hover:text-black transition-colors">
                 Dashboard
             </a>
             <a href="reports.php" class="hover:text-black transition-colors">Reports</a>
             <a href="suggestions.php" class="hover:text-black transition-colors">Suggestions</a>
             <a href="archive_report.php" class="hover:text-black transition-colors">Completed Tickets</a>
-            
+
 
             <?php if ($isAdmin): ?>
+                <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
+            <?php endif; ?>
+            <?php if ($isAdmin || $isHr): ?>
                 <a href="user_list.php" class="hover:text-black transition-colors">User List</a>
                 <a href="archive_list.php" class="hover:text-black transition-colors">Archived Users</a>
-                <a href="categories_module.php" class="hover:text-black transition-colors">Modules</a>
 
-             
-                
             <?php endif; ?>
         </div>
 

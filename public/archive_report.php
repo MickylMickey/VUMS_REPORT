@@ -94,10 +94,10 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <title>Archive Management</title>
 </head>
 
-<body class="bg-slate-50 pt-24 text-slate-800">
+<body class="bg-slate-50 pt-24 text-slate-800 min-h-screen flex flex-col">
     <?php include "templates/navbar.php"; ?>
 
-    <main class="container mx-auto px-4 pb-20 max-w-7xl">
+    <main class="container mx-auto px-4 pb-20 max-w-7xl flex-grow">
         <div class="mt-12 mb-10">
             <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Archive Repository</h1>
             <p class="text-slate-500 mt-2">View and manage all historical reports and system suggestions.</p>
@@ -383,9 +383,12 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
         </section>
     </main>
-    <?php include "templates/footer.php"; ?>
+
     <div id="tooltip"
         class="fixed pointer-events-none opacity-0 transition-all duration-150 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">
+    </div>
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
     </div>
 </body>
 <script src="js/archive_module.js"></script>

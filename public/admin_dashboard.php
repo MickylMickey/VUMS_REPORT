@@ -24,8 +24,10 @@ $user_role = $userData->role;
     <?php include "templates/navbar.php"; ?>
     <main class="flex-grow p-6 md:p-8 lg:p-10 space-y-6 max-w-[1600px] mx-auto w-full bg-slate-50">
 
-        <div class="empty:hidden">
-            <?= showValidation() ?>
+        <div id="validationBlock" class="fixed bottom-28 right-5 z-[250] flex flex-col gap-3 pointer-events-none">
+            <div class="pointer-events-auto">
+                <?= showValidation() ?>
+            </div>
         </div>
         <?php
         $username = ucfirst($userData->username ?? 'User');
