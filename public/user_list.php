@@ -183,11 +183,29 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                             <!-- ACCESS LEVEL (IBINALIK) -->
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                                    <?= htmlspecialchars($user['role_name']) ?>
-                                                </span>
-                                            </td>
+                                            <?php 
+                                            $role = strtolower($user['role_name']);
+        
+                                            switch ($role) {
+                                            case 'admin':
+                //red for admin
+                $style = "background-color: #fee2e2; color: #b91c1c; border-color: #fecaca;";
+                break;
+            case 'hr':
+                //purple para sa HR 
+                $style = "background-color: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;";
+                break;
+            default:
+                //green for regular users 
+                $style = "background-color: #f0fdf4; color: #15803d; border-color: #dcfce7;";
+                break;
+               }
+            ?>
+                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium border" 
+                                      style="<?= $style ?>">
+                                      <?= htmlspecialchars($user['role_name']) ?>
+                                      </span>
+                                      </td>
 
                                             <!-- ACTIONS -->
                                             <td class="px-6 py-4 whitespace-nowrap text-right">
@@ -292,10 +310,11 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
         <div
             class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-200 transition-all duration-300 opacity-0 scale-95">
 
-            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+            <div class="bg-blue-500 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900">Create New User</h3>
-                    <p class="text-[15px] text-slate-500">Enter account and personal details.</p>
+                    <h3 class="text-[20px] text-white font-bold">Create New User</h3>
+                    <p class="text-[15px] text-white text-slate-200 font-bold">Enter account and personal details.</p>
+
                 </div>
                 <button onclick="toggleAddModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,23 +348,41 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 </div>
                             </div>
                             <div class="col-span-1">
-                                <label class="block text-[14px] font-semibold text-slate-700 mb-1">Password <span
-                                        class="text-red-500">*</span></label>
-                                <input type="password" name="password" data-required="true"
-                                    data-error="Password is required."
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-                                <div>
-                                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                                </div>
-                            </div>
+    <label class="block text-[14px] font-semibold text-slate-700 mb-1">
+        Password <span class="text-red-500">*</span>
+    </label>
+    
+   
+    <div class="relative">
+        <input type="password" id="password" name="password" data-required="true"
+            data-error="Password is required."
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+        
+        
+        <button type="button" id="togglePassword" class="absolute inset-y-0 right-5 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+            <svg id="eyeIcon" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.67 8.5 7.652 6 12 6c4.348 0 8.33 2.5 9.964 5.678a1.012 1.012 0 0 1 0 .644C20.33 15.5 16.348 18 12 18c-4.348 0-8.33-2.5-9.964-5.678Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+        </button>
+    </div>
+
+    <div>
+        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+    </div>
+</div>
+
                         </div>
 
                         <div>
-                            <label class="block text-[14px] font-semibold text-slate-700 mb-1">Email Address <span
-                                    class="text-red-500">*</span></label>
-                            <input type="email" name="email" data-required="true" data-error="Email is required."
-                                data-check-url="/check-availability.php?field=email&value="
-                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            <label class="block text-[14px] font-semibold text-slate-700 mb-1">Email Address<span
+                            class="text-red-500"> *</span></label>
+                            <input type="email" 
+                            name="email" 
+                            data-required="true" 
+                            data-error="Email is required."
+                            data-check-url="/check-availability.php?field=email&value="
+                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
                             <div>
                                 <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                             </div>
@@ -447,11 +484,11 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     </div>
                 </div>
 
-                <div class="mt-8 flex justify-end items-center gap-3 pt-4 border-t border-slate-100">
+                <div class="mt-8 flex justify-end items-center gap-3 pt-4 border-t border-slate-200">
                     <button type="button" onclick="toggleAddModal(false)"
-                        class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">Cancel</button>
+                        class="px-4 py-2 rounded-lg text-[15px] font-bold text-white bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">Cancel</button>
                     <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-bold shadow-md shadow-blue-100 transition-all">
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-[15px] font-bold shadow-md shadow-blue-100 transition-all">
                         Save User
                     </button>
                 </div>
@@ -462,11 +499,11 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
     <div id="editUserModal"
         class="fixed inset-0 hidden items-center justify-center backdrop-blur-md bg-slate-900/60 z-[200] px-4 transition-all">
         <div
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-200 opacity-0 scale-95 duration-300">
-            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-100 opacity-0 scale-95 duration-300">
+            <div class="bg-blue-500 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900">Update Account</h3>
-                    <p class="text-[15px] text-slate-500">Update account credentials and system access.</p>
+                    <h3 class="text-[20px] font-bold text-white text-slate-900">Update Account</h3>
+                    <p class="text-[15px] text-white">Update account credentials and system access.</p>
                 </div>
                 <button onclick="toggleEditModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -511,12 +548,28 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">New
-                        Password</label>
-                    <input type="password" name="password" id="password_edit" placeholder="Leave blank to keep current"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
-                </div>
+                <div class="relative">
+    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+        New Password
+    </label>
+    
+    <div class="relative">
+        <input type="password" 
+               name="password" 
+               id="password_edit" 
+               placeholder="Leave blank to keep current"
+               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
+        
+        <button type="button" 
+                onclick="togglePasswordVisibility()" 
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+            <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+    </div>
+</div>
 
                 <div class="pt-4 flex justify-end items-center gap-3">
                     <button type="button" onclick="toggleEditModal(false)" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
@@ -591,8 +644,9 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     Confirm
                 </button>
             </form>
-        </div>
     </div>
+    </div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3"></div>
 </body>
 
 <?php ob_end_flush(); ?>
@@ -600,10 +654,28 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 <script src="js/user_list.js"></script>
 <script src="js/tooltip.js"></script>
 <script src="js/inputValidation.js" defer></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        initFormValidation("addUserForm"),
-            initFormValidation("EditUserForm");
+        // 1. Form Validations
+        initFormValidation("addUserForm");
+        initFormValidation("EditUserForm");
+
+        // 2. TOAST TRIGGER FROM SESSION
+        // Dito natin kukunin ang validation message na sinet mo sa add_user.php
+        <?php if (isset($_SESSION['validation'])): ?>
+            const type = "<?php echo $_SESSION['validation']['type']; ?>"; // success o error
+            const message = "<?php echo $_SESSION['validation']['message']; ?>";
+            
+            // Siguraduhin na nasa user_list.js ang showToast function
+            if (typeof showToast === "function") {
+                // Mas matagal ang duration (10s) kapag error para mabasa ni user ang "Policy/Format Error"
+                const duration = type === "error" ? 10000 : 7000;
+                showToast(message, type, duration);
+            }
+            
+            <?php unset($_SESSION['validation']); // Importante: Burahin ang session para hindi lumabas ulit sa refresh ?>
+        <?php endif; ?>
     });
 </script>
 

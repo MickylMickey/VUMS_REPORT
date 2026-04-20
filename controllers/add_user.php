@@ -1,37 +1,46 @@
 <?php
 require_once __DIR__ . "/../init.php";
 
-// Enable MySQLi exceptions so the try-catch block actually works
+// Mysql configuraiton hehe
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 ob_start();
 
 use Ramsey\Uuid\Uuid;
-
+    // for modal creation of user
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        // 1. Data Sanitization
+        
         $userId = Uuid::uuid4()->toString();
 
         $username = isset($_POST['username']) ? trim(filter_var($_POST['username'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;
-        // Hash password only if it exists
         $password = !empty($_POST['password']) ? password_hash(trim($_POST["password"]), PASSWORD_BCRYPT) : null;
-        $email = isset($_POST['email']) ? filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) : null;
+
+        // email validation method here :3 UwU T_T 
+        $rawEmail = isset($_POST['email']) ? strtolower(trim($_POST['email'])) : '';
+
+        
+        if (!filter_var($rawEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Format error: Mangyaring gumamit ng valid na email format.");
+        }
+
+       
+        $email = $rawEmail;
+       
+
         $firstName = isset($_POST['fname']) ? trim(filter_var($_POST['fname'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;
         $middleName = isset($_POST['mname']) ? trim(filter_var($_POST['mname'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;
         $lastName = isset($_POST['lname']) ? trim(filter_var($_POST['lname'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;
         $roleId = isset($_POST['user_role']) ? (int) $_POST['user_role'] : null;
         $birthDate = !empty($_POST['birthday']) ? $_POST['birthday'] : null;
 
-        // 2. File Upload Configuration
         $uploadDir = __DIR__ . "/../public/img/prof_pic/";
         $dbImageName = "default.png";
-
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
-        // 3. Process Profile Picture
+        // for profile picture upload
         if (isset($_FILES["prof_pic"]) && $_FILES["prof_pic"]["error"] === UPLOAD_ERR_OK) {
             $fileTmpPath = $_FILES["prof_pic"]["tmp_name"];
             $fileName = $_FILES["prof_pic"]["name"];

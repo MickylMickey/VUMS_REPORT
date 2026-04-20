@@ -221,7 +221,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                 <i class="fa-solid fa-calendar"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-500">Birthdate</p>
+                                <p class="text-[15px] text-slate-500">Birthdate</p>
                                 <p class="font-semibold text-slate-800">
                                     <?= !empty($userData['user_dob']) ? date('F j, Y', strtotime($userData['user_dob'])) : 'Not set' ?>
                                 </p>
@@ -231,7 +231,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                     </div>
 
 
-                    <div class="p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
+                    <div class="p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 transition-shadow hover:shadow-md"
                         style="background: linear-gradient(to right, #ffffff, #ffffff);">
                         <div class="flex items-center gap-4 mb-4 pb-4 border-b border-black/50">
                             <div
@@ -254,14 +254,14 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                     <i class="fa-solid fa-user-gear"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-slate-500">Username</p>
+                                    <p class="text-[15px] text-slate-500">Username</p>
                                     <p class="font-semibold text-slate-800">
                                         <?= htmlspecialchars($userData['username'] ?? 'N/A') ?>
                                     </p>
                                 </div>
                             </div>
 
-                            <!-- Email -->
+                            
                             <div
                                 class="flex items-center gap-3 p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm">
                                 <div
@@ -269,7 +269,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                     <i class="fa-solid fa-envelope"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-slate-500">Email Address</p>
+                                    <p class="text-[15px] text-slate-500">Email Address</p>
                                     <p class="font-semibold text-slate-800">
                                         <?= htmlspecialchars($userData['email'] ?? 'N/A') ?>
                                     </p>
