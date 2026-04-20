@@ -28,5 +28,7 @@ require_once __DIR__ . "/functions/pagination.php";
 require_once __DIR__ . "/functions/bug_visibility.php";
 require_once __DIR__ . "/functions/fetch_status.php";
 require_once __DIR__ . "/functions/report_archive.php";
+require_once __DIR__ . "/functions/fetch_notification.php";
+require_once __DIR__ . "/functions/breadcrumps.php";
 
 ?>

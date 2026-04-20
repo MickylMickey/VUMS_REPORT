@@ -70,6 +70,37 @@ INSERT INTO `module` VALUES (1,'DASH','Dashboard Module','2026-03-26 21:47:55','
 UNLOCK TABLES;
 
 --
+-- Table structure for table `notifications`
+--
+
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notifications` (
+  `notification_id` int NOT NULL AUTO_INCREMENT,
+  `sender_id` char(36) NOT NULL,
+  `report_id` int NOT NULL,
+  `report_ref_snapshot` varchar(50) NOT NULL,
+  `is_read` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`notification_id`),
+  KEY `fk_notif_sender` (`sender_id`),
+  KEY `fk_notif_report` (`report_id`),
+  CONSTRAINT `fk_notif_report` FOREIGN KEY (`report_id`) REFERENCES `report` (`report_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_notif_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifications`
+--
+
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `report`
 --
 
@@ -102,7 +133,7 @@ CREATE TABLE `report` (
   CONSTRAINT `report_ibfk_4` FOREIGN KEY (`sev_id`) REFERENCES `severity` (`sev_id`) ON DELETE CASCADE,
   CONSTRAINT `report_ibfk_5` FOREIGN KEY (`status_id`) REFERENCES `status` (`status_id`) ON DELETE CASCADE,
   CONSTRAINT `report_ibfk_6` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,6 +142,7 @@ CREATE TABLE `report` (
 
 LOCK TABLES `report` WRITE;
 /*!40000 ALTER TABLE `report` DISABLE KEYS */;
+INSERT INTO `report` VALUES (71,'b601448a-dbbc-423c-a3f2-427eb7a61d89',3,4,3,1,'uxui-proc-m-001',NULL,'fdsafdsafsdafasd',NULL,'2026-04-17 03:42:36','2026-04-17 03:42:36'),(72,'ecf740ae-2721-11f1-80cd-fc068c03d3f8',2,4,1,1,'rbac-proc-c-001',NULL,'dfsafdsafsda',NULL,'2026-04-17 03:42:53','2026-04-17 03:42:53'),(74,'19a0ae43-5454-4e8c-93f7-95f9b9a0370f',1,2,1,1,'bug-hr-c-001',NULL,'asdasd',NULL,'2026-04-17 07:12:02','2026-04-17 07:12:02'),(75,'b601448a-dbbc-423c-a3f2-427eb7a61d89',2,3,2,1,'rbac-pay-h-001',NULL,'dasdasdasd',NULL,'2026-04-17 07:36:15','2026-04-17 07:36:15'),(76,'b601448a-dbbc-423c-a3f2-427eb7a61d89',4,1,1,1,'valid-dash-c-001',NULL,'fgsdgsdfgg',NULL,'2026-04-17 07:36:26','2026-04-17 07:36:26'),(77,'b601448a-dbbc-423c-a3f2-427eb7a61d89',10,NULL,1,1,'sec-xxx-c-001',NULL,'dfsafdsa',NULL,'2026-04-17 07:36:42','2026-04-17 07:36:42');
 /*!40000 ALTER TABLE `report` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +173,7 @@ CREATE TABLE `report_archive` (
   KEY `report_ibfk_4` (`sev_id`),
   KEY `report_ibfk_5` (`status_id`),
   KEY `report_ibfk_6` (`updated_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,6 +182,7 @@ CREATE TABLE `report_archive` (
 
 LOCK TABLES `report_archive` WRITE;
 /*!40000 ALTER TABLE `report_archive` DISABLE KEYS */;
+INSERT INTO `report_archive` VALUES (69,'b601448a-dbbc-423c-a3f2-427eb7a61d89',1,3,2,3,'bug-pay-h-001',NULL,'fdsafdsa','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-17 03:42:22','2026-04-17 06:58:27'),(70,'b601448a-dbbc-423c-a3f2-427eb7a61d89',3,3,3,3,'uxui-pay-m-001',NULL,'fdsafdsafdsfasd','b601448a-dbbc-423c-a3f2-427eb7a61d89','2026-04-17 03:42:30','2026-04-17 08:57:20'),(73,'b601448a-dbbc-423c-a3f2-427eb7a61d89',2,2,1,3,'rbac-hr-c-001',NULL,'asdas','b601448a-dbbc-423c-a3f2-427eb7a61d89','2026-04-17 07:06:49','2026-04-17 08:58:33');
 /*!40000 ALTER TABLE `report_archive` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,7 +259,7 @@ CREATE TABLE `suggestion_archive` (
   KEY `user_suggestion_ibfk_1` (`user_id`),
   KEY `user_suggestion_ibfk_2` (`status_id`),
   KEY `user_suggestion_ibfk_3` (`suggestion_updated_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -235,6 +268,7 @@ CREATE TABLE `suggestion_archive` (
 
 LOCK TABLES `suggestion_archive` WRITE;
 /*!40000 ALTER TABLE `suggestion_archive` DISABLE KEYS */;
+INSERT INTO `suggestion_archive` VALUES (27,'ecf740ae-2721-11f1-80cd-fc068c03d3f8','fghdghjghgh',3,NULL,'ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-17 03:51:17','2026-04-17 06:58:18'),(28,'ecf740ae-2721-11f1-80cd-fc068c03d3f8','yuftyuiughjk',3,'sug_1776397891_7a31ccd4.png','ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-17 03:51:31','2026-04-17 06:58:08'),(29,'ecf740ae-2721-11f1-80cd-fc068c03d3f8','sdfasdfasd',3,NULL,'ecf740ae-2721-11f1-80cd-fc068c03d3f8','2026-04-17 06:58:55','2026-04-17 08:30:33'),(30,'b601448a-dbbc-423c-a3f2-427eb7a61d89','asdasdasd',3,NULL,'b601448a-dbbc-423c-a3f2-427eb7a61d89','2026-04-17 08:46:02','2026-04-17 08:56:21');
 /*!40000 ALTER TABLE `suggestion_archive` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -265,7 +299,6 @@ CREATE TABLE `user_profile` (
 
 LOCK TABLES `user_profile` WRITE;
 /*!40000 ALTER TABLE `user_profile` DISABLE KEYS */;
-INSERT INTO `user_profile` VALUES ('b601448a-dbbc-423c-a3f2-427eb7a61d89','Gemalyn','Ansiboy','Gregorio','1999-11-16','gemalyn.vinculum@gmail.com','default.png'),('ecf740ae-2721-11f1-80cd-fc068c03d3f8','mickyl','Gaytana','Sumagang','2003-06-09','test@gmail.com','default.png'),('ecf74437-2721-11f1-80cd-fc068c03d3f8','Niel','Magsumbol','Apaitan','2003-10-21','test1@gmail.com',NULL);
 /*!40000 ALTER TABLE `user_profile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -282,7 +315,7 @@ CREATE TABLE `user_role` (
   `role_created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `role_updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,7 +377,7 @@ CREATE TABLE `user_suggestions` (
   CONSTRAINT `user_suggestion_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
   CONSTRAINT `user_suggestion_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `status` (`status_id`) ON DELETE CASCADE,
   CONSTRAINT `user_suggestion_ibfk_3` FOREIGN KEY (`suggestion_updated_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,6 +386,7 @@ CREATE TABLE `user_suggestions` (
 
 LOCK TABLES `user_suggestions` WRITE;
 /*!40000 ALTER TABLE `user_suggestions` DISABLE KEYS */;
+INSERT INTO `user_suggestions` VALUES (31,'b601448a-dbbc-423c-a3f2-427eb7a61d89','dfsafsdfasdfasdf',1,NULL,'b601448a-dbbc-423c-a3f2-427eb7a61d89','2026-04-17 08:47:24','2026-04-17 08:56:26');
 /*!40000 ALTER TABLE `user_suggestions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -386,7 +420,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('b601448a-dbbc-423c-a3f2-427eb7a61d89','gems','$2y$12$mZssY8tYRf3eXwNPc.C8muSWkxcijwfqVOi5ryF8MMZwx7XFG3e.i',1,1,'2026-04-16 07:49:06','2026-04-16 07:49:06'),('ecf740ae-2721-11f1-80cd-fc068c03d3f8','admin','$2y$12$9ws8..jQHFKZDdP/v6m6POZE1HGvOiNdQJpjYWNdQAaL7PMk/23om',1,1,'2026-03-26 21:47:55','2026-04-12 18:45:50'),('ecf74437-2721-11f1-80cd-fc068c03d3f8','niel','$2y$12$bLYvFjsMo.YIAL7SrGcTMeZUeIOAX4TTQ1aNx5c6OF1JQXjyDCKCu',2,1,'2026-03-26 21:47:55','2026-04-12 23:53:29');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -421,7 +454,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=CURRENT_USER */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `v_dashboard_reports` AS select `report`.`report_id` AS `report_id`,`report`.`ref_num` AS `ref_num`,`report`.`user_id` AS `user_id`,`report`.`cat_id` AS `cat_id`,`report`.`sev_id` AS `sev_id`,`report`.`status_id` AS `status_id`,`report`.`report_created_at` AS `created_at`,'Active' AS `record_type` from `report` union all select `report_archive`.`report_id` AS `report_id`,`report_archive`.`ref_num` AS `ref_num`,`report_archive`.`user_id` AS `user_id`,`report_archive`.`cat_id` AS `cat_id`,`report_archive`.`sev_id` AS `sev_id`,`report_archive`.`status_id` AS `status_id`,`report_archive`.`report_created_at` AS `created_at`,'Archived' AS `record_type` from `report_archive` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -436,4 +469,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-16 15:51:21
+-- Dump completed on 2026-04-20  9:02:15

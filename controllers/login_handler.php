@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $remember = isset($_POST['remember_me']); // ✅ remember me
 
     try {
-        
+
         $sql = "SELECT user_id, username, password, user_status_id FROM users WHERE BINARY username = ?";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
@@ -31,18 +31,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $users = $result->fetch_assoc();
 
-            if ((int)$users['user_status_id'] === 2) {
+            if ((int) $users['user_status_id'] === 2) {
                 setValidation("error", "Account is archived. Please contact the administrator.");
-                header("Location: /index.php"); 
+                header("Location: /index.php");
                 exit();
             }
 
-            if ((int)$users['user_status_id'] >= 4) {
+            if ((int) $users['user_status_id'] >= 4) {
                 setValidation("error", "Invalid username or password.");
                 header("Location: /index.php");
                 exit();
             }
-            
+
 
             if (password_verify($password, $users["password"])) {
 
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
 
                 // ✅ unified expiry
-                $expiry = $remember 
+                $expiry = $remember
                     ? time() + (86400 * 30) // 30 days
                     : time() + 3600;        // 1 hour
 
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ob_end_clean();
 
                 if ($isAdmin) {
-                    header("Location: /admin_dashboard.php");
+                    header("Location: ../public/admin_dashboard.php");
                 } else {
                     header("Location: /index.php");
                 }
