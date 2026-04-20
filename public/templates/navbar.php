@@ -6,14 +6,14 @@ $role = $user->role;
 $isAdmin = RoleHelper::isAdmin($role);
 $isUser = RoleHelper::isUser($role);
 $isHr = RoleHelper::isHr($role);
-// Define the base folder where images are stored
+
 $uploadPath = "/public/img/prof_pic/";
 
-// Check if user has a profile and if the file actually exists
+
 if (!empty($user->user_prof)) {
     $profilePic = $uploadPath . $user->user_prof;
 } else {
-    // Default UI Avatar if no profile pic exists
+   
     $profilePic = "https://ui-avatars.com/api/?name=" . urlencode($user->username) . "&background=random";
 }
 
