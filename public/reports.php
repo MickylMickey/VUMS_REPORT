@@ -450,8 +450,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                     <div class="space-y-1.5">
                         <label class="text-[20px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
                         <p class="text-[13px] text-slate-400 ml-1 mb-1">Tip: You can paste a screenshot directly into
-                            the
-                            description box!</p>
+                            the description box!</p>
 
                         <input type="file" name="rep_img" id="rep_img_input" accept="image/*,video/*"
                             class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none transition-all">
@@ -624,7 +623,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     
     <div id="statusConfirmContainer" style="position: relative; background-color: rgba(255, 255, 255, 0.95); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 2.5rem; box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.3); transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; text-align: center;">
         
-        <div style="margin: 0 auto 1.25rem; display: flex; height: 70px; width: 70px; align-items: center; justify-content: center; border-radius: 1.5rem; background: linear-gradient(135deg, #fffbeb 0%, #ffedd5 100%);">
+        <div style="margin: 0 auto 1.25rem; display: flex; height: 70px; width: 70px; align-items: center; justify-content: center; border-radius: 1.5rem; background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);">
             <svg xmlns="http://www.w3.org/2000/svg" style="height: 35px; width: 35px; color: #f59e0b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
