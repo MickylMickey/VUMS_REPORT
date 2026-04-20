@@ -19,7 +19,7 @@ $types = "i";
 $pagination = getPaginationData(
     $conn,
     "users u INNER JOIN user_profile up ON u.user_id = up.user_id",
-    $_GET['limit'] ?? 10,
+    $_GET['limit'] ?? 25,
     $_GET['page'] ?? 1,
     $where,
     $params,
@@ -183,29 +183,30 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                             <!-- ACCESS LEVEL (IBINALIK) -->
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                            <?php 
-                                            $role = strtolower($user['role_name']);
-        
-                                            switch ($role) {
-                                            case 'admin':
-                //red for admin
-                $style = "background-color: #fee2e2; color: #b91c1c; border-color: #fecaca;";
-                break;
-            case 'hr':
-                //purple para sa HR 
-                $style = "background-color: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;";
-                break;
-            default:
-                //green for regular users 
-                $style = "background-color: #f0fdf4; color: #15803d; border-color: #dcfce7;";
-                break;
-               }
-            ?>
-                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium border" 
-                                      style="<?= $style ?>">
-                                      <?= htmlspecialchars($user['role_name']) ?>
-                                      </span>
-                                      </td>
+                                                <?php
+                                                $role = strtolower($user['role_name']);
+
+                                                switch ($role) {
+                                                    case 'admin':
+                                                        //red for admin
+                                                        $style = "background-color: #fee2e2; color: #b91c1c; border-color: #fecaca;";
+                                                        break;
+                                                    case 'hr':
+                                                        //purple para sa HR 
+                                                        $style = "background-color: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;";
+                                                        break;
+                                                    default:
+                                                        //green for regular users 
+                                                        $style = "background-color: #f0fdf4; color: #15803d; border-color: #dcfce7;";
+                                                        break;
+                                                }
+                                                ?>
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium border"
+                                                    style="<?= $style ?>">
+                                                    <?= htmlspecialchars($user['role_name']) ?>
+                                                </span>
+                                            </td>
 
                                             <!-- ACTIONS -->
                                             <td class="px-6 py-4 whitespace-nowrap text-right">
@@ -348,41 +349,42 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                 </div>
                             </div>
                             <div class="col-span-1">
-    <label class="block text-[14px] font-semibold text-slate-700 mb-1">
-        Password <span class="text-red-500">*</span>
-    </label>
-    
-   
-    <div class="relative">
-        <input type="password" id="password" name="password" data-required="true"
-            data-error="Password is required."
-            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-        
-        
-        <button type="button" id="togglePassword" class="absolute inset-y-0 right-5 pr-3 flex items-center text-slate-400 hover:text-slate-600">
-            <svg id="eyeIcon" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.67 8.5 7.652 6 12 6c4.348 0 8.33 2.5 9.964 5.678a1.012 1.012 0 0 1 0 .644C20.33 15.5 16.348 18 12 18c-4.348 0-8.33-2.5-9.964-5.678Z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-            </svg>
-        </button>
-    </div>
+                                <label class="block text-[14px] font-semibold text-slate-700 mb-1">
+                                    Password <span class="text-red-500">*</span>
+                                </label>
 
-    <div>
-        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-    </div>
-</div>
+
+                                <div class="relative">
+                                    <input type="password" id="password" name="password" data-required="true"
+                                        data-error="Password is required."
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+
+
+                                    <button type="button" id="togglePassword"
+                                        class="absolute inset-y-0 right-5 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                        <svg id="eyeIcon" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.67 8.5 7.652 6 12 6c4.348 0 8.33 2.5 9.964 5.678a1.012 1.012 0 0 1 0 .644C20.33 15.5 16.348 18 12 18c-4.348 0-8.33-2.5-9.964-5.678Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                                </div>
+                            </div>
 
                         </div>
 
                         <div>
                             <label class="block text-[14px] font-semibold text-slate-700 mb-1">Email Address<span
-                            class="text-red-500"> *</span></label>
-                            <input type="email" 
-                            name="email" 
-                            data-required="true" 
-                            data-error="Email is required."
-                            data-check-url="/check-availability.php?field=email&value="
-                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                    class="text-red-500"> *</span></label>
+                            <input type="email" name="email" data-required="true" data-error="Email is required."
+                                data-check-url="/check-availability.php?field=email&value="
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
                             <div>
                                 <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                             </div>
@@ -549,27 +551,27 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                 </div>
 
                 <div class="relative">
-    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
-        New Password
-    </label>
-    
-    <div class="relative">
-        <input type="password" 
-               name="password" 
-               id="password_edit" 
-               placeholder="Leave blank to keep current"
-               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
-        
-        <button type="button" 
-                onclick="togglePasswordVisibility()" 
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
-            <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-        </button>
-    </div>
-</div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                        New Password
+                    </label>
+
+                    <div class="relative">
+                        <input type="password" name="password" id="password_edit"
+                            placeholder="Leave blank to keep current"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
+
+                        <button type="button" onclick="togglePasswordVisibility()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                            <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="pt-4 flex justify-end items-center gap-3">
                     <button type="button" onclick="toggleEditModal(false)" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
@@ -644,7 +646,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     Confirm
                 </button>
             </form>
-    </div>
+        </div>
     </div>
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3"></div>
 </body>
@@ -666,14 +668,14 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
         <?php if (isset($_SESSION['validation'])): ?>
             const type = "<?php echo $_SESSION['validation']['type']; ?>"; // success o error
             const message = "<?php echo $_SESSION['validation']['message']; ?>";
-            
+
             // Siguraduhin na nasa user_list.js ang showToast function
             if (typeof showToast === "function") {
                 // Mas matagal ang duration (10s) kapag error para mabasa ni user ang "Policy/Format Error"
                 const duration = type === "error" ? 10000 : 7000;
                 showToast(message, type, duration);
             }
-            
+
             <?php unset($_SESSION['validation']); // Importante: Burahin ang session para hindi lumabas ulit sa refresh ?>
         <?php endif; ?>
     });

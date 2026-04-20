@@ -24,7 +24,7 @@ if ($isAdmin) {
 $pagination = getPaginationData(
     $conn,
     "report_archive ra", // Use the alias 'ra' to match your $where clause
-    $_GET['limit'] ?? 10,
+    $_GET['limit'] ?? 50,
     $_GET['page'] ?? 1,
     $where,
     $params,
@@ -52,7 +52,7 @@ $s_types = "i";
 $s_pagination = getPaginationData(
     $conn,
     "suggestion_archive sa",
-    $_GET['s_limit'] ?? 6, // Suggestions usually look better in smaller grids
+    $_GET['s_limit'] ?? 12, // Suggestions usually look better in smaller grids
     $_GET['s_page'] ?? 1,
     $s_where,
     $s_params,
