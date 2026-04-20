@@ -183,11 +183,29 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
 
                                             <!-- ACCESS LEVEL (IBINALIK) -->
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                                    <?= htmlspecialchars($user['role_name']) ?>
-                                                </span>
-                                            </td>
+                                            <?php 
+                                            $role = strtolower($user['role_name']);
+        
+                                            switch ($role) {
+                                            case 'admin':
+                //red for admin
+                $style = "background-color: #fee2e2; color: #b91c1c; border-color: #fecaca;";
+                break;
+            case 'hr':
+                //purple para sa HR 
+                $style = "background-color: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;";
+                break;
+            default:
+                //green for regular users 
+                $style = "background-color: #f0fdf4; color: #15803d; border-color: #dcfce7;";
+                break;
+               }
+            ?>
+                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium border" 
+                                      style="<?= $style ?>">
+                                      <?= htmlspecialchars($user['role_name']) ?>
+                                      </span>
+                                      </td>
 
                                             <!-- ACTIONS -->
                                             <td class="px-6 py-4 whitespace-nowrap text-right">
@@ -530,12 +548,28 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">New
-                        Password</label>
-                    <input type="password" name="password" id="password_edit" placeholder="Leave blank to keep current"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
-                </div>
+                <div class="relative">
+    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+        New Password
+    </label>
+    
+    <div class="relative">
+        <input type="password" 
+               name="password" 
+               id="password_edit" 
+               placeholder="Leave blank to keep current"
+               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400">
+        
+        <button type="button" 
+                onclick="togglePasswordVisibility()" 
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+            <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+    </div>
+</div>
 
                 <div class="pt-4 flex justify-end items-center gap-3">
                     <button type="button" onclick="toggleEditModal(false)" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white
