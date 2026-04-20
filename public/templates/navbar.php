@@ -70,14 +70,14 @@ $recentNotifications = fetchNotification($conn, $user_id, $role, 5, 0);
                     <div class="p-4 border-b flex justify-between items-center bg-gray-50/50">
                        <button id="mark-all-read" 
         data-userid="<?= $user_id ?>" data-role="<?= $role ?>"
-                        class="text-[11px] text-blue-600 font-bold hover:underline">
+                        class="text-[15px] text-blue-600 font-bold hover:underline">
                         Mark all as read
                     </button>
                     </div>
 
                     <div class="max-h-96 overflow-y-auto">
                         <?php if (empty($recentNotifications)): ?>
-                            <div class="p-8 text-center text-gray-400 text-xs">All caught up!</div>
+                            <div class="p-8 text-center text-gray-400 text-[15px]">All caught up!</div>
                         <?php else: ?>
                             <?php foreach ($recentNotifications as $n): ?>
                                 <div class="p-4 flex gap-3 hover:bg-blue-50/40 transition border-b <?= !$n['is_read'] ? 'bg-blue-50/20 border-l-4 border-l-blue-500' : '' ?>">

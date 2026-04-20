@@ -10,13 +10,13 @@ $isUser = RoleHelper::isUser($userData->role);
 $isHr = RoleHelper::isHR($userData->role);
 
 $pagination = getPaginationData(
-    $conn,                     // Database connection
-    "notifications",                   // Table name
-    $_GET['limit'] ?? 10,      // Number of records per page (default: 10)
-    $_GET['page'] ?? 1,        // Current page number (default: 1)
-    null,         // WHERE condition for filtering
+    $conn,                     
+    "notifications",                   
+    $_GET['limit'] ?? 10,      
+    $_GET['page'] ?? 1,       
+    null,         
     null, // Parameter for WHERE condition (selected barangay)
-    null                      // Data type for binding (integer)
+    null                     
 );
 
 // Extract pagination values from the result array
