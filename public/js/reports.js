@@ -16,116 +16,113 @@ const addBackdrop = document.getElementById("addModalBackdrop");
  * 1. STATUS CONFIRMATION MODAL LOGIC (NEW)
  */
 function toggleStatusModal(show) {
-    const modal = document.getElementById("statusConfirmModal");
-    const container = document.getElementById("statusConfirmContainer");
-    if (!modal || !container) return;
+  const modal = document.getElementById("statusConfirmModal");
+  const container = document.getElementById("statusConfirmContainer");
+  if (!modal || !container) return;
 
-    if (show) {
-        modal.style.display = "flex";
-        setTimeout(() => {
-            container.style.opacity = "1";
-            container.style.transform = "scale(1)";
-        }, 10);
-    } else {
-        container.style.opacity = "0";
-        container.style.transform = "scale(0.95)";
-        setTimeout(() => {
-            modal.style.display = "none";
-        }, 300);
-    }
+  if (show) {
+    modal.style.display = "flex";
+    setTimeout(() => {
+      container.style.opacity = "1";
+      container.style.transform = "scale(1)";
+    }, 10);
+  } else {
+    container.style.opacity = "0";
+    container.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      modal.style.display = "none";
+    }, 300);
+  }
 }
 
 // Listen for dropdown changes using Event Delegation
-document.addEventListener("change", function(e) {
-    if (e.target.classList.contains("status-updater") && e.isTrusted) {
-        const select = e.target;
-        const reportId = select.getAttribute("data-report-id");
-        const statusId = select.value;
-        const userId = select.getAttribute("data-user-id");
-        const originalValue = select.getAttribute("data-last-value") || select.defaultValue;
+document.addEventListener("change", function (e) {
+  if (e.target.classList.contains("status-updater") && e.isTrusted) {
+    const select = e.target;
+    const reportId = select.getAttribute("data-report-id");
+    const statusId = select.value;
+    const userId = select.getAttribute("data-user-id");
+    const originalValue = select.getAttribute("data-last-value") || select.defaultValue;
 
-        pendingStatusChange = { select, reportId, statusId, userId, originalValue };
+    pendingStatusChange = { select, reportId, statusId, userId, originalValue };
 
-        const confirmBtn = document.getElementById("confirmStatusBtn");
-        const modal = document.getElementById("statusConfirmModal");
+    const confirmBtn = document.getElementById("confirmStatusBtn");
+    const modal = document.getElementById("statusConfirmModal");
 
-        toggleStatusModal(true);
+    toggleStatusModal(true);
 
-        // Timer Logic (3 seconds)
-        let timeLeft = 3;
-        confirmBtn.disabled = true;
-        confirmBtn.style.opacity = "0.6";
+    // Timer Logic (3 seconds)
+    let timeLeft = 3;
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = "0.6";
+    confirmBtn.innerText = `Yes (${timeLeft}s)`;
+
+    if (modal.dataset.timerId) clearInterval(Number(modal.dataset.timerId));
+
+    const timer = setInterval(() => {
+      timeLeft--;
+      if (timeLeft > 0) {
         confirmBtn.innerText = `Yes (${timeLeft}s)`;
+      } else {
+        clearInterval(timer);
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = "1";
+        confirmBtn.innerText = "Yes, Change it";
+      }
+    }, 1000);
 
-        if (modal.dataset.timerId) clearInterval(Number(modal.dataset.timerId));
-
-        const timer = setInterval(() => {
-            timeLeft--;
-            if (timeLeft > 0) {
-                confirmBtn.innerText = `Yes (${timeLeft}s)`;
-            } else {
-                clearInterval(timer);
-                confirmBtn.disabled = false;
-                confirmBtn.style.opacity = "1";
-                confirmBtn.innerText = "Yes, Change it";
-            }
-        }, 1000);
-
-        modal.dataset.timerId = timer;
-    }
+    modal.dataset.timerId = timer;
+  }
 });
 
 /**
  * 2. AJAX UPDATE EXECUTION
  */
 function executeStatusUpdate() {
-    if (!pendingStatusChange) return;
-    const { select, reportId, statusId, userId, originalValue } = pendingStatusChange;
+  if (!pendingStatusChange) return;
+  const { select, reportId, statusId, userId, originalValue } = pendingStatusChange;
 
-    select.style.opacity = "0.5";
-    select.disabled = true;
+  select.style.opacity = "0.5";
+  select.disabled = true;
 
-    fetch("../controllers/quick_update_status.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-Requested-With": "XMLHttpRequest",
-        },
-        body: `report_id=${reportId}&status_id=${statusId}&updated_by=${userId}`,
-    })
+  fetch("../controllers/quick_update_status.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: `report_id=${reportId}&status_id=${statusId}&updated_by=${userId}`,
+  })
     .then((response) => response.json())
     .then((data) => {
-        select.style.opacity = "1";
-        select.disabled = false;
+      select.style.opacity = "1";
+      select.disabled = false;
 
-        if (data.success) {
-            select.setAttribute('data-last-value', statusId);
-            showToast(
-                '<i class="fas fa-check-circle mr-2"></i>Status updated successfully!',
-                "success"
-            );
+      if (data.success) {
+        select.setAttribute("data-last-value", statusId);
+        showToast('<i class="fas fa-check-circle mr-2"></i>Status updated successfully!', "success");
 
-            // Row removal animation for Resolved (3) or Closed (4)
-            const statusToRemove = ["3", "4"];
-            if (statusToRemove.includes(statusId)) {
-                const row = select.closest("tr") || select.closest(".report-row");
-                if (row) {
-                    row.style.transition = "all 0.5s ease";
-                    row.style.opacity = "0";
-                    row.style.transform = "translateX(20px)";
-                    setTimeout(() => row.remove(), 500);
-                }
-            }
-        } else {
-            showToast("Update failed: " + data.error, "error"); 
-            select.value = originalValue; // Reset dropdown
+        // Row removal animation for Resolved (3) or Closed (4)
+        const statusToRemove = ["3", "4"];
+        if (statusToRemove.includes(statusId)) {
+          const row = select.closest("tr") || select.closest(".report-row");
+          if (row) {
+            row.style.transition = "all 0.5s ease";
+            row.style.opacity = "0";
+            row.style.transform = "translateX(20px)";
+            setTimeout(() => row.remove(), 500);
+          }
         }
+      } else {
+        showToast("Update failed: " + data.error, "error");
+        select.value = originalValue; // Reset dropdown
+      }
     })
     .catch((err) => {
-        console.error("Fetch Error:", err);
-        select.disabled = false;
-        select.style.opacity = "1";
-        select.value = originalValue;
+      console.error("Fetch Error:", err);
+      select.disabled = false;
+      select.style.opacity = "1";
+      select.value = originalValue;
     });
 }
 
@@ -133,82 +130,82 @@ function executeStatusUpdate() {
  * 3. DOM CONTENT LOADED (Listeners for Buttons & Filters)
  */
 document.addEventListener("DOMContentLoaded", () => {
-    // Confirm Status "Yes" Button
-    document.getElementById("confirmStatusBtn")?.addEventListener("click", () => {
-        toggleStatusModal(false);
-        executeStatusUpdate();
-    });
+  // Confirm Status "Yes" Button
+  document.getElementById("confirmStatusBtn")?.addEventListener("click", () => {
+    toggleStatusModal(false);
+    executeStatusUpdate();
+  });
 
-    // Confirm Status "Cancel" Button
-    document.getElementById("cancelStatusBtn")?.addEventListener("click", () => {
-        if (pendingStatusChange) {
-            pendingStatusChange.select.value = pendingStatusChange.originalValue;
-        }
-        const modal = document.getElementById("statusConfirmModal");
-        if (modal.dataset.timerId) clearInterval(Number(modal.dataset.timerId));
-        toggleStatusModal(false);
-        pendingStatusChange = null;
-    });
-
-    // --- Original Filtering Logic ---
-    const searchInput = document.getElementById("searchInput");
-    const categoryFilter = document.getElementById("categoryFilter");
-    const moduleFilter = document.getElementById("moduleFilter");
-    const severityFilter = document.getElementById("severityFilter");
-    const resetBtn = document.getElementById("resetBtn");
-    const rows = document.querySelectorAll(".report-row");
-    const noResultsRow = document.getElementById("noResultsRow");
-
-    function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const catVal = categoryFilter.value;
-        const modVal = moduleFilter.value;
-        const sevVal = severityFilter.value;
-        let visibleCount = 0;
-
-        rows.forEach((row) => {
-            const ref = row.getAttribute("data-ref").toLowerCase();
-            const reporter = row.getAttribute("data-reporter").toLowerCase();
-            const desc = row.getAttribute("data-desc").toLowerCase();
-            const catId = row.getAttribute("data-cat");
-            const modId = row.getAttribute("data-mod");
-            const sevId = row.getAttribute("data-sev");
-
-            const matchesSearch = searchTerm === "" || ref.includes(searchTerm) || reporter.includes(searchTerm) || desc.includes(searchTerm);
-            const matchesCat = catVal === "" || catId === catVal;
-            const matchesMod = modVal === "" || modId === modVal;
-            const matchesSev = sevVal === "" || sevId === sevVal;
-
-            if (matchesSearch && matchesCat && matchesMod && matchesSev) {
-                row.classList.remove("hidden");
-                visibleCount++;
-            } else {
-                row.classList.add("hidden");
-            }
-        });
-        if (noResultsRow) noResultsRow.classList.toggle("hidden", visibleCount !== 0);
+  // Confirm Status "Cancel" Button
+  document.getElementById("cancelStatusBtn")?.addEventListener("click", () => {
+    if (pendingStatusChange) {
+      pendingStatusChange.select.value = pendingStatusChange.originalValue;
     }
+    const modal = document.getElementById("statusConfirmModal");
+    if (modal.dataset.timerId) clearInterval(Number(modal.dataset.timerId));
+    toggleStatusModal(false);
+    pendingStatusChange = null;
+  });
 
-    searchInput?.addEventListener("input", applyFilters);
-    categoryFilter?.addEventListener("change", applyFilters);
-    moduleFilter?.addEventListener("change", applyFilters);
-    severityFilter?.addEventListener("change", applyFilters);
-    resetBtn?.addEventListener("click", () => {
-        searchInput.value = "";
-        categoryFilter.value = "";
-        moduleFilter.value = "";
-        severityFilter.value = "";
-        applyFilters();
+  // --- Original Filtering Logic ---
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const moduleFilter = document.getElementById("moduleFilter");
+  const severityFilter = document.getElementById("severityFilter");
+  const resetBtn = document.getElementById("resetBtn");
+  const rows = document.querySelectorAll(".report-row");
+  const noResultsRow = document.getElementById("noResultsRow");
+
+  function applyFilters() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const catVal = categoryFilter.value;
+    const modVal = moduleFilter.value;
+    const sevVal = severityFilter.value;
+    let visibleCount = 0;
+
+    rows.forEach((row) => {
+      const ref = row.getAttribute("data-ref").toLowerCase();
+      const reporter = row.getAttribute("data-reporter").toLowerCase();
+      const desc = row.getAttribute("data-desc").toLowerCase();
+      const catId = row.getAttribute("data-cat");
+      const modId = row.getAttribute("data-mod");
+      const sevId = row.getAttribute("data-sev");
+
+      const matchesSearch = searchTerm === "" || ref.includes(searchTerm) || reporter.includes(searchTerm) || desc.includes(searchTerm);
+      const matchesCat = catVal === "" || catId === catVal;
+      const matchesMod = modVal === "" || modId === modVal;
+      const matchesSev = sevVal === "" || sevId === sevVal;
+
+      if (matchesSearch && matchesCat && matchesMod && matchesSev) {
+        row.classList.remove("hidden");
+        visibleCount++;
+      } else {
+        row.classList.add("hidden");
+      }
     });
+    if (noResultsRow) noResultsRow.classList.toggle("hidden", visibleCount !== 0);
+  }
+
+  searchInput?.addEventListener("input", applyFilters);
+  categoryFilter?.addEventListener("change", applyFilters);
+  moduleFilter?.addEventListener("change", applyFilters);
+  severityFilter?.addEventListener("change", applyFilters);
+  resetBtn?.addEventListener("click", () => {
+    searchInput.value = "";
+    categoryFilter.value = "";
+    moduleFilter.value = "";
+    severityFilter.value = "";
+    applyFilters();
+  });
 });
 
 /**
  * 4. TOAST NOTIFICATION (Modernized)
  */
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    
-    toast.style.cssText = `
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+
+  toast.style.cssText = `
         position: fixed;
         bottom: 100px; /* ITINAAS KO ITO (Dati 30px) */
         right: 30px;
@@ -226,123 +223,152 @@ function showToast(message, type = 'success') {
         opacity: 0;
     `;
 
-    // CHECK NATIN DITO: 
-    // Siguraduhin na ang 'type' ay exactly 'success' (small letters)
-    if (type === 'success') {
-    toast.style.backgroundColor = '#059669'; // Emerald Green
+  // CHECK NATIN DITO:
+  // Siguraduhin na ang 'type' ay exactly 'success' (small letters)
+  if (type === "success") {
+    toast.style.backgroundColor = "#059669"; // Emerald Green
     toast.innerHTML = message; // "message" na lang, wala nang emoji sa unahan
-    } else {
-        toast.style.backgroundColor = '#e11d48'; // SOLID RED
+  } else {
+    toast.style.backgroundColor = "#e11d48"; // SOLID RED
     toast.innerHTML = message;
-    }
+  }
 
-    document.body.appendChild(toast);
+  document.body.appendChild(toast);
 
-    setTimeout(() => {
-        toast.style.transform = 'translateY(0)';
-        toast.style.opacity = '1';
-    }, 100);
+  setTimeout(() => {
+    toast.style.transform = "translateY(0)";
+    toast.style.opacity = "1";
+  }, 100);
 
-    setTimeout(() => {
-        toast.style.transform = 'translateY(100px)';
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 5000); // GINAWA KONG 4 SECONDS PARA MAS MABASA
+  setTimeout(() => {
+    toast.style.transform = "translateY(100px)";
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 500);
+  }, 5000); // GINAWA KONG 4 SECONDS PARA MAS MABASA
 }
 
 /**
  * 5. MODAL CONTROL FUNCTIONS (ADD & EDIT)
  */
 function openAddModal() {
-    addModal.classList.remove("hidden");
-    setTimeout(() => {
-        addContainer.classList.remove("scale-95", "opacity-0");
-        addContainer.classList.add("scale-100", "opacity-100");
-        addBackdrop.classList.remove("opacity-0");
-        addBackdrop.classList.add("opacity-100");
-    }, 10);
+  addModal.classList.remove("hidden");
+  setTimeout(() => {
+    addContainer.classList.remove("scale-95", "opacity-0");
+    addContainer.classList.add("scale-100", "opacity-100");
+    addBackdrop.classList.remove("opacity-0");
+    addBackdrop.classList.add("opacity-100");
+  }, 10);
 }
 
 function closeAddModal() {
-    addContainer.classList.remove("scale-100", "opacity-100");
-    addContainer.classList.add("scale-95", "opacity-0");
-    addBackdrop.classList.remove("opacity-100");
-    addBackdrop.classList.add("opacity-0");
-    setTimeout(() => addModal.classList.add("hidden"), 300);
+  addContainer.classList.remove("scale-100", "opacity-100");
+  addContainer.classList.add("scale-95", "opacity-0");
+  addBackdrop.classList.remove("opacity-100");
+  addBackdrop.classList.add("opacity-0");
+  setTimeout(() => addModal.classList.add("hidden"), 300);
 }
 
 function openEditModal() {
-    editModal.classList.remove("hidden");
-    setTimeout(() => {
-        editContainer.classList.remove("scale-95", "opacity-0");
-        editContainer.classList.add("scale-100", "opacity-100");
-        editBackdrop.classList.remove("opacity-0");
-        editBackdrop.classList.add("opacity-100");
-    }, 10);
+  editModal.classList.remove("hidden");
+  setTimeout(() => {
+    editContainer.classList.remove("scale-95", "opacity-0");
+    editContainer.classList.add("scale-100", "opacity-100");
+    editBackdrop.classList.remove("opacity-0");
+    editBackdrop.classList.add("opacity-100");
+  }, 10);
 }
 
 function closeEditModal() {
-    editContainer.classList.remove("scale-100", "opacity-100");
-    editContainer.classList.add("scale-95", "opacity-0");
-    editBackdrop.classList.remove("opacity-100");
-    editBackdrop.classList.add("opacity-0");
-    setTimeout(() => editModal.classList.add("hidden"), 300);
+  editContainer.classList.remove("scale-100", "opacity-100");
+  editContainer.classList.add("scale-95", "opacity-0");
+  editBackdrop.classList.remove("opacity-100");
+  editBackdrop.classList.add("opacity-0");
+  setTimeout(() => editModal.classList.add("hidden"), 300);
 }
 
 // Edit Button Populating Logic
 document.querySelectorAll(".edit-report-btn").forEach((button) => {
-    button.addEventListener("click", function () {
-        document.getElementById("edit_report_id").value = this.getAttribute("data-id");
-        document.getElementById("edit_cat_id").value = this.getAttribute("data-cat");
-        document.getElementById("edit_mod_id").value = this.getAttribute("data-mod");
-        document.getElementById("edit_desc").value = this.getAttribute("data-desc");
+  button.addEventListener("click", function () {
+    document.getElementById("edit_report_id").value = this.getAttribute("data-id");
+    document.getElementById("edit_cat_id").value = this.getAttribute("data-cat");
+    document.getElementById("edit_mod_id").value = this.getAttribute("data-mod");
+    document.getElementById("edit_desc").value = this.getAttribute("data-desc");
 
-        const severityId = this.getAttribute("data-sev");
-        const radioToSelect = editModal.querySelector(`input[name="sev_id"][value="${severityId}"]`);
-        if (radioToSelect) radioToSelect.checked = true;
+    const severityId = this.getAttribute("data-sev");
+    const radioToSelect = editModal.querySelector(`input[name="sev_id"][value="${severityId}"]`);
+    if (radioToSelect) radioToSelect.checked = true;
 
-        openEditModal();
-    });
+    openEditModal();
+  });
 });
 
 /**
  * 6. FORM SUBMISSION (ADD REPORT)
  */
 if (addReportForm) {
-    addReportForm.addEventListener("submit", function (e) {
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const severityOptions = this.querySelectorAll('input[name="sev_id"]');
-        const fileInput = document.getElementById('rep_img_input');
+  addReportForm.addEventListener("submit", function (e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const severityOptions = this.querySelectorAll('input[name="sev_id"]');
+    const fileInput = document.getElementById("rep_img_input");
 
-        const isChecked = Array.from(severityOptions).some((r) => r.checked);
-        if (!isChecked) {
-            e.preventDefault();
-            document.getElementById("severity-error")?.classList.remove("hidden");
-            return false;
-        }
+    const isChecked = Array.from(severityOptions).some((r) => r.checked);
+    if (!isChecked) {
+      e.preventDefault();
+      document.getElementById("severity-error")?.classList.remove("hidden");
+      return false;
+    }
 
-        if (fileInput?.files.length > 0) {
-            if (fileInput.files[0].size > 25 * 1024 * 1024) {
-                e.preventDefault();
-                showToast('<i class="fas fa-exclamation-triangle mr-2"></i>Max 25MB only!', "bg-red-500 text-white");
-                return false;
-            }
-        }
+    if (fileInput?.files.length > 0) {
+      if (fileInput.files[0].size > 25 * 1024 * 1024) {
+        e.preventDefault();
+        showToast('<i class="fas fa-exclamation-triangle mr-2"></i>Max 25MB only!', "bg-red-500 text-white");
+        return false;
+      }
+    }
 
-        submitBtn.style.pointerEvents = "none";
-        submitBtn.classList.add("opacity-70", "cursor-not-allowed");
-        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
-        
-        const form = this;
-        setTimeout(() => form.submit(), 100);
-    });
+    submitBtn.style.pointerEvents = "none";
+    submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+    submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
+
+    const form = this;
+    setTimeout(() => form.submit(), 100);
+  });
 }
 
 // Global Key Listeners
 window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-        closeAddModal();
-        closeEditModal();
-        toggleStatusModal(false);
-    }
+  if (e.key === "Escape") {
+    closeAddModal();
+    closeEditModal();
+    toggleStatusModal(false);
+  }
+});
+document.querySelectorAll(".remind-btn").forEach((button) => {
+  button.addEventListener("click", function () {
+    const reportId = this.getAttribute("data-id");
+    const icon = this.querySelector("i");
+
+    // 1. UI Feedback: Disable and show loading
+    this.classList.add("opacity-50", "cursor-not-allowed");
+    icon.className = "fa-solid fa-spinner fa-spin";
+
+    // 2. Send the request
+    fetch("../controllers/remind_admin_handler.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `report_id=${reportId}`,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          icon.className = "fa-solid fa-check";
+          // Optional: Hide the button or change color to show it's "Done"
+        } else {
+          // Alert the user they are spamming
+          alert(data.message);
+          icon.className = "fa-solid fa-bell";
+          this.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+      });
+  });
 });

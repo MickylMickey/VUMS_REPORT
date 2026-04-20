@@ -9,15 +9,15 @@ if (isset($_COOKIE['auth_token'])) {
 
         // Redirect based on the actual role in the token
         if ($role === 'Admin') {
-            header("Location: /public/admin_dashboard.php");
+            header("Location: ../public/admin_dashboard.php");
             exit();
         } elseif ($role === 'HR') {
-            header("Location: /public/hr_dashboard.php");
+            header("Location: ../public/hr_dashboard.php");
             exit();
 
         } else {
             // If they are a normal user, send them to the user area (or just stay here)
-            header("Location: /public/user_dashboard.php");
+            header("Location: ../public/user_dashboard.php");
             echo "Welcome, User. You do not have Admin access.";
             exit();
         }
@@ -25,5 +25,5 @@ if (isset($_COOKIE['auth_token'])) {
 }
 
 // No valid token? Go to login.
-header("Location: /public/login.php");
+header("Location: ../public/login.php");
 exit();

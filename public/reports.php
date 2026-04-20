@@ -12,6 +12,8 @@ $visibility = new BugVisibility($conn);
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
 $isAdmin = (isset($userData->role) && $userData->role === 'Admin');
+$isUser = RoleHelper::isUser($userData->role);
+$isHr = RoleHelper::isHR($userData->role);
 
 
 if ($isAdmin) {
@@ -27,7 +29,7 @@ if ($isAdmin) {
 
 $pagination = getPaginationData(
     $conn,
-    "report r", 
+    "report r",
     $_GET['limit'] ?? 10,
     $_GET['page'] ?? 1,
     $where,
@@ -111,7 +113,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                         data-tooltip="Filter by Module">
                         <option value="">All Modules</option>
                         <?php foreach ($moduleOptions as $mod): ?>
-                            <option value="<?= htmlspecialchars($mod['mod_id']) ?>"><?= htmlspecialchars($mod['module']) ?>
+                            <option value="<?= htmlspecialchars($mod['mod_id']) ?>">
+                                <?= htmlspecialchars($mod['module']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -160,11 +163,10 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             <th
                                 class="px-6 py-4 text-left text-[13px] font-bold text-black-400 uppercase tracking-wider text-center">
                                 Image/Videos</th>
-                            <?php if ($isAdmin): ?>
-                                <th
-                                    class="px-6 py-4 text-right text-[13px] font-bold text-black-400 uppercase tracking-wider">
-                                    Action</th>
-                            <?php endif; ?>
+                            <th
+                                class="px-6 py-4 text-right text-[13px] font-bold text-black-400 uppercase tracking-wider">
+                                Action</th>
+
                         </tr>
                     </thead>
                     <tbody id="reportsTableBody" class="divide-y divide-slate-100">
@@ -226,18 +228,18 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 </td>
 
                                 <td class="px-6 py-4">
-    <select
-        class="status-updater bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-semibold text-slate-600 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
-        data-report-id="<?= $report['report_id'] ?>" 
-        data-user-id="<?= $current_user_id ?>"
-        data-last-value="<?= $report['status_id'] ?>" >
-        <?php foreach ($statusOptions as $status): ?>
-            <option value="<?= $status['status_id'] ?>" 
-                <?= $report['status_id'] == $status['status_id'] ? 'selected' : '' ?>> <?= htmlspecialchars($status['status_desc']) ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-</td>
+                                    <select
+                                        class="status-updater bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-semibold text-slate-600 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
+                                        data-report-id="<?= $report['report_id'] ?>" data-user-id="<?= $current_user_id ?>"
+                                        data-last-value="<?= $report['status_id'] ?>">
+                                        <?php foreach ($statusOptions as $status): ?>
+                                            <option value="<?= $status['status_id'] ?>"
+                                                <?= $report['status_id'] == $status['status_id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($status['status_desc']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
 
                                 <td class="px-6 py-4 text-center">
                                     <?php
@@ -247,7 +249,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                         $fileExt = strtolower(pathinfo($mediaFile, PATHINFO_EXTENSION));
                                         $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
 
-                          
+
                                         $folderPath = in_array($fileExt, $videoExtensions) ? "Videos/" : "uploads/";
                                         $finalPath = $folderPath . $mediaFile;
                                         ?>
@@ -268,8 +270,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                         <span class="text-slate-300 text-[13px] italic">No media</span>
                                     <?php endif; ?>
                                 </td>
-                                <?php if ($isAdmin): ?>
-                                    <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 text-right">
+                                    <?php if ($isAdmin): ?>
                                         <button
                                             class="edit-report-btn hidden md:flex bg-blue-600 text-white px-5 py-1.5 rounded-xl h-10 w-auto font-semibold text-sm hover:bg-blue-700 transition-all items-center shadow-lg shadow-blue-200"
                                             data-tooltip="Edit Report Details" data-id="<?= $report['report_id'] ?>"
@@ -278,8 +280,15 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                             data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                    </td>
-                                <?php endif; ?>
+                                    <?php endif; ?>
+                                    <?php if ($isUser || $isHr): ?>
+                                        <button
+                                            class="remind-btn hidden md:flex bg-green-600 text-white px-5 py-1.5 rounded-xl h-10 font-semibold text-sm hover:bg-green-700 transition-all items-center shadow-lg shadow-green-200"
+                                            data-tooltip="Remind Admin" data-id="<?= $report['report_id'] ?>">
+                                            <i class="fa-solid fa-bell"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                 </table>
@@ -555,7 +564,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                             </div>
                             <div id="edit_mod_desc_panel"
                                 class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p><p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
+                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
                             </div>
                         </div>
                     </div>
@@ -619,36 +629,47 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
         </div>
 
     </main>
-    <div id="statusConfirmModal" class="hidden" style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1rem; background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
-    
-    <div id="statusConfirmContainer" style="position: relative; background-color: rgba(255, 255, 255, 0.95); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 2.5rem; box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.3); transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; text-align: center;">
-        
-        <div style="margin: 0 auto 1.25rem; display: flex; height: 70px; width: 70px; align-items: center; justify-content: center; border-radius: 1.5rem; background: linear-gradient(135deg, #fffbeb 0%, #ffedd5 100%);">
-            <svg xmlns="http://www.w3.org/2000/svg" style="height: 35px; width: 35px; color: #f59e0b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-            </svg>
-        </div>
+    <div id="statusConfirmModal" class="hidden"
+        style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1rem; background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
 
-        <h3 style="font-size: 1.75rem; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -0.025em; line-height: 1.2;">
-            Confirm Status Update
-        </h3>
+        <div id="statusConfirmContainer"
+            style="position: relative; background-color: rgba(255, 255, 255, 0.95); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 2.5rem; box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.3); transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; text-align: center;">
 
-        <p style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
-            Are you sure you want to change the status of this report? 
-        </p>
+            <div
+                style="margin: 0 auto 1.25rem; display: flex; height: 70px; width: 70px; align-items: center; justify-content: center; border-radius: 1.5rem; background: linear-gradient(135deg, #fffbeb 0%, #ffedd5 100%);">
+                <svg xmlns="http://www.w3.org/2000/svg" style="height: 35px; width: 35px; color: #f59e0b;" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
 
-        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
-            <button id="confirmStatusBtn" disabled style="width: 100%; padding: 1rem; border-radius: 1.25rem; font-weight: 700; color: white; background-color: #2563eb; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); opacity: 0.6;">
-                Yes (3s)
-            </button>
+            <h3
+                style="font-size: 1.75rem; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -0.025em; line-height: 1.2;">
+                Confirm Status Update
+            </h3>
 
-            <button id="cancelStatusBtn" style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #fee2e2; color: #ef4444; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(239, 68, 68, 0.1);">
-                Maybe Later
-            </button>
+            <p
+                style="color: #64748b; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; line-height: 1.5; padding: 0 1rem;">
+                Are you sure you want to update the status of this report?
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
+                <button id="confirmStatusBtn" disabled
+                    style="width: 100%; padding: 1rem; border-radius: 1.25rem; font-weight: 700; color: white; background-color: #2563eb; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); opacity: 0.6;">
+                    Yes (3s)
+                </button>
+
+                <button id="cancelStatusBtn"
+                    style="width: 100%; padding: 0.85rem; border-radius: 1.25rem; background-color: #fee2e2; color: #ef4444; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(239, 68, 68, 0.1);">
+                    Maybe Later
+                </button>
+            </div>
         </div>
     </div>
-</div>
-    <?php include "templates/footer.php"; ?>
+    <div class="mt-auto">
+        <?php include "templates/footer.php"; ?>
+    </div>
 </body>
 <?php ob_end_flush(); ?>
 <script src="js/removeNotification.js" defer></script>
