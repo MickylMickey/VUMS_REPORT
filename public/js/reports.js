@@ -379,19 +379,19 @@ function openViewModal(data) {
     const imgElement = document.getElementById('view_attachment');
     const placeholder = document.getElementById('no_img_placeholder');
 
-    // 1. Populate text fields
+  
     document.getElementById('view_category').innerText = data.category;
     document.getElementById('view_module').innerText = data.module;
     document.getElementById('view_desc').innerText = data.description;
     
-    // 2. Severity badge logic & colors
+
     const sevBadge = document.getElementById('view_severity');
     sevBadge.innerText = data.severity;
     
     let bgColor, textColor, borderColor;
     const sev = data.severity.toLowerCase();
 
-    // Mapping ng kulay depende sa severity
+   
     if (sev === 'critical') {
         bgColor = '#fef2f2'; textColor = '#dc2626'; borderColor = '#fee2e2';
     } else if (sev === 'high') {
@@ -399,19 +399,15 @@ function openViewModal(data) {
     } else if (sev === 'medium') {
         bgColor = '#fffbeb'; textColor = '#d97706'; borderColor = '#fef3c7';
     } else {
-        // Low o Default (Emerald/Green)
         bgColor = '#ecfdf5'; textColor = '#059669'; borderColor = '#d1fae5';
     }
 
-    // Apply inline styles sa badge
     sevBadge.style.backgroundColor = bgColor;
     sevBadge.style.color = textColor;
     sevBadge.style.borderColor = borderColor;
 
-    // 3. IMAGE LOGIC (Evidence)
-    // Dito natin chinecheck kung may filename na pinasa mula sa PHP
-    if (data.image && data.image.toString().trim() !== "") {
-        imgElement.src = "uploads/" + data.image; // Siguraduhin na uploads folder ang gamit mo
+     if (data.image && data.image.toString().trim() !== "") {
+        imgElement.src = "uploads/" + data.image; 
         imgElement.style.display = "block";
         placeholder.style.display = "none";
     } else {
@@ -420,7 +416,7 @@ function openViewModal(data) {
         placeholder.style.display = "block";
     }
 
-    // 4. Show modal with animations
+  
     modal.style.display = 'flex';
     setTimeout(() => {
         backdrop.style.opacity = '1';
