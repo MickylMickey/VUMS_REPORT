@@ -10,8 +10,8 @@ class BugVisibility
     }
 
     /**
-     * @param string $current_user_id (UUID string)
-     * @param string $user_role (String like "Admin" or "User")
+     * @param string $current_user_id 
+     * @param string $user_role 
      */
     public function getVisibleReports(string $current_user_id, string $user_role, ?int $limit = null, ?int $offset = null): array
     {

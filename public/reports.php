@@ -30,7 +30,7 @@ if ($isAdmin) {
 $pagination = getPaginationData(
     $conn,
     "report r",
-    $_GET['limit'] ?? 10,
+    $_GET['limit'] ?? 25,
     $_GET['page'] ?? 1,
     $where,
     $params,

@@ -38,6 +38,4 @@ descriptionArea.addEventListener("paste", function (e) {
       reader.readAsDataURL(blob);
     }
   }
-  // Note: I removed the !foundImage check.
-  // You want to keep the image even if they paste text later!
 });

@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($statusId == 3 || $statusId == 4) {
 
             // A. Copy to archive
-            // Ensure report_archive has the EXACT same column structure as report
             $copySql = "INSERT INTO report_archive SELECT * FROM report WHERE report_id = ?";
             $copyStmt = $conn->prepare($copySql);
             $copyStmt->bind_param("i", $reportId);

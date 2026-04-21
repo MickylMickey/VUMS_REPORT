@@ -17,7 +17,7 @@ $response = [
 
 try {
     // 2. Category Totals (User-Specific)
-    // We filter the JOIN to only count reports belonging to this user
+
 
     // 3. Status & Severity Stats (User-Specific)
     $statsQuery = "SELECT 

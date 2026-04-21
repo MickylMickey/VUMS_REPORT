@@ -29,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_name = $_FILES['rep_img']['name'];
         $file_tmp = $_FILES['rep_img']['tmp_name'];
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        
+
         $video_extensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
 
-        // LINKING LOGIC: Doon ba sa Videos o sa Uploads folder?
+
         if (in_array($file_extension, $video_extensions)) {
             $upload_dir = __DIR__ . "/../public/Videos/";
         } else {
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_file = $upload_dir . $new_filename;
 
         if (move_uploaded_file($file_tmp, $target_file)) {
-            $image_path = $new_filename; // Ang filename lang ang mase-save sa DB
+            $image_path = $new_filename;
         }
     }
 

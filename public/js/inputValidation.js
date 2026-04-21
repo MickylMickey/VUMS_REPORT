@@ -77,13 +77,13 @@ function initFormValidation(formId) {
       return;
     }
 
-    // ❌ Recorded Age cannot be GREATER than real age
+    //  Recorded Age cannot be GREATER than real age
     if (recordedAge > realAge) {
       showAgeError(`Recorded age cannot be greater than actual age (${realAge} months).`);
       return;
     }
 
-    // 👍 Valid
+    //  Valid
     clearAgeError();
 
     function showAgeError(msg) {
@@ -161,7 +161,7 @@ function initFormValidation(formId) {
         return; // skip other checks
       }
 
-      // ✅ Custom rule checks
+      //  Custom rule checks
       if (input.dataset.minlength && input.value.length < parseInt(input.dataset.minlength)) {
         valid = false;
         if (errorEl) {

@@ -27,7 +27,7 @@ if (isset($_COOKIE[session_name()])) {
     setcookie(session_name(), '', time() - 3600, '/');
 }
 
-// 4. Clear auth token cookie (IMPORTANT FIX)
+// 4. Clear auth token cookie 
 $isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 
 setcookie("auth_token", "", [

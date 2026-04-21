@@ -13,8 +13,8 @@ use Ramsey\Uuid\Uuid;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST["username"] ?? '');
     $password = trim($_POST["password"] ?? '');
-    $loginType = $_POST['login_type'] ?? ''; // safer default
-    $remember = isset($_POST['remember_me']); // ✅ remember me
+    $loginType = $_POST['login_type'] ?? '';
+    $remember = isset($_POST['remember_me']);
 
     try {
 
@@ -78,10 +78,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     exit();
                 }
 
-                // ✅ unified expiry
+
                 $expiry = $remember
-                    ? time() + (86400 * 30) // 30 days
-                    : time() + 3600;        // 1 hour
+                    ? time() + (86400 * 30)
+                    : time() + 3600;
 
                 $payload = [
                     "user_id" => $updatedUser["user_id"],
@@ -97,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 
                 setcookie("auth_token", $jwt, [
-                    "expires" => $remember ? $expiry : 0, // session vs persistent
+                    "expires" => $remember ? $expiry : 0,
                     "path" => "/",
                     "domain" => "",
                     "secure" => $isSecure,

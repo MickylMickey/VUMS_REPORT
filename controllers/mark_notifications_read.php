@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 $user = checkAuth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1. Remove intval() because UUIDs are strings, not integers
+
     $user_id = $_POST['user_id'];
     $role = $_POST['role'];
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $conn->prepare($sql);
 
-        // 2. CHANGE "i" TO "s" HERE
+
         $stmt->bind_param("s", $user_id);
 
         if ($stmt->execute()) {

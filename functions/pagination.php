@@ -9,7 +9,7 @@ function getPaginationData($conn, $table, $limit = 10, $page = 1, $where = "", $
         $limit = 10;
     }
 
-    // ✅ Always default to 1 for invalid or zero/negative pages
+    //  Always default to 1 for invalid or zero/negative pages
     if ($page <= 0) {
         $page = 1;
     }
@@ -53,7 +53,7 @@ function getPaginationData($conn, $table, $limit = 10, $page = 1, $where = "", $
     $totalRecords = $result['total'] ?? 0;
     $stmt->close();
 
-    $totalPages = max(1, ceil($totalRecords / $limit)); // ✅ ensure at least 1 page
+    $totalPages = max(1, ceil($totalRecords / $limit)); //  ensure at least 1 page
 
     return [
         'limit' => $limit,

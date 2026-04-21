@@ -271,7 +271,6 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <!-- External Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/countup.js@2.3.2/dist/countUp.umd.js"></script>
-    <!-- Your Provided user_chat.js -->
     <script src="js/user_chart.js" defer></script>
 </body>
 
