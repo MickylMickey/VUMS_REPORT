@@ -302,9 +302,7 @@ document.querySelectorAll(".edit-report-btn").forEach((button) => {
   });
 });
 
-/**
- * 6. FORM SUBMISSION (ADD REPORT)
- */
+
 if (addReportForm) {
   addReportForm.addEventListener("submit", function (e) {
     const submitBtn = this.querySelector('button[type="submit"]');
@@ -335,7 +333,7 @@ if (addReportForm) {
   });
 }
 
-// Global Key Listeners
+
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeAddModal();
@@ -348,11 +346,11 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
     const reportId = this.getAttribute("data-id");
     const icon = this.querySelector("i");
 
-    // 1. UI Feedback: Disable and show loading
+
     this.classList.add("opacity-50", "cursor-not-allowed");
     icon.className = "fa-solid fa-spinner fa-spin";
 
-    // 2. Send the request
+
     fetch("../controllers/remind_admin_handler.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -362,9 +360,9 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
       .then((data) => {
         if (data.success) {
           icon.className = "fa-solid fa-check";
-          // Optional: Hide the button or change color to show it's "Done"
+      
         } else {
-          // Alert the user they are spamming
+      
           alert(data.message);
           icon.className = "fa-solid fa-bell";
           this.classList.remove("opacity-50", "cursor-not-allowed");
@@ -372,3 +370,78 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
       });
   });
 });
+
+//para sa opening ng view information ng reports.
+function openViewModal(data) {
+    const modal = document.getElementById('viewModal');
+    const backdrop = document.getElementById('viewModalBackdrop');
+    const container = document.getElementById('viewModalContainer');
+    const imgElement = document.getElementById('view_attachment');
+    const placeholder = document.getElementById('no_img_placeholder');
+
+    // 1. Populate text fields
+    document.getElementById('view_category').innerText = data.category;
+    document.getElementById('view_module').innerText = data.module;
+    document.getElementById('view_desc').innerText = data.description;
+    
+    // 2. Severity badge logic & colors
+    const sevBadge = document.getElementById('view_severity');
+    sevBadge.innerText = data.severity;
+    
+    let bgColor, textColor, borderColor;
+    const sev = data.severity.toLowerCase();
+
+    // Mapping ng kulay depende sa severity
+    if (sev === 'critical') {
+        bgColor = '#fef2f2'; textColor = '#dc2626'; borderColor = '#fee2e2';
+    } else if (sev === 'high') {
+        bgColor = '#fff7ed'; textColor = '#ea580c'; borderColor = '#ffedd5';
+    } else if (sev === 'medium') {
+        bgColor = '#fffbeb'; textColor = '#d97706'; borderColor = '#fef3c7';
+    } else {
+        // Low o Default (Emerald/Green)
+        bgColor = '#ecfdf5'; textColor = '#059669'; borderColor = '#d1fae5';
+    }
+
+    // Apply inline styles sa badge
+    sevBadge.style.backgroundColor = bgColor;
+    sevBadge.style.color = textColor;
+    sevBadge.style.borderColor = borderColor;
+
+    // 3. IMAGE LOGIC (Evidence)
+    // Dito natin chinecheck kung may filename na pinasa mula sa PHP
+    if (data.image && data.image.toString().trim() !== "") {
+        imgElement.src = "uploads/" + data.image; // Siguraduhin na uploads folder ang gamit mo
+        imgElement.style.display = "block";
+        placeholder.style.display = "none";
+    } else {
+        imgElement.src = "";
+        imgElement.style.display = "none";
+        placeholder.style.display = "block";
+    }
+
+    // 4. Show modal with animations
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        backdrop.style.opacity = '1';
+        container.style.opacity = '1';
+        container.style.transform = 'scale(1)';
+    }, 10);
+}
+
+//function para isara ang view details modal meow meow.
+function closeViewModal() {
+    const modal = document.getElementById('viewModal');
+    const backdrop = document.getElementById('viewModalBackdrop');
+    const container = document.getElementById('viewModalContainer');
+
+   
+    backdrop.style.opacity = '0';
+    container.style.opacity = '0';
+    container.style.transform = 'scale(0.95)';
+
+  
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
