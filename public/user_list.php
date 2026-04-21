@@ -147,7 +147,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                             data-username="<?= htmlspecialchars($user['username']) ?>"
                                             data-role="<?= htmlspecialchars($user['user_role_id']) ?>">
 
-                                            <!-- USER DETAILS -->
+                                        
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center gap-4">
                                                     <div class="relative flex-shrink-0">
@@ -174,14 +174,14 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                 </div>
                                             </td>
 
-                                            <!-- USERNAME -->
+                                          
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600">
                                                 <span class="bg-slate-100 px-2 py-1 rounded text-[15px] font-mono">
                                                     <?= htmlspecialchars($user['username']) ?>
                                                 </span>
                                             </td>
 
-                                            <!-- ACCESS LEVEL -->
+                                         
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <?php
                                                 $role = strtolower($user['role_name']);
@@ -208,28 +208,23 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                 </span>
                                             </td>
 
-                                            <!-- ACTIONS -->
+                                         
                                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                                 <div
-                                                    class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-all duration-300">
+                                                class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-all duration-300">
+                                                <a href="../public/user_profile.php?u=<?= $user_id ?>"
+                                                data-tooltip="View profile details" 
+                                                class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-600 hover:text-white hover:shadow-lg hover:shadow-emerald-200 active:scale-95 transition-all duration-200">
+                                                <i class="fa-solid fa-user text-xl"></i>
+                                                </a>
 
-                                                    <!-- VIEW -->
-                                                    <a href="../public/user_profile.php?u=<?= $user_id ?>"
-                                                        data-tooltip="View profile details" class="inline-flex items-center justify-center w-12 h-12 rounded-xl
-                  bg-emerald-50 text-emerald-600 border border-emerald-100
-                  hover:bg-emerald-600 hover:text-white hover:shadow-lg hover:shadow-emerald-200
-                  active:scale-95 transition-all duration-200">
-
-                                                        <i class="fa-solid fa-user-shield text-lg"></i>
-                                                    </a>
-
-                                                    <!-- EDIT -->
+                                                  
                                                     <button
                                                         onclick="openEditUserModal('<?= $user_id ?>', '<?= addslashes($user['username']) ?>', '<?= addslashes($user['user_role_id']) ?>')"
                                                         data-tooltip="Edit account" class="hidden md:inline-flex items-center justify-center w-12 h-12 rounded-xl
-                   bg-blue-50 text-blue-600 border border-blue-100
-                   hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200
-                   active:scale-95 transition-all duration-200">
+                                                        bg-blue-50 text-blue-600 border border-blue-100
+                                                        hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200
+                                                        active:scale-95 transition-all duration-200">
 
                                                         <i class="fa-solid fa-pen-to-square text-lg"></i>
                                                     </button>

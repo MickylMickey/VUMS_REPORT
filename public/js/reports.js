@@ -302,9 +302,6 @@ document.querySelectorAll(".edit-report-btn").forEach((button) => {
   });
 });
 
-/**
- * 6. FORM SUBMISSION (ADD REPORT)
- */
 if (addReportForm) {
   addReportForm.addEventListener("submit", function (e) {
     const submitBtn = this.querySelector('button[type="submit"]');
@@ -335,7 +332,6 @@ if (addReportForm) {
   });
 }
 
-// Global Key Listeners
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeAddModal();
@@ -348,11 +344,9 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
     const reportId = this.getAttribute("data-id");
     const icon = this.querySelector("i");
 
-    // 1. UI Feedback: Disable and show loading
     this.classList.add("opacity-50", "cursor-not-allowed");
     icon.className = "fa-solid fa-spinner fa-spin";
 
-    // 2. Send the request
     fetch("../controllers/remind_admin_handler.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -362,9 +356,7 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
       .then((data) => {
         if (data.success) {
           icon.className = "fa-solid fa-check";
-          // Optional: Hide the button or change color to show it's "Done"
         } else {
-          // Alert the user they are spamming
           alert(data.message);
           icon.className = "fa-solid fa-bell";
           this.classList.remove("opacity-50", "cursor-not-allowed");
