@@ -10,13 +10,13 @@ $isUser = RoleHelper::isUser($userData->role);
 $isHr = RoleHelper::isHR($userData->role);
 
 $pagination = getPaginationData(
-    $conn,                     // Database connection
-    "notifications",                   // Table name
-    $_GET['limit'] ?? 10,      // Number of records per page (default: 10)
-    $_GET['page'] ?? 1,        // Current page number (default: 1)
-    null,         // WHERE condition for filtering
+    $conn,
+    "notifications",
+    $_GET['limit'] ?? 10,
+    $_GET['page'] ?? 1,
+    null,
     null, // Parameter for WHERE condition (selected barangay)
-    null                      // Data type for binding (integer)
+    null
 );
 
 // Extract pagination values from the result array
@@ -182,7 +182,7 @@ var_dump($userData);
 <script src="js/notification/userRemoveNotification.js"></script>
 <script>
     function markAsRead(id) {
-        // Logic to hit your controller and update UI
+
         const row = document.getElementById(`notification-${id}`);
         row.classList.remove('font-semibold', 'bg-white');
         row.classList.add('bg-gray-50/40', 'font-normal', 'text-gray-600');
@@ -192,7 +192,7 @@ var_dump($userData);
 
     function deleteNotification(id) {
         if (confirm('Archive this notification?')) {
-            // Call your userRemoveNotification.js logic here
+
             document.getElementById(`notification-${id}`).style.opacity = '0';
             setTimeout(() => document.getElementById(`notification-${id}`).remove(), 300);
         }

@@ -431,7 +431,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset, 2);
 
         clearInterval(deleteCountdownInterval);
 
-        // 🔒 FULL LOCK STATE (constant blur for 5 seconds)
+        //  FULL LOCK STATE (constant blur for 5 seconds)
         btn.disabled = true;
         btn.style.cursor = "not-allowed";
         btn.style.opacity = "1";
@@ -449,7 +449,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset, 2);
 
             if (timeLeft > 0) {
                 timerEl.textContent = timeLeft;
-                // ❌ NO MORE FILTER CHANGES (important fix)
+                //  NO MORE FILTER CHANGES
             } else {
                 clearInterval(deleteCountdownInterval);
 
@@ -477,7 +477,7 @@ $users = $userVisibility->getVisibleUsers($limit, $offset, 2);
                 deleteContent.classList.add("opacity-100", "scale-100");
             }, 10);
 
-            // 🔥 START TIMER WHEN OPEN
+            //  START TIMER WHEN OPEN
             startDeleteTimer();
 
         } else {

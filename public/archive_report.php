@@ -44,7 +44,7 @@ $reportArchive = $visibility->getVisibleArchiveReports($current_user_id, $user_r
 // --- SUGGESTION PAGINATION ---
 
 // 1. Define filters for suggestions
-$s_where = "sa.status_id != ?"; // Adjust this if you want to show all (e.g., "1=1")
+$s_where = "sa.status_id != ?";
 $s_params = [0];
 $s_types = "i";
 
@@ -52,7 +52,7 @@ $s_types = "i";
 $s_pagination = getPaginationData(
     $conn,
     "suggestion_archive sa",
-    $_GET['s_limit'] ?? 12, // Suggestions usually look better in smaller grids
+    $_GET['s_limit'] ?? 12,
     $_GET['s_page'] ?? 1,
     $s_where,
     $s_params,
@@ -67,7 +67,6 @@ $s_totalRecords = $s_pagination['totalRecords'];
 $s_page = $s_pagination['page'];
 
 // 4. Fetch the actual suggestions using LIMIT and OFFSET
-// Note: You'll need to update your raw SQL query to use these
 $sql = "SELECT sa.*, st.status_desc, updater.username AS updater_name, UPPER(u.username) AS username 
         FROM suggestion_archive sa
         LEFT JOIN status st ON sa.status_id = st.status_id
@@ -75,7 +74,7 @@ $sql = "SELECT sa.*, st.status_desc, updater.username AS updater_name, UPPER(u.u
         LEFT JOIN users u ON sa.user_id = u.user_id
         WHERE $s_where
         ORDER BY sa.suggestion_updated_at DESC
-        LIMIT ? OFFSET ?"; // Added placeholders
+        LIMIT ? OFFSET ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sii", $s_params[0], $s_limit, $s_offset);

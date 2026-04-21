@@ -4,7 +4,7 @@ function fetchNotification($conn, $user_id, $user_role, $limit = null, $offset =
     $notifications = [];
 
     try {
-        // Force lowercase to avoid "Admin" vs "admin" mismatches
+
         $role = strtolower($user_role);
 
         if ($role === 'Admin') {
@@ -26,7 +26,6 @@ function fetchNotification($conn, $user_id, $user_role, $limit = null, $offset =
                 n.created_at,
                 n.sender_id,
                 CONCAT(sender.user_first_name, ' ', COALESCE(CONCAT(LEFT(sender.user_middle_name, 1), '. '), ''), sender.user_last_name) AS sender_name,
-                -- Added sender image so the UI can display it
                 sender.user_prof AS sender_image
             FROM notifications AS n 
             LEFT JOIN report AS r ON n.report_id = r.report_id
@@ -59,7 +58,7 @@ function fetchNotification($conn, $user_id, $user_role, $limit = null, $offset =
 
 
 /**
- * Converts a datetime string into a "time ago" format (e.g., "5 mins ago")
+ * Converts a datetime string into a "time ago" format ("5 mins ago")
  * * @param string $datetime The timestamp from the database (Y-m-d H:i:s)
  * @param bool $full Whether to return a full string or just the most significant unit
  * @return string

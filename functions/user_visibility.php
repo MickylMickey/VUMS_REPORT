@@ -9,7 +9,7 @@ class UserVisibility
         $this->conn = $conn;
     }
 
-    // Nagdagdag tayo ng $status = 1 para by default, Active users lang ang kukunin niya
+
     public function getVisibleUsers(?int $limit = null, ?int $offset = null, int $status = 1): array
     {
         $sql = "SELECT u.user_id, u.username, u.user_role_id, 
@@ -20,7 +20,7 @@ class UserVisibility
         INNER JOIN user_profile up ON u.user_id = up.user_id
         INNER JOIN user_role r ON u.user_role_id = r.user_role_id
         WHERE u.user_status_id = $status
-            ORDER BY (r.role_name = 'Admin') DESC, u.username ASC"; 
+            ORDER BY (r.role_name = 'Admin') DESC, u.username ASC";
 
         if ($limit !== null) {
             $limit = max(0, (int) $limit);

@@ -207,7 +207,7 @@ function showToast(message, type = "success") {
 
   toast.style.cssText = `
         position: fixed;
-        bottom: 100px; /* ITINAAS KO ITO (Dati 30px) */
+        bottom: 100px; 
         right: 30px;
         padding: 1.25rem 2.5rem;
         border-radius: 1.5rem;
@@ -224,12 +224,12 @@ function showToast(message, type = "success") {
     `;
 
   // CHECK NATIN DITO:
-  // Siguraduhin na ang 'type' ay exactly 'success' (small letters)
+
   if (type === "success") {
     toast.style.backgroundColor = "#059669"; // Emerald Green
-    toast.innerHTML = message; // "message" na lang, wala nang emoji sa unahan
+    toast.innerHTML = message;
   } else {
-    toast.style.backgroundColor = "#e11d48"; // SOLID RED
+    toast.style.backgroundColor = "#e11d48";
     toast.innerHTML = message;
   }
 
@@ -244,7 +244,7 @@ function showToast(message, type = "success") {
     toast.style.transform = "translateY(100px)";
     toast.style.opacity = "0";
     setTimeout(() => toast.remove(), 500);
-  }, 5000); // GINAWA KONG 4 SECONDS PARA MAS MABASA
+  }, 5000);
 }
 
 /**

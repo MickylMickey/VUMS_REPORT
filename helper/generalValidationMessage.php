@@ -21,7 +21,7 @@ function showValidation(): ?string
     $message = htmlspecialchars($_COOKIE["validation_message"]);
     $type = $_COOKIE["validation_type"];
 
-    // ✅ clear cookies here (safe because of ob_start at top)
+    //  clear cookies here (safe because of ob_start at top)
     setcookie("validation_message", "", time() - 3600, "/");
     setcookie("validation_type", "", time() - 3600, "/");
 

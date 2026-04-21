@@ -181,22 +181,22 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                                 </span>
                                             </td>
 
-                                            <!-- ACCESS LEVEL (IBINALIK) -->
+                                            <!-- ACCESS LEVEL -->
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <?php
                                                 $role = strtolower($user['role_name']);
 
                                                 switch ($role) {
                                                     case 'admin':
-                                                        //red for admin
+
                                                         $style = "background-color: #fee2e2; color: #b91c1c; border-color: #fecaca;";
                                                         break;
                                                     case 'hr':
-                                                        //purple para sa HR 
+
                                                         $style = "background-color: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;";
                                                         break;
                                                     default:
-                                                        //green for regular users 
+
                                                         $style = "background-color: #f0fdf4; color: #15803d; border-color: #dcfce7;";
                                                         break;
                                                 }
@@ -335,6 +335,23 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                             <h4 class="text-[15px] font-bold uppercase tracking-widest text-slate-400">Account
                                 Access</h4>
                         </div>
+                        <!-- PROFILE PICTURE -->
+                        <div class="flex flex-col items-center gap-4 w-64">
+                            <div
+                                class="relative w-32 h-32 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-50">
+                                <img id="preview-img"
+                                    src="https://ui-avatars.com/api/?name=User&background=cbd5e1&color=fff"
+                                    class="w-full h-full object-cover" alt="Preview">
+                            </div>
+
+                            <label class="cursor-pointer bg-white border border-slate-200 w-60 px-3 py-2 rounded-lg
+                  text-[15px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm
+                  flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-camera"></i>
+                                <span>Profile Picture</span>
+                                <input type="file" id="prof-pic-input" name="prof_pic" class="hidden" accept="image/*">
+                            </label>
+                        </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div class="col-span-1">
@@ -468,20 +485,6 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
                                     <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                                 </div>
                             </div>
-
-                            <!-- PROFILE PICTURE -->
-                            <div>
-                                <label class="cursor-pointer bg-white border border-slate-200 w-full px-3 py-2 rounded-lg
-                      text-[15px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm
-                      flex items-center justify-center gap-2">
-
-                                    <i class="fa-solid fa-camera"></i>
-                                    <span>Profile Picture</span>
-
-                                    <input type="file" name="prof_pic" class="hidden">
-                                </label>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -664,19 +667,19 @@ $users = $userVisibility->getVisibleUsers($limit, $offset);
         initFormValidation("EditUserForm");
 
         // 2. TOAST TRIGGER FROM SESSION
-        // Dito natin kukunin ang validation message na sinet mo sa add_user.php
+
         <?php if (isset($_SESSION['validation'])): ?>
-            const type = "<?php echo $_SESSION['validation']['type']; ?>"; // success o error
+            const type = "<?php echo $_SESSION['validation']['type']; ?>";
             const message = "<?php echo $_SESSION['validation']['message']; ?>";
 
-            // Siguraduhin na nasa user_list.js ang showToast function
+
             if (typeof showToast === "function") {
-                // Mas matagal ang duration (10s) kapag error para mabasa ni user ang "Policy/Format Error"
+
                 const duration = type === "error" ? 10000 : 7000;
                 showToast(message, type, duration);
             }
 
-            <?php unset($_SESSION['validation']); // Importante: Burahin ang session para hindi lumabas ulit sa refresh ?>
+            <?php unset($_SESSION['validation']); ?>
         <?php endif; ?>
     });
 </script>

@@ -1,5 +1,5 @@
 <?php
-// functions/data-api.php
+
 require_once __DIR__ . "/../init.php";
 
 // 1. Clear any previous accidental output and set header
@@ -113,13 +113,13 @@ GROUP BY s.status_id, s.status_desc";
                       ORDER BY created_at DESC 
                       LIMIT 5;";
     $response['data']['critical_reports'] = $conn->query($criticalListQuery)->fetch_all(MYSQLI_ASSOC);
-    // 4. Success!
+    // 8. Success!
     $response['status'] = 'success';
 
 } catch (Exception $e) {
     $response['message'] = $e->getMessage();
 }
 
-// 5. Output exactly one JSON string
+// 9. Output exactly one JSON string
 echo json_encode($response);
 exit;

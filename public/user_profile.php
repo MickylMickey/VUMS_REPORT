@@ -261,7 +261,7 @@ $paginationBase = $baseUrl . ($baseQuery ? '?' . $baseQuery : '') . $separator;
                                 </div>
                             </div>
 
-                            
+
                             <div
                                 class="flex items-center gap-3 p-4 rounded-xl bg-white/60 border border-slate-200 shadow-sm">
                                 <div

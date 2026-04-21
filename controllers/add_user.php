@@ -1,32 +1,31 @@
 <?php
 require_once __DIR__ . "/../init.php";
 
-// Mysql configuraiton hehe
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 ob_start();
 
 use Ramsey\Uuid\Uuid;
-    // for modal creation of user
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        
+
         $userId = Uuid::uuid4()->toString();
 
         $username = isset($_POST['username']) ? trim(filter_var($_POST['username'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;
         $password = !empty($_POST['password']) ? password_hash(trim($_POST["password"]), PASSWORD_BCRYPT) : null;
 
-        // email validation method here :3 UwU T_T 
+        // email validation method 
         $rawEmail = isset($_POST['email']) ? strtolower(trim($_POST['email'])) : '';
 
-        
+
         if (!filter_var($rawEmail, FILTER_VALIDATE_EMAIL)) {
             throw new Exception("Format error: Mangyaring gumamit ng valid na email format.");
         }
 
-       
+
         $email = $rawEmail;
-       
+
 
         $firstName = isset($_POST['fname']) ? trim(filter_var($_POST['fname'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;
         $middleName = isset($_POST['mname']) ? trim(filter_var($_POST['mname'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH)) : null;

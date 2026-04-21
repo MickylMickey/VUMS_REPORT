@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // 3. Handle Image Upload
-    // 3. Handle Media Upload (Image & Video)
+
     $image_path = null;
     if (isset($_FILES['suggestion_img']) && $_FILES['suggestion_img']['error'] === UPLOAD_ERR_OK) {
         $upload_dir = __DIR__ . "/../public/uploads/suggestions/";
@@ -30,15 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_name = $_FILES['suggestion_img']['name'];
         $file_tmp = $_FILES['suggestion_img']['tmp_name'];
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        
-        // Listahan ng mga tinatanggap na format
+
+        //  formats
         $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
 
         if (in_array($file_extension, $allowed_extensions)) {
             $new_filename = "sug_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $file_extension;
             $target_file = $upload_dir . $new_filename;
 
-            // Inalis natin ang getimagesize() para payagan ang video
+
             if (move_uploaded_file($file_tmp, $target_file)) {
                 $image_path = $new_filename;
             }
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt) {
         $stmt->bind_param("sss", $user_id, $suggestion_desc, $image_path);
 
-        // Debug Check: Ensure user exists (Table name changed to 'user' to match your schema)
+        // Debug Check: Ensure user exists
         $checkQuery = $conn->prepare("SELECT user_id FROM users WHERE user_id = ?");
         $checkQuery->bind_param("s", $user_id);
         $checkQuery->execute();
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("ERROR: UUID ($user_id) not found in 'users' table. Try logging out and back in.");
         }
 
-        // --- CRITICAL: You must call execute() to actually save to DB ---
+
         if ($stmt->execute()) {
             setValidation('success', "Suggestion submitted successfully!");
         } else {

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../init.php";
-header('Content-Type: application/json'); // Ensure the browser knows this is JSON
+header('Content-Type: application/json');
 $userData = checkAuth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'])) {
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'])) {
     $message = "Reminded: $sender_name is requesting an update on Report: $displayRef.";
 
     // Logic: We set receiver_id to NULL. 
-    // Our fetch function will treat NULL as "Visible to all Admins/HR".
+    // fetch function will treat NULL as "Visible to all Admins/HR".
     $sql = "INSERT INTO notifications (sender_id, receiver_id, report_id, report_ref_snapshot, is_read) 
             VALUES (?, NULL, ?, ?, 0)";
 
