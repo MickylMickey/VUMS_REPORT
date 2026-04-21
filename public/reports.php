@@ -271,46 +271,49 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <?php if ($isAdmin): ?>
-                                        <div style="display: flex; align-items: center; gap: 8px;">
-                                     <button
-                                      type="button"
-                                      class="view-report-btn"
-    onclick="openViewModal({
-        category: '<?= htmlspecialchars($report['cat_desc'] ?? 'Other') ?>',
-        module: '<?= htmlspecialchars($report['mod_desc'] ?? 'Other') ?>',
-        severity: '<?= htmlspecialchars($report['severity']) ?>',
-        description: `<?= addslashes($report['report_desc']) ?>`,
-        image: '<?= $report['report_img'] ?? '' ?>' 
-    })"
-    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-    data-tooltip="View Report Details">
-    <i class="fa-solid fa-file-lines"></i>
-</button>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+        
+        <button
+            type="button"
+            class="view-report-btn"
+            onclick="openViewModal({
+                category: '<?= htmlspecialchars($report['cat_desc'] ?? 'Other') ?>',
+                module: '<?= htmlspecialchars($report['mod_desc'] ?? 'Other') ?>',
+                severity: '<?= htmlspecialchars($report['severity']) ?>',
+                description: `<?= addslashes($report['report_desc']) ?>`,
+                image: '<?= $report['report_img'] ?? '' ?>' 
+            })"
+            style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+            data-tooltip="View Report Details">
+            <i class="fa-solid fa-file-lines"></i>
+        </button>
 
-                                        <?php if ($isAdmin): ?>
-                                        <button
-                                         class="edit-report-btn"
-                                         style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; padding: 0 20px; border-radius: 12px; height: 40px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s;"
-                                         data-tooltip="Edit Report Details" 
-                                         data-id="<?= $report['report_id'] ?>"
-                                         data-cat="<?= $report['cat_id'] ?? 'other' ?>"
-                                         data-mod="<?= $report['mod_id'] ?? 'other' ?>" 
-                                         data-sev="<?= $report['sev_id'] ?>"
-                                         data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
-                                         <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <?php endif; ?>
-                                    </div>
-                                    <?php endif; ?>
-                                    <?php if ($isUser || $isHr): ?>
-                                        <button
-                                            class="remind-btn hidden md:flex bg-green-600 text-white px-5 py-1.5 rounded-xl h-10 font-semibold text-sm hover:bg-green-700 transition-all items-center shadow-lg shadow-green-200"
-                                            data-tooltip="Remind Admin" data-id="<?= $report['report_id'] ?>">
-                                            <i class="fa-solid fa-bell"></i>
-                                        </button>
-                                    <?php endif; ?>
-                                </td>
+        <?php if ($isAdmin): ?>
+            <button
+                class="edit-report-btn"
+                style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s;"
+                data-tooltip="Edit Report Details" 
+                data-id="<?= $report['report_id'] ?>"
+                data-cat="<?= $report['cat_id'] ?? 'other' ?>"
+                data-mod="<?= $report['mod_id'] ?? 'other' ?>" 
+                data-sev="<?= $report['sev_id'] ?>"
+                data-desc="<?= htmlspecialchars($report['report_desc'], ENT_QUOTES) ?>">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+        <?php endif; ?>
+
+        <?php if ($isUser || $isHr): ?>
+            <button
+                type="button"
+                class="remind-btn"
+                style="display: inline-flex; align-items: center; justify-content: center; background-color: #16a34a; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.2); transition: all 0.2s; flex-shrink: 0;"
+                data-tooltip="Remind Admin" 
+                data-id="<?= $report['report_id'] ?>">
+                <i class="fa-solid fa-bell"></i>
+            </button>
+        <?php endif; ?>
+
+    </div> </td>
                             </tr>
                         <?php endforeach; ?>
                 </table>
