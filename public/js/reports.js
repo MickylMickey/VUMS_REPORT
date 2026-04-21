@@ -372,3 +372,83 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
       });
   });
 });
+
+//AI integration for suggestions
+
+let aiTimeout;
+
+async function fetchSuggestions(text) {
+  const badge = document.getElementById("ai-status-badge");
+  const dot = document.getElementById("ai-dot");
+  const statusText = document.getElementById("ai-status-text");
+
+  // Don't do anything for very short text
+  if (text.length < 5) {
+    badge.className =
+      "flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-400 transition-all duration-300 border border-transparent";
+    statusText.innerText = "AI Ready";
+    return;
+  }
+
+  // 1. Enter "Thinking" State immediately
+  badge.classList.add("ai-active");
+  badge.classList.remove("ai-success");
+  statusText.innerText = "AI is thinking...";
+
+  // 2. Debounce the API call (Wait for user to stop typing for 800ms)
+  clearTimeout(aiTimeout);
+  aiTimeout = setTimeout(async () => {
+    try {
+      // Replace with your actual helper path
+      const response = await fetch(`../functions/get_suggestions.php?text=${encodeURIComponent(text)}`);
+      const data = await response.json();
+
+      if (data && !data.error) {
+        // 3. Success State
+        badge.classList.remove("ai-active");
+        badge.classList.add("ai-success");
+        statusText.innerText = "Suggestions applied!";
+
+        // Call your function to fill the category/severity/module
+        applyAiSuggestions(data);
+
+        // 4. Return to idle after 3 seconds
+        setTimeout(() => {
+          badge.classList.remove("ai-success");
+          statusText.innerText = "AI Ready";
+        }, 3000);
+      }
+    } catch (err) {
+      statusText.innerText = "AI Offline";
+      badge.classList.remove("ai-active");
+    }
+  }, 800);
+}
+function applyAiSuggestions(data) {
+  // 1. Update Category Dropdown
+  const catSelect = document.getElementById("cat_id");
+  if (data.category) {
+    catSelect.value = data.category;
+    // Trigger change event to update your existing "Definition" panel UI
+    catSelect.dispatchEvent(new Event("change"));
+  }
+
+  // 2. Update Module Dropdown
+  const modSelect = document.getElementById("mod_id");
+  if (data.module) {
+    modSelect.value = data.module;
+    modSelect.dispatchEvent(new Event("change"));
+  }
+
+  // 3. Update Severity Radio Buttons
+  if (data.severity) {
+    const severityRadio = document.querySelector(`input[name="sev_id"][value="${data.severity}"]`);
+    if (severityRadio) {
+      severityRadio.checked = true;
+      // Trigger change if you have listeners on these radios
+      severityRadio.dispatchEvent(new Event("change"));
+    }
+  }
+
+  console.log("AI Suggestions Applied:", data);
+}

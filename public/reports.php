@@ -446,14 +446,24 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="rep_desc" class="text-[15px] font-semibold text-slate-600 ml-1">What
-                            happened?</label>
-                        <textarea name="rep_desc" id="rep_desc" rows="3" placeholder="Briefly describe the issue... "
+                        <div class="flex justify-between items-end mb-1">
+                            <label for="rep_desc" class="text-[15px] font-semibold text-slate-600 ml-1">What
+                                happened?</label>
+
+                            <div id="ai-status-badge"
+                                class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-400 transition-all duration-300 border border-transparent">
+                                <div id="ai-dot" class="w-2 h-2 rounded-full bg-slate-300"></div>
+                                <span id="ai-status-text">AI Ready</span>
+                            </div>
+                        </div>
+
+                        <textarea name="rep_desc" id="rep_desc" rows="3" oninput="fetchSuggestions(this.value)"
+                            placeholder="Briefly describe the issue... "
                             class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none"
                             data-required="true" data-error="Description is required."></textarea>
-                        <div>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                        </div>
+                    </div>
+                    <div>
+                        <p class="error-message hidden text-red-600 text-sm mt-1"></p>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[20px] font-semibold text-slate-600 ml-1">Attach Image (Optional)</label>
@@ -684,6 +694,49 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             initFormValidation("editForm");
     });
 </script>
+<style>
+    /* AI is Thinking - Pulsing Animation */
+    @keyframes ai-pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
 
+        50% {
+            transform: scale(1.4);
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .ai-active #ai-dot {
+        background-color: #3b82f6;
+        /* Blue */
+        animation: ai-pulse 1.5s infinite ease-in-out;
+    }
+
+    .ai-active {
+        background-color: #eff6ff !important;
+        /* Light blue bg */
+        color: #3b82f6 !important;
+        border-color: #dbeafe !important;
+    }
+
+    /* AI Success State */
+    .ai-success #ai-dot {
+        background-color: #10b981;
+        /* Emerald */
+    }
+
+    .ai-success {
+        background-color: #ecfdf5 !important;
+        color: #059669 !important;
+        border-color: #d1fae5 !important;
+    }
+</style>
 
 </html>
