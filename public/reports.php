@@ -274,19 +274,19 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
         
         <button
-    type="button"
-    class="view-report-btn"
-    onclick="openViewModal({
-        category: '<?= htmlspecialchars($report['cat_desc'] ?? 'Other') ?>',
-        module: '<?= htmlspecialchars($report['mod_desc'] ?? 'Other') ?>',
-        severity: '<?= htmlspecialchars($report['severity']) ?>',
-        description: `<?= addslashes($report['report_desc']) ?>`,
-        media: '<?= $report['report_img'] ?? '' ?>' 
-    })"
-            style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-            data-tooltip="View Report Details">
-            <i class="fa-solid fa-file-lines"></i>
-        </button>
+        type="button"
+        class="view-report-btn"
+        onclick='openViewModal(<?= htmlspecialchars(json_encode([
+        "category"    => $report["cat_desc"] ?? "Other",
+        "module"      => $report["mod_desc"] ?? "Other",
+        "severity"    => $report["severity"],
+        "description" => $report["report_desc"],
+        "media"       => $report["report_img"] ?? ""
+    ]), ENT_QUOTES, "UTF-8") ?>)'
+    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+    data-tooltip="View Report Details">
+    <i class="fa-solid fa-file-lines"></i>
+</button>
 
         <?php if ($isAdmin): ?>
             <button
