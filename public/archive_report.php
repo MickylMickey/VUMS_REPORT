@@ -211,19 +211,19 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <td class="px-6 py-4 text-center">
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <button 
-                        type="button" 
-                        class="view-archive-btn"
-                        onclick="openViewModal({
-                            category: '<?= htmlspecialchars($archive['cat_desc'] ?? 'Other') ?>',
-                            module: '<?= htmlspecialchars($archive['mod_desc'] ?? 'Other') ?>',
-                            severity: '<?= htmlspecialchars($archive['severity']) ?>',
-                            description: `<?= addslashes($archive['report_desc']) ?>`,
-                            image: '<?= $archive['report_img'] ?? '' ?>'
-                        })"
-                                    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-                        data-tooltip="View Full Report">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </button>
+    type="button" 
+    class="view-archive-btn"
+    onclick='openViewModal(<?= htmlspecialchars(json_encode([
+        "category"    => $archive["cat_desc"] ?? "Other",
+        "module"      => $archive["mod_desc"] ?? "Other",
+        "severity"    => $archive["severity"],
+        "description" => $archive["report_desc"],
+        "image"       => $archive["report_img"] ?? ""
+    ]), ENT_QUOTES, "UTF-8") ?>)'
+    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+    data-tooltip="View Full Report">
+    <i class="fa-solid fa-file-lines"></i>
+</button>
                 </div>
             </td>
         </tr>

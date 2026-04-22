@@ -438,6 +438,7 @@ function applyAiSuggestions(data) {
   }
   console.log("AI Suggestions Applied:", data);
 }
+
 function openViewModal(data) {
   const modal = document.getElementById("viewModal");
   const backdrop = document.getElementById("viewModalBackdrop");
@@ -447,13 +448,34 @@ function openViewModal(data) {
   const videoElement = document.getElementById("view_video_attachment");
   const placeholder = document.getElementById("no_media_placeholder");
 
-  
   document.getElementById("view_category").innerText = data.category;
   document.getElementById("view_module").innerText = data.module;
   document.getElementById("view_desc").innerText = data.description;
 
+  // --- SEVERITY COLOR LOGIC START ---
   const sevBadge = document.getElementById("view_severity");
   sevBadge.innerText = data.severity;
+  
+  // Linisin ang mga dating styles at i-apply ang base style
+  sevBadge.style.padding = "4px 12px";
+  sevBadge.style.borderRadius = "8px";
+  sevBadge.style.color = "#ffffff"; // Puti ang text
+  sevBadge.style.fontWeight = "bold";
+  sevBadge.style.fontSize = "12px";
+  sevBadge.style.display = "inline-block";
+
+  const severity = data.severity.toLowerCase();
+
+  if (severity === 'critical' || severity === 'high') {
+    sevBadge.style.backgroundColor = "#ef4444"; // Red
+  } else if (severity === 'medium' || severity === 'moderate') {
+    sevBadge.style.backgroundColor = "#eec071"; // Orange/Amber
+  } else if (severity === 'low') {
+    sevBadge.style.backgroundColor = "#10b981"; // Green
+  } else {
+    sevBadge.style.backgroundColor = "#64748b"; // Slate/Gray (default)
+  }
+  // --- SEVERITY COLOR LOGIC END ---
   
   const filename = data.media ? data.media.toString().trim() : "";
   
@@ -487,17 +509,35 @@ function openViewModal(data) {
 }
 
 function closeViewModal() {
-  const modal = document.getElementById("viewModal");
-  const backdrop = document.getElementById("viewModalBackdrop");
-  const container = document.getElementById("viewModalContainer");
+  try {
+    const modal = document.getElementById("viewModal");
+    const backdrop = document.getElementById("viewModalBackdrop");
+    const container = document.getElementById("viewModalContainer");
+    const videoElement = document.getElementById("view_video_attachment");
 
-  backdrop.style.opacity = "0";
-  container.style.opacity = "0";
-  container.style.transform = "scale(0.95)";
+    // 1. Simulan ang fade-out animation
+    if (backdrop) backdrop.style.opacity = "0";
+    if (container) {
+      container.style.opacity = "0";
+      container.style.transform = "scale(0.95)";
+    }
 
-  setTimeout(() => {
-    modal.style.display = "none";
-  }, 300);
+    // 2. I-stop ang video para hindi tumutunog kahit sarado na ang modal
+    if (videoElement) {
+      videoElement.pause();
+      videoElement.src = "";
+    }
+
+    // 3. Hintayin matapos ang animation (300ms) bago itago ang buong modal
+    setTimeout(() => {
+      if (modal) modal.style.display = "none";
+    }, 300);
+    
+  } catch (error) {
+    console.error("Error closing modal:", error);
+    // Fallback: itago agad ang modal kung mag-error ang animation
+    document.getElementById("viewModal").style.display = "none";
+  }
 }
 
 function updateEditFileLabel(input) {
