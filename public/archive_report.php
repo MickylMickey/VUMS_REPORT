@@ -438,14 +438,17 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Evidence Attachment</label>
+                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report Attachment</label>
                 <div id="view_img_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
-                    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
-                    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
-                        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-                        <span style="font-size: 12px;">No image uploaded</span>
-                    </div>
-                </div>
+    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
+    
+    <video id="view_attachment_video" controls style="max-width: 100%; border-radius: 10px; display: none;"></video>
+    
+    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
+        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
+        <span style="font-size: 12px;">No evidence uploaded</span>
+    </div>
+</div>
             </div>
         </div>
 

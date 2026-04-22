@@ -684,7 +684,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Evidence Attachment</label>
+            <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report Attachment</label>
     
             <div id="view_media_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; min-height: 200px;">
         
