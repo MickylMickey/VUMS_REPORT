@@ -274,15 +274,15 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
         
         <button
-            type="button"
-            class="view-report-btn"
-            onclick="openViewModal({
-                category: '<?= htmlspecialchars($report['cat_desc'] ?? 'Other') ?>',
-                module: '<?= htmlspecialchars($report['mod_desc'] ?? 'Other') ?>',
-                severity: '<?= htmlspecialchars($report['severity']) ?>',
-                description: `<?= addslashes($report['report_desc']) ?>`,
-                image: '<?= $report['report_img'] ?? '' ?>' 
-            })"
+    type="button"
+    class="view-report-btn"
+    onclick="openViewModal({
+        category: '<?= htmlspecialchars($report['cat_desc'] ?? 'Other') ?>',
+        module: '<?= htmlspecialchars($report['mod_desc'] ?? 'Other') ?>',
+        severity: '<?= htmlspecialchars($report['severity']) ?>',
+        description: `<?= addslashes($report['report_desc']) ?>`,
+        media: '<?= $report['report_img'] ?? '' ?>' 
+    })"
             style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
             data-tooltip="View Report Details">
             <i class="fa-solid fa-file-lines"></i>
@@ -531,135 +531,120 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
         </div>
 
         <div id="editModal"
-            class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
+    class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
 
-            <div id="editModalBackdrop"
-                class="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity duration-300"
-                onclick="closeEditModal()"></div>
+    <div id="editModalBackdrop"
+        class="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity duration-300"
+        onclick="closeEditModal()"></div>
 
-            <div id="editModalContainer"
-                class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
+    <div id="editModalContainer"
+        class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col transform scale-95 opacity-0 transition-all duration-300 ease-out">
 
-                <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
-                    <div>
-                        <h2 class="text-xl font-bold tracking-tight">Edit Report Details</h2>
-                        <p class="text-blue-100 text-xs mt-0.5">Update the classification or description.</p>
-                    </div>
-                    <button onclick="closeEditModal()"
-                        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-
-                <form id="editForm" action="../controllers/edit_reports.php" method="POST" class="p-6 space-y-5">
-                    <input type="hidden" name="report_id" id="edit_report_id">
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1.5">
-                            <label class="text-[15px] font-semibold text-slate-600 ml-1">Category</label>
-                            <div class="relative">
-                                <select name="cat_id" id="edit_cat_id"
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer"
-                                    data-required="true" data-error="Category is required.">
-                                    <option value="other" data-desc="Select this if the category is not listed.">Other
-                                    </option>
-                                    <?php foreach ($categoryOptions as $c): ?>
-                                        <option value="<?= $c['cat_id'] ?>"
-                                            data-desc="<?= htmlspecialchars($c['category_long_desc'] ?? $c['category']) ?>">
-                                            <?= htmlspecialchars($c['category']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <i
-                                    class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
-                            </div>
-                            <div id="edit_cat_desc_panel"
-                                class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Definition</p>
-                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label class="text-[15px] font-semibold text-slate-600 ml-1">Module</label>
-                            <div class="relative">
-                                <select name="mod_id" id="edit_mod_id"
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
-                                    <option value="other" data-desc="Select this if the module is not listed.">Other
-                                    </option>
-                                    <?php foreach ($moduleOptions as $m): ?>
-                                        <option value="<?= $m['mod_id'] ?>"
-                                            data-desc="<?= htmlspecialchars($m['module_long_desc'] ?? $m['module']) ?>">
-                                            <?= htmlspecialchars($m['module']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <i
-                                    class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
-                            </div>
-                            <div id="edit_mod_desc_panel"
-                                class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p>
-                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="text-[15px] font-semibold text-slate-600 ml-1">Severity Level</label>
-
-                        <div class="flex gap-2">
-                            <?php foreach ($severityOptions as $s): ?>
-                                <label class="flex-1 cursor-pointer relative group">
-                                    <input type="radio" name="sev_id" value="<?= $s['sev_id'] ?>"
-                                        class="absolute opacity-0 w-0 h-0 peer" required>
-
-                                    <div class="py-2 text-center text-[12px] font-semibold rounded-xl border
-                                border-slate-200 bg-white text-slate-500
-                                transition-all duration-200
-                                hover:border-blue-300 hover:text-blue-600
-                                peer-checked:border-blue-50 peer-checked:text-blue-600 peer-checked:bg-blue-50 
-                                peer-focus:ring-2 peer-focus:ring-blue-500/20">
-                                        <?= htmlspecialchars($s['sev_desc']) ?>
-                                    </div>
-
-                                    <div class="absolute -top-1 -right-1 opacity-0 scale-50 
-                                        peer-checked:opacity-100 peer-checked:scale-100 
-                                        transition-all duration-300 pointer-events-none">
-                                        <div
-                                            class="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-white shadow-sm">
-                                            <i class="fa-solid fa-check text-[10px]"></i>
-                                        </div>
-                                    </div>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                        <textarea name="report_desc" id="edit_desc" rows="4"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
-                            data-required="true" data-error="Description is required."></textarea>
-                        <div>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-3 pt-2">
-                        <button type="button" onclick="closeEditModal()"
-                            class="flex-1 px-4 py-3 text-sm font-bold text-white rounded-2xl bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">
-                            Cancel
-                        </button>
-                        <button type="submit"
-                            class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
-                            Save Changes
-                        </button>
-                    </div>
-                </form>
+        <div class="bg-blue-600 px-6 py-5 flex justify-between items-center text-white">
+            <div>
+                <h2 class="text-xl font-bold tracking-tight">Edit Report Details</h2>
+                <p class="text-blue-100 text-xs mt-0.5">Update the classification or description.</p>
             </div>
+            <button onclick="closeEditModal()"
+                class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
 
+        <form id="editForm" action="../controllers/edit_reports.php" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+            <input type="hidden" name="report_id" id="edit_report_id">
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[15px] font-semibold text-slate-600 ml-1">Category</label>
+                    <div class="relative">
+                        <select name="cat_id" id="edit_cat_id"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer"
+                            data-required="true" data-error="Category is required.">
+                            <option value="other" data-desc="Select this if the category is not listed.">Other</option>
+                            <?php foreach ($categoryOptions as $c): ?>
+                                <option value="<?= $c['cat_id'] ?>"
+                                    data-desc="<?= htmlspecialchars($c['category_long_desc'] ?? $c['category']) ?>">
+                                    <?= htmlspecialchars($c['category']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-[15px] font-semibold text-slate-600 ml-1">Module</label>
+                    <div class="relative">
+                        <select name="mod_id" id="edit_mod_id"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none cursor-pointer">
+                            <option value="other" data-desc="Select this if the module is not listed.">Other</option>
+                            <?php foreach ($moduleOptions as $m): ?>
+                                <option value="<?= $m['mod_id'] ?>"
+                                    data-desc="<?= htmlspecialchars($m['module_long_desc'] ?? $m['module']) ?>">
+                                    <?= htmlspecialchars($m['module']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="text-[15px] font-semibold text-slate-600 ml-1">Severity Level</label>
+                <div class="flex gap-2">
+                    <?php foreach ($severityOptions as $s): ?>
+                        <label class="flex-1 cursor-pointer relative group">
+                            <input type="radio" name="sev_id" value="<?= $s['sev_id'] ?>"
+                                class="absolute opacity-0 w-0 h-0 peer" required>
+                            <div class="py-2 text-center text-[12px] font-semibold rounded-xl border border-slate-200 bg-white text-slate-500 transition-all duration-200 hover:border-blue-300 hover:text-blue-600 peer-checked:border-blue-50 peer-checked:text-blue-600 peer-checked:bg-blue-50">
+                                <?= htmlspecialchars($s['sev_desc']) ?>
+                            </div>
+                            <div class="absolute -top-1 -right-1 opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-300 pointer-events-none">
+                                <div class="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-white shadow-sm">
+                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                </div>
+                            </div>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
+                <textarea name="report_desc" id="edit_desc" rows="3"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
+                    data-required="true" data-error="Description is required."></textarea>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[13px] font-semibold text-slate-600 ml-1">Attachment (Image/Video)</label>
+                <div class="relative">
+                    <input type="file" name="report_file" id="edit_report_file" accept="image/*,video/*" class="hidden" onchange="updateEditFileLabel(this)">
+                    <label for="edit_report_file" class="flex items-center gap-3 w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm cursor-pointer hover:bg-slate-100 transition-all border-dashed border-2">
+                        <div class="min-w-[32px] h-8 flex items-center justify-center rounded-xl border border-slate-200">
+    <i class="fa-solid fa-cloud-arrow-up text-xs text-black"></i>
+</div>
+                        <span id="edit_file_name_label" class="text-slate-400 text-xs truncate">Click to upload new media...</span>
+                    </label>
+                </div>
+                <p class="text-[15px] text-black-400 italic ml-1">Leave blank if you don't want to upload the file.</p>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+                <button type="button" onclick="closeEditModal()"
+                    class="flex-1 px-4 py-3 text-sm font-bold text-white rounded-2xl bg-[#fb2424] hover:bg-[#c01c1c] transition-all duration-200">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="flex-[2] px-4 py-3 text-sm bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
      <div id="viewModal" 
      style="position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.3s;">
@@ -699,15 +684,22 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Evidence Attachment</label>
-                <div id="view_img_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
-                    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
-                    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
-                        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-                        <span style="font-size: 12px;">No image uploaded</span>
-                    </div>
-                </div>
-            </div>
+            <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Evidence Attachment</label>
+    
+            <div id="view_media_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; min-height: 200px;">
+        
+            <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" onclick="window.open(this.src, '_blank')">
+
+        <video id="view_video_attachment" controls style="max-width: 100%; border-radius: 10px; display: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            Your browser does not support the video tag.
+        </video>
+
+        <div id="no_media_placeholder" style="text-align: center; color: #94a3b8;">
+            <i class="fa-regular fa-file-video" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
+            <span style="font-size: 12px;">No media uploaded</span>
+        </div>
+    </div>
+</div>
         </div>
 
         <div style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center;">

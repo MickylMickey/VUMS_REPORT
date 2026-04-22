@@ -279,11 +279,31 @@ function openEditModal() {
 }
 
 function closeEditModal() {
+  // 1. Animations (Existing logic mo)
   editContainer.classList.remove("scale-100", "opacity-100");
   editContainer.classList.add("scale-95", "opacity-0");
   editBackdrop.classList.remove("opacity-100");
   editBackdrop.classList.add("opacity-0");
-  setTimeout(() => editModal.classList.add("hidden"), 300);
+
+  // 2. Reset Logic (Dapat gawin bago o habang nagha-hide)
+  const editForm = document.getElementById("editForm");
+  const fileLabel = document.getElementById("edit_file_name_label");
+
+  if (editForm) {
+    editForm.reset(); // Binubura ang lahat ng input sa loob ng form
+  }
+
+  if (fileLabel) {
+    // I-reset ang itsura ng file upload button
+    fileLabel.innerText = "Click to upload new media...";
+    fileLabel.classList.add('text-slate-400');
+    fileLabel.classList.remove('text-blue-600', 'font-bold');
+  }
+
+  // 3. Hide Modal after animation
+  setTimeout(() => {
+    editModal.classList.add("hidden");
+  }, 300);
 }
 
 // Edit Button Populating Logic
@@ -448,51 +468,49 @@ function openViewModal(data) {
   const modal = document.getElementById("viewModal");
   const backdrop = document.getElementById("viewModalBackdrop");
   const container = document.getElementById("viewModalContainer");
+  
   const imgElement = document.getElementById("view_attachment");
-  const placeholder = document.getElementById("no_img_placeholder");
+  const videoElement = document.getElementById("view_video_attachment");
+  const placeholder = document.getElementById("no_media_placeholder");
 
+  // Basic Details
   document.getElementById("view_category").innerText = data.category;
   document.getElementById("view_module").innerText = data.module;
   document.getElementById("view_desc").innerText = data.description;
 
+  // Severity Badge Logic
   const sevBadge = document.getElementById("view_severity");
   sevBadge.innerText = data.severity;
+  // ... (panatilihin ang iyong existing color logic dito) ...
 
-  let bgColor, textColor, borderColor;
-  const sev = data.severity.toLowerCase();
+  // --- FIXED MEDIA LOGIC ---
+  const filename = data.media ? data.media.toString().trim() : "";
+  
+  // I-reset ang display
+  imgElement.style.display = "none";
+  videoElement.style.display = "none";
+  placeholder.style.display = "block";
 
-  if (sev === "critical") {
-    bgColor = "#fef2f2";
-    textColor = "#dc2626";
-    borderColor = "#fee2e2";
-  } else if (sev === "high") {
-    bgColor = "#fff7ed";
-    textColor = "#ea580c";
-    borderColor = "#ffedd5";
-  } else if (sev === "medium") {
-    bgColor = "#fffbeb";
-    textColor = "#d97706";
-    borderColor = "#fef3c7";
-  } else {
-    bgColor = "#ecfdf5";
-    textColor = "#059669";
-    borderColor = "#d1fae5";
+  if (filename !== "") {
+    const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+    const fileExt = filename.split('.').pop().toLowerCase();
+    const isVideo = videoExtensions.includes(fileExt);
+
+    if (isVideo) {
+      // Kung video, kukunin sa Videos/ folder (tulad ng logic mo sa PHP)
+      videoElement.src = "Videos/" + filename; 
+      videoElement.style.display = "block";
+      videoElement.load();
+      placeholder.style.display = "none";
+    } else {
+      // Kung image, kukunin sa uploads/ folder
+      imgElement.src = "uploads/" + filename;
+      imgElement.style.display = "block";
+      placeholder.style.display = "none";
+    }
   }
 
-  sevBadge.style.backgroundColor = bgColor;
-  sevBadge.style.color = textColor;
-  sevBadge.style.borderColor = borderColor;
-
-  if (data.image && data.image.toString().trim() !== "") {
-    imgElement.src = "uploads/" + data.image;
-    imgElement.style.display = "block";
-    placeholder.style.display = "none";
-  } else {
-    imgElement.src = "";
-    imgElement.style.display = "none";
-    placeholder.style.display = "block";
-  }
-
+  // Modal Animation
   modal.style.display = "flex";
   setTimeout(() => {
     backdrop.style.opacity = "1";
@@ -514,4 +532,17 @@ function closeViewModal() {
   setTimeout(() => {
     modal.style.display = "none";
   }, 300);
+}
+
+function updateEditFileLabel(input) {
+    const label = document.getElementById('edit_file_name_label');
+    if (input.files && input.files[0]) {
+        label.innerText = input.files[0].name;
+        label.classList.remove('text-slate-400');
+        label.classList.add('text-blue-600', 'font-bold');
+    } else {
+        label.innerText = "Click to upload new media...";
+        label.classList.add('text-slate-400');
+        label.classList.remove('text-blue-600', 'font-bold');
+    }
 }
