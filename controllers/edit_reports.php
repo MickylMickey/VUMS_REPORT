@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../init.php";
 $userData = checkAuth('Admin');
 
-// 1. HARD SECURITY CHECK
+
 if ($userData->role !== 'Admin') {
     die("Unauthorized access.");
 }
@@ -19,33 +19,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db_mod_id = ($mod_id === "other") ? null : (int) $mod_id;
     $db_sev_id = (int) $sev_id;
 
-    // --- FILE UPLOAD LOGIC START ---
     
-    // Kuhanin ang kasalukuyang image/video filename para hindi mabura kung walang bagong upload
+    
+    
     $stmtOldFile = $conn->prepare("SELECT report_img FROM report WHERE report_id = ?");
     $stmtOldFile->bind_param("i", $report_id);
     $stmtOldFile->execute();
     $current_file = $stmtOldFile->get_result()->fetch_assoc()['report_img'];
     $new_filename = $current_file; 
 
-    // Check kung may in-upload na file sa 'report_file' input
+    
     if (isset($_FILES['report_file']) && $_FILES['report_file']['error'] === UPLOAD_ERR_OK) {
         $file_tmp = $_FILES['report_file']['tmp_name'];
         $file_original_name = $_FILES['report_file']['name'];
         $file_ext = strtolower(pathinfo($file_original_name, PATHINFO_EXTENSION));
         
-        // Unique name para walang kaparehas
+        
         $unique_name = time() . '_' . uniqid() . '.' . $file_ext;
 
-        // Tukuyin ang folder base sa file extension
+       
         $video_exts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
         $is_video = in_array($file_ext, $video_exts);
         
-        // Tandaan: Ang path ay relative sa kinalalagyan ng file na ito (controllers folder)
+        
         $target_dir = $is_video ? "../public/Videos/" : "../public/uploads/";
         
         if (move_uploaded_file($file_tmp, __DIR__ . "/" . $target_dir . $unique_name)) {
-            // Burahin ang lumang file sa server kung may bago nang pinalit
+           
             if (!empty($current_file)) {
                 $old_ext = strtolower(pathinfo($current_file, PATHINFO_EXTENSION));
                 $old_dir = in_array($old_ext, $video_exts) ? "../public/Videos/" : "../public/uploads/";
@@ -56,9 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $new_filename = $unique_name;
         }
     }
-    // --- FILE UPLOAD LOGIC END ---
-
-    // 2. Fetch Names for Ref Number
+    
     $catName = "xxx"; $modName = "xxx"; $sevChar = "x";
     $queryNames = "
         SELECT 
@@ -75,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($db_mod_id && !empty($resNames['mod_name'])) $modName = str_replace(' ', '-', strtolower($resNames['mod_name']));
     if (!empty($resNames['sev_char'])) $sevChar = strtolower($resNames['sev_char']);
 
-    // 3. Get Sequence
+
     $stmtOld = $conn->prepare("SELECT ref_num FROM report WHERE report_id = ?");
     $stmtOld->bind_param("i", $report_id);
     $stmtOld->execute();
@@ -85,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $new_ref_num = "{$catName}-{$modName}-{$sevChar}-{$sequence}";
 
-    // 4. Final Update (Isinama na ang report_img sa query)
+  
     $sql = "UPDATE report SET 
                 cat_id = ?, 
                 mod_id = ?, 

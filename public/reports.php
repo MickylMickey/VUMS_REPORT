@@ -73,7 +73,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <main class="flex-grow">
         <div class="container mx-auto p-6 max-w-7xl">
 
-            <!-- HEADER -->
+           
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">System Reports</h2>
@@ -774,7 +774,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     });
 </script>
 <style>
-    /* AI is Thinking - Pulsing Animation */
+   
     @keyframes ai-pulse {
         0% {
             transform: scale(1);
@@ -794,21 +794,21 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
     .ai-active #ai-dot {
         background-color: #3b82f6;
-        /* Blue */
+        
         animation: ai-pulse 1.5s infinite ease-in-out;
     }
 
     .ai-active {
         background-color: #eff6ff !important;
-        /* Light blue bg */
+        
         color: #3b82f6 !important;
         border-color: #dbeafe !important;
     }
 
-    /* AI Success State */
+
     .ai-success #ai-dot {
         background-color: #10b981;
-        /* Emerald */
+        
     }
 
     .ai-success {
