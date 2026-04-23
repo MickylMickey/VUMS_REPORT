@@ -452,14 +452,14 @@ function openViewModal(data) {
   document.getElementById("view_module").innerText = data.module;
   document.getElementById("view_desc").innerText = data.description;
 
-  // --- SEVERITY COLOR LOGIC START ---
+ 
   const sevBadge = document.getElementById("view_severity");
   sevBadge.innerText = data.severity;
   
-  // Linisin ang mga dating styles at i-apply ang base style
+ 
   sevBadge.style.padding = "4px 12px";
   sevBadge.style.borderRadius = "8px";
-  sevBadge.style.color = "#ffffff"; // Puti ang text
+  sevBadge.style.color = "#ffffff"; 
   sevBadge.style.fontWeight = "bold";
   sevBadge.style.fontSize = "12px";
   sevBadge.style.display = "inline-block";
@@ -467,15 +467,15 @@ function openViewModal(data) {
   const severity = data.severity.toLowerCase();
 
   if (severity === 'critical' || severity === 'high') {
-    sevBadge.style.backgroundColor = "#ef4444"; // Red
+    sevBadge.style.backgroundColor = "#ef4444"; 
   } else if (severity === 'medium' || severity === 'moderate') {
-    sevBadge.style.backgroundColor = "#eec071"; // Orange/Amber
+    sevBadge.style.backgroundColor = "#eec071"; 
   } else if (severity === 'low') {
-    sevBadge.style.backgroundColor = "#10b981"; // Green
+    sevBadge.style.backgroundColor = "#10b981"; 
   } else {
-    sevBadge.style.backgroundColor = "#64748b"; // Slate/Gray (default)
+    sevBadge.style.backgroundColor = "#64748b"; 
   }
-  // --- SEVERITY COLOR LOGIC END ---
+
   
   const filename = data.media ? data.media.toString().trim() : "";
   

@@ -1,7 +1,6 @@
-<?php
-require_once __DIR__ . "/../init.php";
-ob_start();
-$userData = checkAuth();
+<?php require_once __DIR__ . "/../init.php"; 
+ob_start(); $userData = checkAuth();
+
 
 $current_user_id = $userData->user_id;
 $user_role = $userData->role;
@@ -158,7 +157,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     Description
                                 </th>
                                 <th
-                                    class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest text-center">
+                                    class="px-6 py-4 text-[13px]font-bold text-white uppercase tracking-widest text-center">
                                     Severity
                                 </th>
                                 <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
@@ -285,7 +284,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <div class="flex items-center gap-3">
                     <div
                         class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                        <i class="fa-solid fa-lightbulb"></i>
+                     <i class="fa-solid fa-lightbulb"></i>
                     </div>
                     <h2 class="text-xl font-bold">Suggestions Archive</h2>
                 </div>
@@ -405,8 +404,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     
     <div id="viewModalBackdrop" onclick="closeViewModal()" 
          style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.6); opacity: 0; transition: opacity 0.3s;"></div>
-
-    <div id="viewModalContainer" 
+         <div id="viewModalContainer" 
          style="background-color: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 32rem; max-height: 90vh; overflow: hidden; z-index: 10; display: flex; flex-direction: column; transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
         
         <div style="background-color: #2563eb; padding: 1.25rem 1.5rem; color: #ffffff; flex-shrink: 0;">
