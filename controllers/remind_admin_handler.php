@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'])) {
     $checkSql = "SELECT created_at FROM notifications 
                  WHERE sender_id = ? AND report_id = ? 
                  AND report_ref_snapshot LIKE 'Reminded:%'
-                 AND created_at > NOW() - INTERVAL 1 DAY 
+                 AND created_at > NOW() - INTERVAL 12 HOUR 
                  LIMIT 1";
 
     $stmtCheck = $conn->prepare($checkSql);

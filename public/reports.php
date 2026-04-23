@@ -559,13 +559,18 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                     </option>
                                     <?php foreach ($categoryOptions as $c): ?>
                                         <option value="<?= $c['cat_id'] ?>"
-                                            data-desc="<?= htmlspecialchars($c['category_long_desc'] ?? $c['category']) ?>">
+                                            data-desc="<?= htmlspecialchars($c['cat_desc'] ?? $c['category']) ?>">
                                             <?= htmlspecialchars($c['category']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <i
                                     class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                            </div>
+                            <div id="edit_cat_desc_panel"
+                                class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Definition</p>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
                             </div>
                         </div>
 
@@ -578,13 +583,18 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                     </option>
                                     <?php foreach ($moduleOptions as $m): ?>
                                         <option value="<?= $m['mod_id'] ?>"
-                                            data-desc="<?= htmlspecialchars($m['module_long_desc'] ?? $m['module']) ?>">
+                                            data-desc="<?= htmlspecialchars($m['mod_desc'] ?? $m['module']) ?>">
                                             <?= htmlspecialchars($m['module']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <i
                                     class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                            </div>
+                            <div id="edit_mod_desc_panel"
+                                class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
                             </div>
                         </div>
                     </div>
@@ -793,7 +803,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 <script src="js/removeNotification.js" defer></script>
 <script src="js/reports.js"></script>
 <script src="js/tooltip.js"></script>
-<!--<script src="js/dropdown_helper.js"></script>-->
+<script src="js/dropdown_helper.js"></script>
 <script src="js/paste_image.js"></script>
 <script src="js/inputValidation.js" defer></script>
 <script>
