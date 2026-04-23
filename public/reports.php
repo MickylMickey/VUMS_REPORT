@@ -279,7 +279,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                             "severity" => $report["severity"],
                                             "description" => $report["report_desc"],
                                             "media" => $report["report_img"] ?? ""
-                                        ]), ENT_QUOTES, "UTF-8") ?>)' style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+                                        ]), ENT_QUOTES, "UTF-8") ?>)'
+                                            style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
                                             data-tooltip="View Report Details">
                                             <i class="fa-solid fa-file-lines"></i>
                                         </button>
@@ -792,7 +793,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 <script src="js/removeNotification.js" defer></script>
 <script src="js/reports.js"></script>
 <script src="js/tooltip.js"></script>
-<script src="js/dropdown_helper.js"></script>
+<!--<script src="js/dropdown_helper.js"></script>-->
 <script src="js/paste_image.js"></script>
 <script src="js/inputValidation.js" defer></script>
 <script>
