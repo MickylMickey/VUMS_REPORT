@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_tmp = $_FILES['rep_img']['tmp_name'];
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        $video_extensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+        $video_extensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv','m4v','wmv','mts', 'm2ts','flv','3gp'];
 
 
         if (in_array($file_extension, $video_extensions)) {

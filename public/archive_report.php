@@ -211,19 +211,19 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <td class="px-6 py-4 text-center">
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <button 
-                        type="button" 
-                        class="view-archive-btn"
-                        onclick="openViewModal({
-                            category: '<?= htmlspecialchars($archive['cat_desc'] ?? 'Other') ?>',
-                            module: '<?= htmlspecialchars($archive['mod_desc'] ?? 'Other') ?>',
-                            severity: '<?= htmlspecialchars($archive['severity']) ?>',
-                            description: `<?= addslashes($archive['report_desc']) ?>`,
-                            image: '<?= $archive['report_img'] ?? '' ?>'
-                        })"
-                                    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-                        data-tooltip="View Full Report">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </button>
+    type="button" 
+    class="view-archive-btn"
+    onclick='openViewModal(<?= htmlspecialchars(json_encode([
+        "category"    => $archive["cat_desc"] ?? "Other",
+        "module"      => $archive["mod_desc"] ?? "Other",
+        "severity"    => $archive["severity"],
+        "description" => $archive["report_desc"],
+        "image"       => $archive["report_img"] ?? ""
+    ]), ENT_QUOTES, "UTF-8") ?>)'
+    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+    data-tooltip="View Full Report">
+    <i class="fa-solid fa-file-lines"></i>
+</button>
                 </div>
             </td>
         </tr>
@@ -438,14 +438,17 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Evidence Attachment</label>
+                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report Attachment</label>
                 <div id="view_img_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
-                    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
-                    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
-                        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-                        <span style="font-size: 12px;">No image uploaded</span>
-                    </div>
-                </div>
+    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
+    
+    <video id="view_attachment_video" controls style="max-width: 100%; border-radius: 10px; display: none;"></video>
+    
+    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
+        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
+        <span style="font-size: 12px;">No evidence uploaded</span>
+    </div>
+</div>
             </div>
         </div>
 

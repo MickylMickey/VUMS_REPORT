@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // === 1. SYSTEM REPORTS FILTERING ===
   const searchInput = document.getElementById("searchInput");
   const severityFilter = document.getElementById("severityFilter");
   const resetBtn = document.getElementById("resetBtn");
@@ -12,19 +11,18 @@ document.addEventListener("DOMContentLoaded", function () {
     let visibleCount = 0;
 
     reportRows.forEach((row) => {
-      // 1. Get all data attributes (including the new data-desc)
+      
       const ref = row.getAttribute("data-ref").toLowerCase();
       const reporter = row.getAttribute("data-reporter").toLowerCase();
       const description = (row.getAttribute("data-desc") || "").toLowerCase(); // New
       const severityID = row.getAttribute("data-severity");
 
-      // 2. Search Logic (Ref OR Reporter OR Description)
       const matchesSearch = searchTerm === "" || ref.includes(searchTerm) || reporter.includes(searchTerm) || description.includes(searchTerm); // Included description in search
 
-      // 3. Filter Logic
+
       const matchesSeverity = severityVal === "" || severityID === severityVal;
 
-      // 4. Final Visibility Check
+    
       if (matchesSearch && matchesSeverity) {
         row.classList.remove("hidden");
         visibleCount++;
@@ -33,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // 5. Handle "No Results" display for the Table
+    
     if (noResultsRow) {
       if (visibleCount === 0) {
         noResultsRow.classList.remove("hidden");
@@ -43,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Report Listeners
+
   if (searchInput) searchInput.addEventListener("input", applyReportFilters);
   if (severityFilter) severityFilter.addEventListener("change", applyReportFilters);
   if (resetBtn) {
@@ -54,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // === 2. SUGGESTIONS FILTERING ===
+  
   const sugSearchInput = document.getElementById("sugSearchInput");
   const sugCards = document.querySelectorAll(".suggestion-card");
   const noSugResults = document.getElementById("noSugResults");
@@ -81,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Suggestion Listeners
+
   if (sugSearchInput) sugSearchInput.addEventListener("input", filterSuggestions);
   if (resetSugBtn) {
     resetSugBtn.addEventListener("click", () => {
@@ -97,21 +95,21 @@ function openViewModal(data) {
     const backdrop = document.getElementById('viewModalBackdrop');
     const container = document.getElementById('viewModalContainer');
     const imgElement = document.getElementById('view_attachment');
+    // Siguraduhin na may video element ka sa HTML na may ganitong ID
+    const videoElement = document.getElementById('view_attachment_video'); 
     const placeholder = document.getElementById('no_img_placeholder');
 
-  
+    // 1. Set Text Details
     document.getElementById('view_category').innerText = data.category;
     document.getElementById('view_module').innerText = data.module;
     document.getElementById('view_desc').innerText = data.description;
-    
 
+    // 2. Severity Badge Logic (Existing mo)
     const sevBadge = document.getElementById('view_severity');
     sevBadge.innerText = data.severity;
-    
     let bgColor, textColor, borderColor;
     const sev = data.severity.toLowerCase();
 
-   
     if (sev === 'critical') {
         bgColor = '#fef2f2'; textColor = '#dc2626'; borderColor = '#fee2e2';
     } else if (sev === 'high') {
@@ -121,22 +119,40 @@ function openViewModal(data) {
     } else {
         bgColor = '#ecfdf5'; textColor = '#059669'; borderColor = '#d1fae5';
     }
-
     sevBadge.style.backgroundColor = bgColor;
     sevBadge.style.color = textColor;
     sevBadge.style.borderColor = borderColor;
 
-     if (data.image && data.image.toString().trim() !== "") {
-        imgElement.src = "uploads/" + data.image; 
-        imgElement.style.display = "block";
-        placeholder.style.display = "none";
+    // 3. MEDIA LOGIC (Image vs Video)
+    let fileName = data.image ? data.image.toString().trim() : ""; // Sa database mo, 'image' column ang gamit
+    let fileExt = fileName.split('.').pop().toLowerCase();
+    const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+
+    // Reset displays
+    imgElement.style.display = "none";
+    if(videoElement) videoElement.style.display = "none";
+    placeholder.style.display = "none";
+
+    if (fileName !== "") {
+        if (videoExtensions.includes(fileExt)) {
+            // KUNG VIDEO
+            if (videoElement) {
+                // Tumingin sa Videos folder (gamit ang ../ kung nasa ibang subfolder ang page)
+                videoElement.src = "../public/Videos/" + fileName; 
+                videoElement.style.display = "block";
+                videoElement.load();
+            }
+        } else {
+            // KUNG IMAGE
+            imgElement.src = "../public/uploads/" + fileName;
+            imgElement.style.display = "block";
+        }
     } else {
-        imgElement.src = "";
-        imgElement.style.display = "none";
+        // KUNG WALANG FILE
         placeholder.style.display = "block";
     }
 
-  
+    // 4. Show Modal Animation
     modal.style.display = 'flex';
     setTimeout(() => {
         backdrop.style.opacity = '1';
@@ -144,7 +160,6 @@ function openViewModal(data) {
         container.style.transform = 'scale(1)';
     }, 10);
 }
-
 //function para isara ang view details modal meow meow.
 function closeViewModal() {
     const modal = document.getElementById('viewModal');

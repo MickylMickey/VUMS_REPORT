@@ -1,9 +1,9 @@
 const currentUserId = "<?= $current_user_id ?>";
 
-// Global Variables for Status Change
+
 let pendingStatusChange = null;
 
-// Modal Elements
+
 const editModal = document.getElementById("editModal");
 const editContainer = document.getElementById("editModalContainer");
 const editBackdrop = document.getElementById("editModalBackdrop");
@@ -12,9 +12,6 @@ const addReportForm = document.getElementById("addReportForm");
 const addContainer = document.getElementById("addModalContainer");
 const addBackdrop = document.getElementById("addModalBackdrop");
 
-/**
- * 1. STATUS CONFIRMATION MODAL LOGIC (NEW)
- */
 function toggleStatusModal(show) {
   const modal = document.getElementById("statusConfirmModal");
   const container = document.getElementById("statusConfirmContainer");
@@ -35,7 +32,6 @@ function toggleStatusModal(show) {
   }
 }
 
-// Listen for dropdown changes using Event Delegation
 document.addEventListener("change", function (e) {
   if (e.target.classList.contains("status-updater") && e.isTrusted) {
     const select = e.target;
@@ -51,7 +47,6 @@ document.addEventListener("change", function (e) {
 
     toggleStatusModal(true);
 
-    // Timer Logic (3 seconds)
     let timeLeft = 3;
     confirmBtn.disabled = true;
     confirmBtn.style.opacity = "0.6";
@@ -75,9 +70,6 @@ document.addEventListener("change", function (e) {
   }
 });
 
-/**
- * 2. AJAX UPDATE EXECUTION
- */
 function executeStatusUpdate() {
   if (!pendingStatusChange) return;
   const { select, reportId, statusId, userId, originalValue } = pendingStatusChange;
@@ -102,7 +94,7 @@ function executeStatusUpdate() {
         select.setAttribute("data-last-value", statusId);
         showToast('<i class="fas fa-check-circle mr-2"></i>Status updated successfully!', "success");
 
-        // Row removal animation for Resolved (3) or Closed (4)
+    
         const statusToRemove = ["3", "4"];
         if (statusToRemove.includes(statusId)) {
           const row = select.closest("tr") || select.closest(".report-row");
@@ -115,7 +107,7 @@ function executeStatusUpdate() {
         }
       } else {
         showToast("Update failed: " + data.error, "error");
-        select.value = originalValue; // Reset dropdown
+        select.value = originalValue;
       }
     })
     .catch((err) => {
@@ -126,17 +118,14 @@ function executeStatusUpdate() {
     });
 }
 
-/**
- * 3. DOM CONTENT LOADED (Listeners for Buttons & Filters)
- */
 document.addEventListener("DOMContentLoaded", () => {
-  // Confirm Status "Yes" Button
+
   document.getElementById("confirmStatusBtn")?.addEventListener("click", () => {
     toggleStatusModal(false);
     executeStatusUpdate();
   });
 
-  // Confirm Status "Cancel" Button
+
   document.getElementById("cancelStatusBtn")?.addEventListener("click", () => {
     if (pendingStatusChange) {
       pendingStatusChange.select.value = pendingStatusChange.originalValue;
@@ -147,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
     pendingStatusChange = null;
   });
 
-  // --- Original Filtering Logic ---
   const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
   const moduleFilter = document.getElementById("moduleFilter");
@@ -199,9 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/**
- * 4. TOAST NOTIFICATION (Modernized)
- */
 function showToast(message, type = "success") {
   const toast = document.createElement("div");
 
@@ -222,8 +207,6 @@ function showToast(message, type = "success") {
         transform: translateY(100px);
         opacity: 0;
     `;
-
-  // CHECK NATIN DITO:
 
   if (type === "success") {
     toast.style.backgroundColor = "#059669"; // Emerald Green
@@ -247,9 +230,7 @@ function showToast(message, type = "success") {
   }, 5000);
 }
 
-/**
- * 5. MODAL CONTROL FUNCTIONS (ADD & EDIT)
- */
+
 function openAddModal() {
   addModal.classList.remove("hidden");
   setTimeout(() => {
@@ -279,14 +260,34 @@ function openEditModal() {
 }
 
 function closeEditModal() {
+  
   editContainer.classList.remove("scale-100", "opacity-100");
   editContainer.classList.add("scale-95", "opacity-0");
   editBackdrop.classList.remove("opacity-100");
   editBackdrop.classList.add("opacity-0");
-  setTimeout(() => editModal.classList.add("hidden"), 300);
+
+  
+  const editForm = document.getElementById("editForm");
+  const fileLabel = document.getElementById("edit_file_name_label");
+
+  if (editForm) {
+    editForm.reset(); 
+  }
+
+  if (fileLabel) {
+    
+    fileLabel.innerText = "Click to upload new media...";
+    fileLabel.classList.add('text-slate-400');
+    fileLabel.classList.remove('text-blue-600', 'font-bold');
+  }
+
+
+  setTimeout(() => {
+    editModal.classList.add("hidden");
+  }, 300);
 }
 
-// Edit Button Populating Logic
+
 document.querySelectorAll(".edit-report-btn").forEach((button) => {
   button.addEventListener("click", function () {
     document.getElementById("edit_report_id").value = this.getAttribute("data-id");
@@ -365,7 +366,7 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
   });
 });
 
-//AI integration for suggestions
+
 
 let aiTimeout;
 
@@ -374,7 +375,7 @@ async function fetchSuggestions(text) {
   const dot = document.getElementById("ai-dot");
   const statusText = document.getElementById("ai-status-text");
 
-  // Don't do anything for very short text
+  
   if (text.length < 5) {
     badge.className =
       "flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-400 transition-all duration-300 border border-transparent";
@@ -382,29 +383,26 @@ async function fetchSuggestions(text) {
     return;
   }
 
-  // 1. Enter "Thinking" State immediately
   badge.classList.add("ai-active");
   badge.classList.remove("ai-success");
   statusText.innerText = "AI is thinking...";
 
-  // 2. Debounce the API call (Wait for user to stop typing for 800ms)
+  
   clearTimeout(aiTimeout);
   aiTimeout = setTimeout(async () => {
     try {
-      // Replace with your actual helper path
+      
       const response = await fetch(`../functions/get_suggestions.php?text=${encodeURIComponent(text)}`);
       const data = await response.json();
 
       if (data && !data.error) {
-        // 3. Success State
+      
         badge.classList.remove("ai-active");
         badge.classList.add("ai-success");
         statusText.innerText = "Suggestions applied!";
 
-        // Call your function to fill the category/severity/module
         applyAiSuggestions(data);
 
-        // 4. Return to idle after 3 seconds
         setTimeout(() => {
           badge.classList.remove("ai-success");
           statusText.innerText = "AI Ready";
@@ -417,82 +415,91 @@ async function fetchSuggestions(text) {
   }, 800);
 }
 function applyAiSuggestions(data) {
-  // 1. Update Category Dropdown
+  
   const catSelect = document.getElementById("cat_id");
   if (data.category) {
     catSelect.value = data.category;
-    // Trigger change event to update your existing "Definition" panel UI
+   
     catSelect.dispatchEvent(new Event("change"));
   }
-
-  // 2. Update Module Dropdown
   const modSelect = document.getElementById("mod_id");
   if (data.module) {
     modSelect.value = data.module;
     modSelect.dispatchEvent(new Event("change"));
   }
 
-  // 3. Update Severity Radio Buttons
   if (data.severity) {
     const severityRadio = document.querySelector(`input[name="sev_id"][value="${data.severity}"]`);
     if (severityRadio) {
       severityRadio.checked = true;
-      // Trigger change if you have listeners on these radios
+      
       severityRadio.dispatchEvent(new Event("change"));
     }
   }
-
   console.log("AI Suggestions Applied:", data);
 }
+
 function openViewModal(data) {
   const modal = document.getElementById("viewModal");
   const backdrop = document.getElementById("viewModalBackdrop");
   const container = document.getElementById("viewModalContainer");
+  
   const imgElement = document.getElementById("view_attachment");
-  const placeholder = document.getElementById("no_img_placeholder");
+  const videoElement = document.getElementById("view_video_attachment");
+  const placeholder = document.getElementById("no_media_placeholder");
 
   document.getElementById("view_category").innerText = data.category;
   document.getElementById("view_module").innerText = data.module;
   document.getElementById("view_desc").innerText = data.description;
 
+  // --- SEVERITY COLOR LOGIC START ---
   const sevBadge = document.getElementById("view_severity");
   sevBadge.innerText = data.severity;
+  
+  // Linisin ang mga dating styles at i-apply ang base style
+  sevBadge.style.padding = "4px 12px";
+  sevBadge.style.borderRadius = "8px";
+  sevBadge.style.color = "#ffffff"; // Puti ang text
+  sevBadge.style.fontWeight = "bold";
+  sevBadge.style.fontSize = "12px";
+  sevBadge.style.display = "inline-block";
 
-  let bgColor, textColor, borderColor;
-  const sev = data.severity.toLowerCase();
+  const severity = data.severity.toLowerCase();
 
-  if (sev === "critical") {
-    bgColor = "#fef2f2";
-    textColor = "#dc2626";
-    borderColor = "#fee2e2";
-  } else if (sev === "high") {
-    bgColor = "#fff7ed";
-    textColor = "#ea580c";
-    borderColor = "#ffedd5";
-  } else if (sev === "medium") {
-    bgColor = "#fffbeb";
-    textColor = "#d97706";
-    borderColor = "#fef3c7";
+  if (severity === 'critical' || severity === 'high') {
+    sevBadge.style.backgroundColor = "#ef4444"; // Red
+  } else if (severity === 'medium' || severity === 'moderate') {
+    sevBadge.style.backgroundColor = "#eec071"; // Orange/Amber
+  } else if (severity === 'low') {
+    sevBadge.style.backgroundColor = "#10b981"; // Green
   } else {
-    bgColor = "#ecfdf5";
-    textColor = "#059669";
-    borderColor = "#d1fae5";
+    sevBadge.style.backgroundColor = "#64748b"; // Slate/Gray (default)
   }
+  // --- SEVERITY COLOR LOGIC END ---
+  
+  const filename = data.media ? data.media.toString().trim() : "";
+  
+  imgElement.style.display = "none";
+  videoElement.style.display = "none";
+  placeholder.style.display = "block";
 
-  sevBadge.style.backgroundColor = bgColor;
-  sevBadge.style.color = textColor;
-  sevBadge.style.borderColor = borderColor;
+  if (filename !== "") {
+    const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+    const fileExt = filename.split('.').pop().toLowerCase();
+    const isVideo = videoExtensions.includes(fileExt);
 
-  if (data.image && data.image.toString().trim() !== "") {
-    imgElement.src = "uploads/" + data.image;
-    imgElement.style.display = "block";
-    placeholder.style.display = "none";
-  } else {
-    imgElement.src = "";
-    imgElement.style.display = "none";
-    placeholder.style.display = "block";
+    if (isVideo) {
+      videoElement.src = "Videos/" + filename; 
+      videoElement.style.display = "block";
+      videoElement.load();
+      placeholder.style.display = "none";
+    } else {
+      imgElement.src = "uploads/" + filename;
+      imgElement.style.display = "block";
+      placeholder.style.display = "none";
+    }
   }
-
+  
   modal.style.display = "flex";
   setTimeout(() => {
     backdrop.style.opacity = "1";
@@ -501,17 +508,47 @@ function openViewModal(data) {
   }, 10);
 }
 
-//function para isara ang view details modal meow meow.
 function closeViewModal() {
-  const modal = document.getElementById("viewModal");
-  const backdrop = document.getElementById("viewModalBackdrop");
-  const container = document.getElementById("viewModalContainer");
+  try {
+    const modal = document.getElementById("viewModal");
+    const backdrop = document.getElementById("viewModalBackdrop");
+    const container = document.getElementById("viewModalContainer");
+    const videoElement = document.getElementById("view_video_attachment");
 
-  backdrop.style.opacity = "0";
-  container.style.opacity = "0";
-  container.style.transform = "scale(0.95)";
+    // 1. Simulan ang fade-out animation
+    if (backdrop) backdrop.style.opacity = "0";
+    if (container) {
+      container.style.opacity = "0";
+      container.style.transform = "scale(0.95)";
+    }
 
-  setTimeout(() => {
-    modal.style.display = "none";
-  }, 300);
+    // 2. I-stop ang video para hindi tumutunog kahit sarado na ang modal
+    if (videoElement) {
+      videoElement.pause();
+      videoElement.src = "";
+    }
+
+    // 3. Hintayin matapos ang animation (300ms) bago itago ang buong modal
+    setTimeout(() => {
+      if (modal) modal.style.display = "none";
+    }, 300);
+    
+  } catch (error) {
+    console.error("Error closing modal:", error);
+    // Fallback: itago agad ang modal kung mag-error ang animation
+    document.getElementById("viewModal").style.display = "none";
+  }
+}
+
+function updateEditFileLabel(input) {
+    const label = document.getElementById('edit_file_name_label');
+    if (input.files && input.files[0]) {
+        label.innerText = input.files[0].name;
+        label.classList.remove('text-slate-400');
+        label.classList.add('text-blue-600', 'font-bold');
+    } else {
+        label.innerText = "Click to upload new media...";
+        label.classList.add('text-slate-400');
+        label.classList.remove('text-blue-600', 'font-bold');
+    }
 }

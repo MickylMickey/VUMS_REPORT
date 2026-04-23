@@ -73,7 +73,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     <main class="flex-grow">
         <div class="container mx-auto p-6 max-w-7xl">
 
-            <!-- HEADER -->
+
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">System Reports</h2>
@@ -273,13 +273,13 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 <td class="px-6 py-4 text-right">
                                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
 
-                                        <button type="button" class="view-report-btn" onclick="openViewModal({
-                category: '<?= htmlspecialchars($report['cat_desc'] ?? 'Other') ?>',
-                module: '<?= htmlspecialchars($report['mod_desc'] ?? 'Other') ?>',
-                severity: '<?= htmlspecialchars($report['severity']) ?>',
-                description: `<?= addslashes($report['report_desc']) ?>`,
-                image: '<?= $report['report_img'] ?? '' ?>' 
-            })" style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+                                        <button type="button" class="view-report-btn" onclick='openViewModal(<?= htmlspecialchars(json_encode([
+                                            "category" => $report["cat_desc"] ?? "Other",
+                                            "module" => $report["mod_desc"] ?? "Other",
+                                            "severity" => $report["severity"],
+                                            "description" => $report["report_desc"],
+                                            "media" => $report["report_img"] ?? ""
+                                        ]), ENT_QUOTES, "UTF-8") ?>)' style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
                                             data-tooltip="View Report Details">
                                             <i class="fa-solid fa-file-lines"></i>
                                         </button>
@@ -543,7 +543,8 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                     </button>
                 </div>
 
-                <form id="editForm" action="../controllers/edit_reports.php" method="POST" class="p-6 space-y-5">
+                <form id="editForm" action="../controllers/edit_reports.php" method="POST" enctype="multipart/form-data"
+                    class="p-6 space-y-5">
                     <input type="hidden" name="report_id" id="edit_report_id">
 
                     <div class="grid grid-cols-2 gap-4">
@@ -565,11 +566,6 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 <i
                                     class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
                             </div>
-                            <div id="edit_cat_desc_panel"
-                                class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Definition</p>
-                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
-                            </div>
                         </div>
 
                         <div class="space-y-1.5">
@@ -589,35 +585,22 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 <i
                                     class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
                             </div>
-                            <div id="edit_mod_desc_panel"
-                                class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-tight">Scope</p>
-                                <p class="text-xs text-slate-600 leading-relaxed mt-1 edit-desc-text"></p>
-                            </div>
                         </div>
                     </div>
 
                     <div class="space-y-3">
                         <label class="text-[15px] font-semibold text-slate-600 ml-1">Severity Level</label>
-
                         <div class="flex gap-2">
                             <?php foreach ($severityOptions as $s): ?>
                                 <label class="flex-1 cursor-pointer relative group">
                                     <input type="radio" name="sev_id" value="<?= $s['sev_id'] ?>"
                                         class="absolute opacity-0 w-0 h-0 peer" required>
-
-                                    <div class="py-2 text-center text-[12px] font-semibold rounded-xl border
-                                border-slate-200 bg-white text-slate-500
-                                transition-all duration-200
-                                hover:border-blue-300 hover:text-blue-600
-                                peer-checked:border-blue-50 peer-checked:text-blue-600 peer-checked:bg-blue-50 
-                                peer-focus:ring-2 peer-focus:ring-blue-500/20">
+                                    <div
+                                        class="py-2 text-center text-[12px] font-semibold rounded-xl border border-slate-200 bg-white text-slate-500 transition-all duration-200 hover:border-blue-300 hover:text-blue-600 peer-checked:border-blue-50 peer-checked:text-blue-600 peer-checked:bg-blue-50">
                                         <?= htmlspecialchars($s['sev_desc']) ?>
                                     </div>
-
-                                    <div class="absolute -top-1 -right-1 opacity-0 scale-50 
-                                        peer-checked:opacity-100 peer-checked:scale-100 
-                                        transition-all duration-300 pointer-events-none">
+                                    <div
+                                        class="absolute -top-1 -right-1 opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-300 pointer-events-none">
                                         <div
                                             class="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-white shadow-sm">
                                             <i class="fa-solid fa-check text-[10px]"></i>
@@ -630,17 +613,33 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                     <div class="space-y-1.5">
                         <label class="text-[13px] font-semibold text-slate-600 ml-1">Description</label>
-                        <textarea name="report_desc" id="edit_desc" rows="4"
+                        <textarea name="report_desc" id="edit_desc" rows="3"
                             class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none placeholder:text-slate-400"
                             data-required="true" data-error="Description is required."></textarea>
-                        <div>
-                            <p class="error-message hidden text-red-600 text-sm mt-1"></p>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[13px] font-semibold text-slate-600 ml-1">Attachment (Image/Video)</label>
+                        <div class="relative">
+                            <input type="file" name="report_file" id="edit_report_file" accept="image/*,video/*"
+                                class="hidden" onchange="updateEditFileLabel(this)">
+                            <label for="edit_report_file"
+                                class="flex items-center gap-3 w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm cursor-pointer hover:bg-slate-100 transition-all border-dashed border-2">
+                                <div
+                                    class="min-w-[32px] h-8 flex items-center justify-center rounded-xl border border-slate-200">
+                                    <i class="fa-solid fa-cloud-arrow-up text-xs text-black"></i>
+                                </div>
+                                <span id="edit_file_name_label" class="text-slate-400 text-xs truncate">Click to upload
+                                    new media...</span>
+                            </label>
                         </div>
+                        <p class="text-[15px] text-black-400 italic ml-1">Leave blank if you don't want to upload the
+                            file.</p>
                     </div>
 
                     <div class="flex items-center gap-3 pt-2">
                         <button type="button" onclick="closeEditModal()"
-                            class="flex-1 px-4 py-3 text-sm font-bold text-white rounded-2xl bg-[#fb2424] hover:bg-[#c01c1c] rounded-[16px] transition-all duration-200">
+                            class="flex-1 px-4 py-3 text-sm font-bold text-white rounded-2xl bg-[#fb2424] hover:bg-[#c01c1c] transition-all duration-200">
                             Cancel
                         </button>
                         <button type="submit"
@@ -651,7 +650,6 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                 </form>
             </div>
         </div>
-
 
         <div id="viewModal"
             style="position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.3s;">
@@ -707,17 +705,25 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label
-                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Evidence
+                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report
                             Attachment</label>
-                        <div id="view_img_container"
-                            style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
+
+                        <div id="view_media_container"
+                            style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; min-height: 200px;">
+
                             <img id="view_attachment" src=""
-                                style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;"
+                                style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"
                                 onclick="window.open(this.src, '_blank')">
-                            <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
-                                <i class="fa-regular fa-image"
+
+                            <video id="view_video_attachment" controls
+                                style="max-width: 100%; border-radius: 10px; display: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                                Your browser does not support the video tag.
+                            </video>
+
+                            <div id="no_media_placeholder" style="text-align: center; color: #94a3b8;">
+                                <i class="fa-regular fa-file-video"
                                     style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-                                <span style="font-size: 12px;">No image uploaded</span>
+                                <span style="font-size: 12px;">No media uploaded</span>
                             </div>
                         </div>
                     </div>
@@ -796,7 +802,6 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
     });
 </script>
 <style>
-    /* AI is Thinking - Pulsing Animation */
     @keyframes ai-pulse {
         0% {
             transform: scale(1);
@@ -816,21 +821,21 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
     .ai-active #ai-dot {
         background-color: #3b82f6;
-        /* Blue */
+
         animation: ai-pulse 1.5s infinite ease-in-out;
     }
 
     .ai-active {
         background-color: #eff6ff !important;
-        /* Light blue bg */
+
         color: #3b82f6 !important;
         border-color: #dbeafe !important;
     }
 
-    /* AI Success State */
+
     .ai-success #ai-dot {
         background-color: #10b981;
-        /* Emerald */
+
     }
 
     .ai-success {
