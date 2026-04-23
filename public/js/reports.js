@@ -430,15 +430,41 @@ function openViewModal(data) {
   const videoElement = document.getElementById("view_video_attachment");
   const placeholder = document.getElementById("no_media_placeholder");
 
+  // I-set ang basic details
   document.getElementById("view_category").innerText = data.category;
   document.getElementById("view_module").innerText = data.module;
   document.getElementById("view_desc").innerText = data.description;
 
- 
+  // --- DATE REPORTED LOGIC START ---
+  const dateElement = document.getElementById("view_date");
+  if (dateElement) {
+    // Chine-check kung may valid na date na galing sa PHP data attribute
+    if (data.date_created && data.date_created !== "N/A" && data.date_created !== "") {
+      const dateObj = new Date(data.date_created);
+      
+      // Chine-check kung valid date ang nakuha (hindi NaN)
+      if (!isNaN(dateObj.getTime())) {
+        dateElement.innerText = dateObj.toLocaleString('en-US', { 
+          month: 'long', 
+          day: 'numeric', 
+          year: 'numeric', 
+          hour: 'numeric', 
+          minute: '2-digit', 
+          hour12: true 
+        });
+      } else {
+        dateElement.innerText = data.date_created; // Fallback kung string lang siya
+      }
+    } else {
+      dateElement.innerText = "No date recorded";
+    }
+  }
+  // --- DATE REPORTED LOGIC END ---
+
+  // Severity Logic
   const sevBadge = document.getElementById("view_severity");
   sevBadge.innerText = data.severity;
 
-  // Linisin ang mga dating styles at i-apply ang base style
   sevBadge.style.padding = "4px 12px";
   sevBadge.style.borderRadius = "8px";
   sevBadge.style.color = "#ffffff"; 
@@ -446,19 +472,19 @@ function openViewModal(data) {
   sevBadge.style.fontSize = "12px";
   sevBadge.style.display = "inline-block";
 
-  const severity = data.severity.toLowerCase();
+  const severity = data.severity ? data.severity.toLowerCase() : "";
 
   if (severity === "critical" || severity === "high") {
-    sevBadge.style.backgroundColor = "#ef4444"; // Red
+    sevBadge.style.backgroundColor = "#ef4444"; 
   } else if (severity === "medium" || severity === "moderate") {
-    sevBadge.style.backgroundColor = "#eec071"; // Orange/Amber
+    sevBadge.style.backgroundColor = "#eec071"; 
   } else if (severity === "low") {
-    sevBadge.style.backgroundColor = "#10b981"; // Green
+    sevBadge.style.backgroundColor = "#10b981"; 
   } else {
     sevBadge.style.backgroundColor = "#64748b"; 
   }
-  // --- SEVERITY COLOR LOGIC END ---
 
+  // Media Handling
   const filename = data.media ? data.media.toString().trim() : "";
 
   imgElement.style.display = "none";
@@ -482,11 +508,14 @@ function openViewModal(data) {
     }
   }
 
+  // Pakita ang modal
   modal.style.display = "flex";
   setTimeout(() => {
-    backdrop.style.opacity = "1";
-    container.style.opacity = "1";
-    container.style.transform = "scale(1)";
+    if (backdrop) backdrop.style.opacity = "1";
+    if (container) {
+      container.style.opacity = "1";
+      container.style.transform = "scale(1)";
+    }
   }, 10);
 }
 

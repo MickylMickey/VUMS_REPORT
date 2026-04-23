@@ -14,17 +14,18 @@ class reportArchiveVisibility
      * @param string $user_role 
      */
     public function getVisibleArchiveReports(string $current_user_id, string $user_role, ?int $limit = null, ?int $offset = null): array
-    {
-        $params = [];
-        $types = "";
+{
+    $params = [];
+    $types = "";
 
-        $sql = "SELECT 
+    $sql = "SELECT 
             ra.*, 
+            ra.Report_created_at, -- Idinagdag para sa tamang Case Sensitivity
             u.username AS reporter_name, 
             updater.username AS updater_name, 
             c.category AS cat_desc,
             m.module AS mod_desc, 
-            s.sev_desc AS severity, 
+            s.sev_desc AS severity, -- Dito kukunin ang 'High', 'Critical', etc.
             st.status_desc
         FROM report_archive ra
         LEFT JOIN users u ON ra.user_id = u.user_id
@@ -33,30 +34,29 @@ class reportArchiveVisibility
         LEFT JOIN module m ON ra.mod_id = m.mod_id
         LEFT JOIN severity s ON ra.sev_id = s.sev_id
         LEFT JOIN status st ON ra.status_id = st.status_id
-        ";
+    ";
 
-        if ($user_role !== 'Admin') {
-            $sql .= " WHERE ra.user_id = ?";
-            $params[] = $current_user_id;
-            $types .= "s";
-        }
-
-        $sql .= " ORDER BY ra.report_created_at ASC";
-
-        if ($limit !== null) {
-            $sql .= " LIMIT ?";
-            $params[] = $limit;
-            $types .= "i";
-            if ($offset !== null) {
-                $sql .= " OFFSET ?";
-                $params[] = $offset;
-                $types .= "i";
-            }
-        }
-
-        // The final return line
-        return $this->executeQuery($sql, $params, $types);
+    if ($user_role !== 'Admin') {
+        $sql .= " WHERE ra.user_id = ?";
+        $params[] = $current_user_id;
+        $types .= "s";
     }
+
+    $sql .= " ORDER BY ra.Report_created_at ASC"; 
+
+    if ($limit !== null) {
+        $sql .= " LIMIT ?";
+        $params[] = $limit;
+        $types .= "i";
+        if ($offset !== null) {
+            $sql .= " OFFSET ?";
+            $params[] = $offset;
+            $types .= "i";
+        }
+    }
+
+    return $this->executeQuery($sql, $params, $types);
+}
 
     private function executeQuery($sql, $params, $types): array
     {

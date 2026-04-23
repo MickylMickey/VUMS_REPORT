@@ -58,14 +58,14 @@ $s_pagination = getPaginationData(
     $s_types
 );
 
-// 3. Extract Suggestion Variables
+
 $s_limit = $s_pagination['limit'];
 $s_offset = $s_pagination['offset'];
 $s_totalPages = $s_pagination['totalPages'];
 $s_totalRecords = $s_pagination['totalRecords'];
 $s_page = $s_pagination['page'];
 
-// 4. Fetch the actual suggestions using LIMIT and OFFSET
+
 $sql = "SELECT sa.*, st.status_desc, updater.username AS updater_name, UPPER(u.username) AS username 
         FROM suggestion_archive sa
         LEFT JOIN status st ON sa.status_id = st.status_id
@@ -209,19 +209,18 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             <td class="px-6 py-4 text-center">
                 <div style="display: flex; align-items: center; justify-content: center;">
-                    <button 
-    type="button" 
-    class="view-archive-btn"
+                   <button type="button" class="view-report-btn" 
     onclick='openViewModal(<?= htmlspecialchars(json_encode([
-        "category"    => $archive["cat_desc"] ?? "Other",
-        "module"      => $archive["mod_desc"] ?? "Other",
-        "severity"    => $archive["severity"],
-        "description" => $archive["report_desc"],
-        "image"       => $archive["report_img"] ?? ""
+        "category" => $archive["cat_desc"] ?? "Other",
+        "module" => $archive["mod_desc"] ?? "Other",
+        "severity" => $archive["severity"] ?? "N/A",
+        "description" => $archive["report_desc"] ?? "",
+        "image" => $archive["report_img"] ?? "",
+        "date_created" => $archive["Report_created_at"] ?? "N/A"
     ]), ENT_QUOTES, "UTF-8") ?>)'
     style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-    data-tooltip="View Full Report">
-    <i class="fa-solid fa-file-lines"></i>
+    data-tooltip="View Details">
+    <i class="fa-solid fa-eye"></i>
 </button>
                 </div>
             </td>
@@ -404,7 +403,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     
     <div id="viewModalBackdrop" onclick="closeViewModal()" 
          style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.6); opacity: 0; transition: opacity 0.3s;"></div>
-         <div id="viewModalContainer" 
+    
+    <div id="viewModalContainer" 
          style="background-color: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 32rem; max-height: 90vh; overflow: hidden; z-index: 10; display: flex; flex-direction: column; transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
         
         <div style="background-color: #2563eb; padding: 1.25rem 1.5rem; color: #ffffff; flex-shrink: 0;">
@@ -426,6 +426,13 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Date Reported</label>
+                <div id="view_date" style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #166534; font-weight: 600;">
+                    No date recorded
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 4px;">
                 <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Severity Level</label>
                 <div id="view_severity" style="display: inline-flex; width: fit-content; padding: 6px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #e2e8f0;"></div>
             </div>
@@ -438,26 +445,26 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <div style="display: flex; flex-direction: column; gap: 4px;">
                 <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report Attachment</label>
                 <div id="view_img_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
-    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
-    
-    <video id="view_attachment_video" controls style="max-width: 100%; border-radius: 10px; display: none;"></video>
-    
-    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
-        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-        <span style="font-size: 12px;">No evidence uploaded</span>
-    </div>
-</div>
+                    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
+                    
+                    <video id="view_attachment_video" controls style="max-width: 100%; border-radius: 10px; display: none;"></video>
+                    
+                    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
+                        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
+                        <span style="font-size: 12px;">No evidence uploaded</span>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center;">
-    <button type="button" onclick="closeViewModal()"
-        style="width: 50%; padding: 12px; font-size: 14px; font-weight: 700; color: #2563eb; border-radius: 12px; background-color: #eff6ff; border: 1px solid #dbeafe; cursor: pointer; transition: all 0.2s;"
-        onmouseover="this.style.backgroundColor='#dbeafe'"
-        onmouseout="this.style.backgroundColor='#eff6ff'">
-        Close 
-    </button>
-</div>
+            <button type="button" onclick="closeViewModal()"
+                style="width: 50%; padding: 12px; font-size: 14px; font-weight: 700; color: #2563eb; border-radius: 12px; background-color: #eff6ff; border: 1px solid #dbeafe; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.backgroundColor='#dbeafe'"
+                onmouseout="this.style.backgroundColor='#eff6ff'">
+                Close 
+            </button>
+        </div>
     </div>
 </div>
 </body>

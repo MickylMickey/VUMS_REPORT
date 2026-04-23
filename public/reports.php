@@ -273,17 +273,19 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
                                 <td class="px-6 py-4 text-right">
                                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
 
-                                        <button type="button" class="view-report-btn" onclick='openViewModal(<?= htmlspecialchars(json_encode([
-                                            "category" => $report["cat_desc"] ?? "Other",
-                                            "module" => $report["mod_desc"] ?? "Other",
-                                            "severity" => $report["severity"],
-                                            "description" => $report["report_desc"],
-                                            "media" => $report["report_img"] ?? ""
-                                        ]), ENT_QUOTES, "UTF-8") ?>)'
-                                            style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-                                            data-tooltip="View Report Details">
-                                            <i class="fa-solid fa-file-lines"></i>
-                                        </button>
+                                       <button type="button" class="view-report-btn" 
+    onclick='openViewModal(<?= htmlspecialchars(json_encode([
+        "category" => $report["cat_desc"] ?? "Other",
+        "module" => $report["mod_desc"] ?? "Other",
+        "severity" => $report["severity"] ?? "N/A",
+        "description" => $report["report_desc"] ?? "",
+        "media" => $report["report_img"] ?? "",
+        "date_created" => $report["Report_created_at"] ?? "N/A" // SIGURADUHIN NA NARITO ITO
+    ]), ENT_QUOTES, "UTF-8") ?>)'
+    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+    data-tooltip="View Report Details">
+    <i class="fa-solid fa-file-lines"></i>
+</button>
 
                                         <?php if ($isAdmin): ?>
                                             <button class="edit-report-btn"
@@ -653,94 +655,86 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
         </div>
 
         <div id="viewModal"
-            style="position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.3s;">
+    style="position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.3s;">
 
-            <div id="viewModalBackdrop" onclick="closeViewModal()"
-                style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.6); opacity: 0; transition: opacity 0.3s;">
+    <div id="viewModalBackdrop" onclick="closeViewModal()"
+        style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.6); opacity: 0; transition: opacity 0.3s;">
+    </div>
+
+    <div id="viewModalContainer"
+        style="background-color: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 32rem; max-height: 90vh; overflow: hidden; z-index: 10; display: flex; flex-direction: column; transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+
+        <div style="background-color: #2563eb; padding: 1.25rem 1.5rem; color: #ffffff; flex-shrink: 0;">
+            <h2 style="font-size: 20px; font-weight: 700; margin: 0;">Report Details</h2>
+            <p style="color: #dbeafe; font-size: 15px; margin-top: 2px;">Reviewing submitted evidence and information.</p>
+        </div>
+
+        <div style="padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem;">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Category</label>
+                    <div id="view_category" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Module</label>
+                    <div id="view_module" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;">
+                    </div>
+                </div>
             </div>
 
-            <div id="viewModalContainer"
-                style="background-color: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 32rem; max-height: 90vh; overflow: hidden; z-index: 10; display: flex; flex-direction: column; transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">
+        Date Reported
+    </label>
 
-                <div style="background-color: #2563eb; padding: 1.25rem 1.5rem; color: #ffffff; flex-shrink: 0;">
-                    <h2 style="font-size: 20px; font-weight: 700; margin: 0;">Report Details</h2>
-                    <p style="color: #dbeafe; font-size: 15px; margin-top: 2px;">Reviewing submitted evidence and
-                        information.</p>
+            <div id="view_date" style="
+                background: #f1f5f9;
+                border: 1px solid #cbd5e1;
+                border-radius: 12px;
+                padding: 10px 14px;
+                font-size: 14px;
+                color: #1e293b;
+                font-weight: 600;
+                ">
+        </div>
+    </div>
+
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Severity Level</label>
+                <div id="view_severity" style="display: inline-flex; width: fit-content; padding: 6px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #e2e8f0;">
                 </div>
+            </div>
 
-                <div style="padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem;">
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <label
-                                style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Category</label>
-                            <div id="view_category"
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;">
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <label
-                                style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Module</label>
-                            <div id="view_module"
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label
-                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Severity
-                            Level</label>
-                        <div id="view_severity"
-                            style="display: inline-flex; width: fit-content; padding: 6px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #e2e8f0;">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label
-                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Description</label>
-                        <div id="view_desc"
-                            style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; font-size: 14px; color: #475569; line-height: 1.6; white-space: pre-wrap;">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label
-                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report
-                            Attachment</label>
-
-                        <div id="view_media_container"
-                            style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; min-height: 200px;">
-
-                            <img id="view_attachment" src=""
-                                style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"
-                                onclick="window.open(this.src, '_blank')">
-
-                            <video id="view_video_attachment" controls
-                                style="max-width: 100%; border-radius: 10px; display: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-                                Your browser does not support the video tag.
-                            </video>
-
-                            <div id="no_media_placeholder" style="text-align: center; color: #94a3b8;">
-                                <i class="fa-regular fa-file-video"
-                                    style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-                                <span style="font-size: 12px;">No media uploaded</span>
-                            </div>
-                        </div>
-                    </div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Description</label>
+                <div id="view_desc" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; font-size: 14px; color: #475569; line-height: 1.6; white-space: pre-wrap;">
                 </div>
+            </div>
 
-                <div
-                    style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center;">
-                    <button type="button" onclick="closeViewModal()"
-                        style="width: 50%; padding: 12px; font-size: 14px; font-weight: 700; color: #2563eb; border-radius: 12px; background-color: #eff6ff; border: 1px solid #dbeafe; cursor: pointer; transition: all 0.2s;"
-                        onmouseover="this.style.backgroundColor='#dbeafe'"
-                        onmouseout="this.style.backgroundColor='#eff6ff'">
-                        Close
-                    </button>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report Attachment</label>
+                <div id="view_media_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; min-height: 200px;">
+                    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" onclick="window.open(this.src, '_blank')">
+                    <video id="view_video_attachment" controls style="max-width: 100%; border-radius: 10px; display: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div id="no_media_placeholder" style="text-align: center; color: #94a3b8;">
+                        <i class="fa-regular fa-file-video" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
+                        <span style="font-size: 12px;">No media uploaded</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center;">
+            <button type="button" onclick="closeViewModal()" style="width: 50%; padding: 12px; font-size: 14px; font-weight: 700; color: #2563eb; border-radius: 12px; background-color: #eff6ff; border: 1px solid #dbeafe; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 
         <div id="tooltip"
             class="fixed pointer-events-none opacity-0 transition-opacity duration-200 z-50 px-3 py-1.5 text-sm font-medium text-white bg-slate-900 rounded shadow-lg whitespace-nowrap">

@@ -20,6 +20,7 @@ class BugVisibility
 
         $sql = "SELECT 
             r.*, 
+            r.Report_created_at,
             u.username AS reporter_name, 
             updater.username AS updater_name, 
             c.category AS cat_desc,
@@ -46,7 +47,7 @@ class BugVisibility
             $types .= "i";
         }
 
-        $sql .= " ORDER BY r.report_created_at ASC";
+       $sql .= " ORDER BY r.Report_created_at ASC";
 
         if ($limit !== null) {
             $sql .= " LIMIT ?";

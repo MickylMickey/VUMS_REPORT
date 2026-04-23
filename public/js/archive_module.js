@@ -95,7 +95,6 @@ function openViewModal(data) {
     const backdrop = document.getElementById('viewModalBackdrop');
     const container = document.getElementById('viewModalContainer');
     const imgElement = document.getElementById('view_attachment');
-    // Siguraduhin na may video element ka sa HTML na may ganitong ID
     const videoElement = document.getElementById('view_attachment_video'); 
     const placeholder = document.getElementById('no_img_placeholder');
 
@@ -104,11 +103,34 @@ function openViewModal(data) {
     document.getElementById('view_module').innerText = data.module;
     document.getElementById('view_desc').innerText = data.description;
 
-    // 2. Severity Badge Logic (Existing mo)
+    // --- DATE REPORTED LOGIC START ---
+    const dateElement = document.getElementById('view_date');
+    if (dateElement) {
+        if (data.date_created && data.date_created !== "N/A" && data.date_created !== "") {
+            const dateObj = new Date(data.date_created);
+            if (!isNaN(dateObj.getTime())) {
+                dateElement.innerText = dateObj.toLocaleString('en-US', { 
+                    month: 'long', 
+                    day: 'numeric', 
+                    year: 'numeric', 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    hour12: true 
+                });
+            } else {
+                dateElement.innerText = data.date_created;
+            }
+        } else {
+            dateElement.innerText = "No date recorded";
+        }
+    }
+    // --- DATE REPORTED LOGIC END ---
+
+    // 2. Severity Badge Logic
     const sevBadge = document.getElementById('view_severity');
     sevBadge.innerText = data.severity;
     let bgColor, textColor, borderColor;
-    const sev = data.severity.toLowerCase();
+    const sev = data.severity ? data.severity.toLowerCase() : "";
 
     if (sev === 'critical') {
         bgColor = '#fef2f2'; textColor = '#dc2626'; borderColor = '#fee2e2';
@@ -124,31 +146,31 @@ function openViewModal(data) {
     sevBadge.style.borderColor = borderColor;
 
     // 3. MEDIA LOGIC (Image vs Video)
-    let fileName = data.image ? data.image.toString().trim() : ""; // Sa database mo, 'image' column ang gamit
+    // Ginagamit ang 'media' o 'image' depende sa kung anong ipinasa mula sa PHP
+    let fileName = (data.media || data.image) ? (data.media || data.image).toString().trim() : ""; 
     let fileExt = fileName.split('.').pop().toLowerCase();
     const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
 
     // Reset displays
     imgElement.style.display = "none";
-    if(videoElement) videoElement.style.display = "none";
+    if(videoElement) {
+        videoElement.style.display = "none";
+        videoElement.src = ""; // Clear previous video src
+    }
     placeholder.style.display = "none";
 
     if (fileName !== "") {
         if (videoExtensions.includes(fileExt)) {
-            // KUNG VIDEO
             if (videoElement) {
-                // Tumingin sa Videos folder (gamit ang ../ kung nasa ibang subfolder ang page)
                 videoElement.src = "../public/Videos/" + fileName; 
                 videoElement.style.display = "block";
                 videoElement.load();
             }
         } else {
-            // KUNG IMAGE
             imgElement.src = "../public/uploads/" + fileName;
             imgElement.style.display = "block";
         }
     } else {
-        // KUNG WALANG FILE
         placeholder.style.display = "block";
     }
 
