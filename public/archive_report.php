@@ -426,11 +426,21 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Date Reported</label>
-                <div id="view_date" style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #166534; font-weight: 600;">
-                    No date recorded
-                </div>
-            </div>
+    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">
+        Date Submitted
+    </label>
+
+            <div id="view_date" style="
+                background: #f1f5f9;
+                border: 1px solid #cbd5e1;
+                border-radius: 12px;
+                padding: 10px 14px;
+                font-size: 14px;
+                color: #1e293b;
+                font-weight: 600;
+                ">
+        </div>
+    </div>
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
                 <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Severity Level</label>

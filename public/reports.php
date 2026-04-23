@@ -696,7 +696,7 @@ $reports = $visibility->getVisibleReports($current_user_id, $user_role, $limit, 
 
             <div style="display: flex; flex-direction: column; gap: 4px;">
     <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">
-        Date Reported
+        Date Submitted
     </label>
 
             <div id="view_date" style="
