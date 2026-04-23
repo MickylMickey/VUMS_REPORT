@@ -1,8 +1,6 @@
 const currentUserId = "<?= $current_user_id ?>";
 
-
 let pendingStatusChange = null;
-
 
 const editModal = document.getElementById("editModal");
 const editContainer = document.getElementById("editModalContainer");
@@ -94,7 +92,6 @@ function executeStatusUpdate() {
         select.setAttribute("data-last-value", statusId);
         showToast('<i class="fas fa-check-circle mr-2"></i>Status updated successfully!', "success");
 
-    
         const statusToRemove = ["3", "4"];
         if (statusToRemove.includes(statusId)) {
           const row = select.closest("tr") || select.closest(".report-row");
@@ -119,12 +116,10 @@ function executeStatusUpdate() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
   document.getElementById("confirmStatusBtn")?.addEventListener("click", () => {
     toggleStatusModal(false);
     executeStatusUpdate();
   });
-
 
   document.getElementById("cancelStatusBtn")?.addEventListener("click", () => {
     if (pendingStatusChange) {
@@ -230,7 +225,6 @@ function showToast(message, type = "success") {
   }, 5000);
 }
 
-
 function openAddModal() {
   addModal.classList.remove("hidden");
   setTimeout(() => {
@@ -260,33 +254,28 @@ function openEditModal() {
 }
 
 function closeEditModal() {
-  
   editContainer.classList.remove("scale-100", "opacity-100");
   editContainer.classList.add("scale-95", "opacity-0");
   editBackdrop.classList.remove("opacity-100");
   editBackdrop.classList.add("opacity-0");
 
-  
   const editForm = document.getElementById("editForm");
   const fileLabel = document.getElementById("edit_file_name_label");
 
   if (editForm) {
-    editForm.reset(); 
+    editForm.reset();
   }
 
   if (fileLabel) {
-    
     fileLabel.innerText = "Click to upload new media...";
-    fileLabel.classList.add('text-slate-400');
-    fileLabel.classList.remove('text-blue-600', 'font-bold');
+    fileLabel.classList.add("text-slate-400");
+    fileLabel.classList.remove("text-blue-600", "font-bold");
   }
-
 
   setTimeout(() => {
     editModal.classList.add("hidden");
   }, 300);
 }
-
 
 document.querySelectorAll(".edit-report-btn").forEach((button) => {
   button.addEventListener("click", function () {
@@ -366,8 +355,6 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
   });
 });
 
-
-
 let aiTimeout;
 
 async function fetchSuggestions(text) {
@@ -375,7 +362,6 @@ async function fetchSuggestions(text) {
   const dot = document.getElementById("ai-dot");
   const statusText = document.getElementById("ai-status-text");
 
-  
   if (text.length < 5) {
     badge.className =
       "flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-400 transition-all duration-300 border border-transparent";
@@ -387,16 +373,13 @@ async function fetchSuggestions(text) {
   badge.classList.remove("ai-success");
   statusText.innerText = "AI is thinking...";
 
-  
   clearTimeout(aiTimeout);
   aiTimeout = setTimeout(async () => {
     try {
-      
       const response = await fetch(`../functions/get_suggestions.php?text=${encodeURIComponent(text)}`);
       const data = await response.json();
 
       if (data && !data.error) {
-      
         badge.classList.remove("ai-active");
         badge.classList.add("ai-success");
         statusText.innerText = "Suggestions applied!";
@@ -415,11 +398,10 @@ async function fetchSuggestions(text) {
   }, 800);
 }
 function applyAiSuggestions(data) {
-  
   const catSelect = document.getElementById("cat_id");
   if (data.category) {
     catSelect.value = data.category;
-   
+
     catSelect.dispatchEvent(new Event("change"));
   }
   const modSelect = document.getElementById("mod_id");
@@ -432,7 +414,7 @@ function applyAiSuggestions(data) {
     const severityRadio = document.querySelector(`input[name="sev_id"][value="${data.severity}"]`);
     if (severityRadio) {
       severityRadio.checked = true;
-      
+
       severityRadio.dispatchEvent(new Event("change"));
     }
   }
@@ -443,7 +425,7 @@ function openViewModal(data) {
   const modal = document.getElementById("viewModal");
   const backdrop = document.getElementById("viewModalBackdrop");
   const container = document.getElementById("viewModalContainer");
-  
+
   const imgElement = document.getElementById("view_attachment");
   const videoElement = document.getElementById("view_video_attachment");
   const placeholder = document.getElementById("no_media_placeholder");
@@ -455,8 +437,8 @@ function openViewModal(data) {
  
   const sevBadge = document.getElementById("view_severity");
   sevBadge.innerText = data.severity;
-  
- 
+
+  // Linisin ang mga dating styles at i-apply ang base style
   sevBadge.style.padding = "4px 12px";
   sevBadge.style.borderRadius = "8px";
   sevBadge.style.color = "#ffffff"; 
@@ -466,30 +448,30 @@ function openViewModal(data) {
 
   const severity = data.severity.toLowerCase();
 
-  if (severity === 'critical' || severity === 'high') {
-    sevBadge.style.backgroundColor = "#ef4444"; 
-  } else if (severity === 'medium' || severity === 'moderate') {
-    sevBadge.style.backgroundColor = "#eec071"; 
-  } else if (severity === 'low') {
-    sevBadge.style.backgroundColor = "#10b981"; 
+  if (severity === "critical" || severity === "high") {
+    sevBadge.style.backgroundColor = "#ef4444"; // Red
+  } else if (severity === "medium" || severity === "moderate") {
+    sevBadge.style.backgroundColor = "#eec071"; // Orange/Amber
+  } else if (severity === "low") {
+    sevBadge.style.backgroundColor = "#10b981"; // Green
   } else {
     sevBadge.style.backgroundColor = "#64748b"; 
   }
+  // --- SEVERITY COLOR LOGIC END ---
 
-  
   const filename = data.media ? data.media.toString().trim() : "";
-  
+
   imgElement.style.display = "none";
   videoElement.style.display = "none";
   placeholder.style.display = "block";
 
   if (filename !== "") {
-    const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
-    const fileExt = filename.split('.').pop().toLowerCase();
+    const videoExtensions = ["mp4", "webm", "ogg", "mov", "avi", "mkv"];
+    const fileExt = filename.split(".").pop().toLowerCase();
     const isVideo = videoExtensions.includes(fileExt);
 
     if (isVideo) {
-      videoElement.src = "Videos/" + filename; 
+      videoElement.src = "Videos/" + filename;
       videoElement.style.display = "block";
       videoElement.load();
       placeholder.style.display = "none";
@@ -499,7 +481,7 @@ function openViewModal(data) {
       placeholder.style.display = "none";
     }
   }
-  
+
   modal.style.display = "flex";
   setTimeout(() => {
     backdrop.style.opacity = "1";
@@ -532,7 +514,6 @@ function closeViewModal() {
     setTimeout(() => {
       if (modal) modal.style.display = "none";
     }, 300);
-    
   } catch (error) {
     console.error("Error closing modal:", error);
     // Fallback: itago agad ang modal kung mag-error ang animation
@@ -541,14 +522,14 @@ function closeViewModal() {
 }
 
 function updateEditFileLabel(input) {
-    const label = document.getElementById('edit_file_name_label');
-    if (input.files && input.files[0]) {
-        label.innerText = input.files[0].name;
-        label.classList.remove('text-slate-400');
-        label.classList.add('text-blue-600', 'font-bold');
-    } else {
-        label.innerText = "Click to upload new media...";
-        label.classList.add('text-slate-400');
-        label.classList.remove('text-blue-600', 'font-bold');
-    }
+  const label = document.getElementById("edit_file_name_label");
+  if (input.files && input.files[0]) {
+    label.innerText = input.files[0].name;
+    label.classList.remove("text-slate-400");
+    label.classList.add("text-blue-600", "font-bold");
+  } else {
+    label.innerText = "Click to upload new media...";
+    label.classList.add("text-slate-400");
+    label.classList.remove("text-blue-600", "font-bold");
+  }
 }

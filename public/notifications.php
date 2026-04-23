@@ -179,7 +179,7 @@ var_dump($userData);
     </div>
 </div>
 
-<script src="js/notification/userRemoveNotification.js"></script>
+<script src="js/removeNotification.js"></script>
 <script>
     function markAsRead(id) {
 
