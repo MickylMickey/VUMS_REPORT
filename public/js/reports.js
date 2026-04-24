@@ -355,72 +355,132 @@ document.querySelectorAll(".remind-btn").forEach((button) => {
   });
 });
 
+//AI Logic
 let aiTimeout;
 
+let lastAiSuggestions = {
+  category: null,
+  module: null,
+  severity: null,
+};
+
+let isApplyingAi = false;
+
+// =========================
+// FETCH AI
+// =========================
 async function fetchSuggestions(text) {
   const badge = document.getElementById("ai-status-badge");
-  const dot = document.getElementById("ai-dot");
   const statusText = document.getElementById("ai-status-text");
 
   if (text.length < 5) {
-    badge.className =
-      "flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-400 transition-all duration-300 border border-transparent";
     statusText.innerText = "AI Ready";
     return;
   }
 
-  badge.classList.add("ai-active");
-  badge.classList.remove("ai-success");
-  statusText.innerText = "AI is thinking...";
-
   clearTimeout(aiTimeout);
+
   aiTimeout = setTimeout(async () => {
     try {
-      const response = await fetch(`../functions/get_suggestions.php?text=${encodeURIComponent(text)}`);
-      const data = await response.json();
+      const res = await fetch(`../functions/get_suggestions.php?text=${encodeURIComponent(text)}`);
 
-      if (data && !data.error) {
-        badge.classList.remove("ai-active");
-        badge.classList.add("ai-success");
-        statusText.innerText = "Suggestions applied!";
+      const data = await res.json();
 
+      if (!data.error) {
         applyAiSuggestions(data);
-
-        setTimeout(() => {
-          badge.classList.remove("ai-success");
-          statusText.innerText = "AI Ready";
-        }, 3000);
+        statusText.innerText = "AI applied";
       }
-    } catch (err) {
-      statusText.innerText = "AI Offline";
-      badge.classList.remove("ai-active");
+    } catch (e) {
+      statusText.innerText = "AI offline";
     }
   }, 800);
 }
-function applyAiSuggestions(data) {
-  const catSelect = document.getElementById("cat_id");
-  if (data.category) {
-    catSelect.value = data.category;
 
-    catSelect.dispatchEvent(new Event("change"));
+// =========================
+// APPLY AI
+// =========================
+function applyAiSuggestions(data) {
+  isApplyingAi = true;
+
+  if (data.category) {
+    lastAiSuggestions.category = data.category;
+    const el = document.getElementById("cat_id");
+    el.value = data.category;
+    el.dispatchEvent(new Event("change"));
   }
-  const modSelect = document.getElementById("mod_id");
+
   if (data.module) {
-    modSelect.value = data.module;
-    modSelect.dispatchEvent(new Event("change"));
+    lastAiSuggestions.module = data.module;
+    const el = document.getElementById("mod_id");
+    el.value = data.module;
+    el.dispatchEvent(new Event("change"));
   }
 
   if (data.severity) {
-    const severityRadio = document.querySelector(`input[name="sev_id"][value="${data.severity}"]`);
-    if (severityRadio) {
-      severityRadio.checked = true;
+    lastAiSuggestions.severity = data.severity;
 
-      severityRadio.dispatchEvent(new Event("change"));
+    const radio = document.querySelector(`input[name="sev_id"][value="${data.severity}"]`);
+
+    if (radio) {
+      radio.checked = true;
+      radio.dispatchEvent(new Event("change"));
     }
   }
-  console.log("AI Suggestions Applied:", data);
+
+  isApplyingAi = false;
+}
+function saveAiFeedback(input, suggested, actual, isCorrection, field) {
+  if (input === undefined || suggested === undefined || actual === undefined || field === undefined) {
+    console.warn("Blocked invalid feedback payload", {
+      input,
+      suggested,
+      actual,
+      isCorrection,
+      field,
+    });
+    return;
+  }
+
+  fetch("../functions/log_feedback.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      input,
+      suggested,
+      actual,
+      is_correction: isCorrection,
+      field_type: field,
+    }),
+  });
 }
 
+function handleFeedback(field, selectedValue) {
+  if (isApplyingAi) return;
+
+  const input = document.getElementById("rep_desc")?.value || "";
+  const suggested = lastAiSuggestions[field];
+
+  if (suggested === null || suggested === undefined) return;
+
+  const isCorrection = selectedValue !== suggested ? 1 : 0;
+
+  saveAiFeedback(input, suggested, selectedValue, isCorrection, field);
+}
+document.getElementById("cat_id")?.addEventListener("change", function () {
+  handleFeedback("category", this.value);
+});
+
+document.getElementById("mod_id")?.addEventListener("change", function () {
+  handleFeedback("module", this.value);
+});
+
+document.querySelectorAll('input[name="sev_id"]').forEach((radio) => {
+  radio.addEventListener("change", function () {
+    handleFeedback("severity", this.value);
+  });
+});
+
+//view modal
 function openViewModal(data) {
   const modal = document.getElementById("viewModal");
   const backdrop = document.getElementById("viewModalBackdrop");
@@ -430,7 +490,6 @@ function openViewModal(data) {
   const videoElement = document.getElementById("view_video_attachment");
   const placeholder = document.getElementById("no_media_placeholder");
 
-  // I-set ang basic details
   document.getElementById("view_category").innerText = data.category;
   document.getElementById("view_module").innerText = data.module;
   document.getElementById("view_desc").innerText = data.description;
@@ -438,22 +497,20 @@ function openViewModal(data) {
   // --- DATE REPORTED LOGIC START ---
   const dateElement = document.getElementById("view_date");
   if (dateElement) {
-    // Chine-check kung may valid na date na galing sa PHP data attribute
     if (data.date_created && data.date_created !== "N/A" && data.date_created !== "") {
       const dateObj = new Date(data.date_created);
-      
-      // Chine-check kung valid date ang nakuha (hindi NaN)
+
       if (!isNaN(dateObj.getTime())) {
-        dateElement.innerText = dateObj.toLocaleString('en-US', { 
-          month: 'long', 
-          day: 'numeric', 
-          year: 'numeric', 
-          hour: 'numeric', 
-          minute: '2-digit', 
-          hour12: true 
+        dateElement.innerText = dateObj.toLocaleString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
         });
       } else {
-        dateElement.innerText = data.date_created; // Fallback kung string lang siya
+        dateElement.innerText = data.date_created;
       }
     } else {
       dateElement.innerText = "No date recorded";
@@ -467,7 +524,7 @@ function openViewModal(data) {
 
   sevBadge.style.padding = "4px 12px";
   sevBadge.style.borderRadius = "8px";
-  sevBadge.style.color = "#ffffff"; 
+  sevBadge.style.color = "#ffffff";
   sevBadge.style.fontWeight = "bold";
   sevBadge.style.fontSize = "12px";
   sevBadge.style.display = "inline-block";
@@ -475,13 +532,13 @@ function openViewModal(data) {
   const severity = data.severity ? data.severity.toLowerCase() : "";
 
   if (severity === "critical" || severity === "high") {
-    sevBadge.style.backgroundColor = "#ef4444"; 
+    sevBadge.style.backgroundColor = "#ef4444";
   } else if (severity === "medium" || severity === "moderate") {
-    sevBadge.style.backgroundColor = "#eec071"; 
+    sevBadge.style.backgroundColor = "#eec071";
   } else if (severity === "low") {
-    sevBadge.style.backgroundColor = "#10b981"; 
+    sevBadge.style.backgroundColor = "#10b981";
   } else {
-    sevBadge.style.backgroundColor = "#64748b"; 
+    sevBadge.style.backgroundColor = "#64748b";
   }
 
   // Media Handling
@@ -508,7 +565,6 @@ function openViewModal(data) {
     }
   }
 
-  // Pakita ang modal
   modal.style.display = "flex";
   setTimeout(() => {
     if (backdrop) backdrop.style.opacity = "1";
@@ -526,26 +582,23 @@ function closeViewModal() {
     const container = document.getElementById("viewModalContainer");
     const videoElement = document.getElementById("view_video_attachment");
 
-    // 1. Simulan ang fade-out animation
     if (backdrop) backdrop.style.opacity = "0";
     if (container) {
       container.style.opacity = "0";
       container.style.transform = "scale(0.95)";
     }
 
-    // 2. I-stop ang video para hindi tumutunog kahit sarado na ang modal
     if (videoElement) {
       videoElement.pause();
       videoElement.src = "";
     }
 
-    // 3. Hintayin matapos ang animation (300ms) bago itago ang buong modal
     setTimeout(() => {
       if (modal) modal.style.display = "none";
     }, 300);
   } catch (error) {
     console.error("Error closing modal:", error);
-    // Fallback: itago agad ang modal kung mag-error ang animation
+
     document.getElementById("viewModal").style.display = "none";
   }
 }

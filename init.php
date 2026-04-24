@@ -17,6 +17,7 @@ require_once __DIR__ . "/helper/generalValidationMessage.php";
 require_once __DIR__ . '/helper/jwt_helper.php';
 require_once __DIR__ . '/helper/toast.php';
 require_once __DIR__ . '/helper/notification_helper.php';
+require_once __DIR__ . '/helper/embedding.php';
 
 
 // Functions
