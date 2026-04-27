@@ -16,34 +16,31 @@ if (empty($input)) {
  */
 function cosineSimilarity($vec1, $vec2)
 {
+    if (!is_array($vec1) || !is_array($vec2))
+        return 0;
+
     $dotProduct = 0;
     $normA = 0;
     $normB = 0;
+
     foreach ($vec1 as $i => $value) {
-        $dotProduct += $vec1[$i] * $vec2[$i];
-        $normA += $vec1[$i] ** 2;
-        $normB += $vec2[$i] ** 2;
+        $v1 = $vec1[$i] ?? 0;
+        $v2 = $vec2[$i] ?? 0;
+
+        $dotProduct += $v1 * $v2;
+        $normA += $v1 ** 2;
+        $normB += $v2 ** 2;
     }
-    return $dotProduct / (sqrt($normA) * sqrt($normB));
+
+    $denominator = sqrt($normA) * sqrt($normB);
+
+    if ($denominator == 0)
+        return 0;
+
+    return $dotProduct / $denominator;
 }
 
 // 1. Get Vector for User Input
-function getEmbedding($text, $key)
-{
-    $modelPath = "models/gemini-embedding-001";
-    $url = "https://generativelanguage.googleapis.com/v1beta/{$modelPath}:embedContent?key=" . $key;
-    $payload = json_encode(["model" => $modelPath, "content" => ["parts" => [["text" => $text]]]]);
-
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-    $res = json_decode(curl_exec($ch), true);
-    return $res['embedding']['values'] ?? null;
-}
 
 $userVector = getEmbedding($input, $apiKey);
 if (!$userVector) {

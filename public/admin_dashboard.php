@@ -54,77 +54,78 @@ $user_role = $userData->role;
 
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
 
+            <!-- AI CARD (LEFT) -->
             <div
-                class="xl:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex flex-col border-r border-slate-100 last:border-0 px-2">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-6 h-6 rounded-lg bg-red-50 flex items-center justify-center">
-                            <i class="fa-solid fa-fire text-[10px] text-red-600"></i>
-                        </div>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Critical</p>
+                class="xl:col-span-1 p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">
+                            AI Learning Engine
+                        </h3>
+                        <p class="text-xs text-slate-500">
+                            Sync user corrections to improve auto-suggestions.
+                        </p>
                     </div>
-                    <h3 id="stat-critical" class="text-2xl font-black text-red-600">0</h3>
-                </div>
-                <div class="flex flex-col border-r border-slate-100 last:border-0 px-2">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-6 h-6 rounded-lg bg-orange-50 flex items-center justify-center">
-                            <i class="fa-solid fa-triangle-exclamation text-[10px] text-orange-500"></i>
-                        </div>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">High</p>
-                    </div>
-                    <h3 id="stat-high" class="text-2xl font-black text-orange-500">0</h3>
-                </div>
-                <div class="flex flex-col border-r border-slate-100 last:border-0 px-2">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-6 h-6 rounded-lg bg-yellow-50 flex items-center justify-center">
-                            <i class="fa-solid fa-circle-exclamation text-[10px] text-yellow-600"></i>
-                        </div>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Medium</p>
-                    </div>
-                    <h3 id="stat-medium" class="text-2xl font-black text-yellow-500">0</h3>
-                </div>
-                <div class="flex flex-col px-2">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center">
-                            <i class="fa-solid fa-shield-check text-[10px] text-green-600"></i>
-                        </div>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Low</p>
-                    </div>
-                    <h3 id="stat-low" class="text-2xl font-black text-green-500">0</h3>
+
+                    <button onclick="startAiTraining()" id="train-btn"
+                        class="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95">
+                        <i id="train-icon" class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span id="train-text">Train AI Now</span>
+                    </button>
                 </div>
             </div>
 
+            <!-- STATUS STATS (FULL BLOCK - NO CUT OFF) -->
             <div
-                class="xl:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 bg-blue-600 p-5 rounded-2xl shadow-lg shadow-blue-200">
-                <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
-                    <p
-                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-bolt-lightning text-blue-200 opacity-70"></i> Active
-                    </p>
+                class="xl:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+
+                <div class="flex flex-col border-r border-slate-100 px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Critical</p>
+                    <h3 id="stat-critical" class="text-2xl font-black text-red-600">0</h3>
+                </div>
+
+                <div class="flex flex-col border-r border-slate-100 px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">High</p>
+                    <h3 id="stat-high" class="text-2xl font-black text-orange-500">0</h3>
+                </div>
+
+                <div class="flex flex-col border-r border-slate-100 px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Medium</p>
+                    <h3 id="stat-medium" class="text-2xl font-black text-yellow-500">0</h3>
+                </div>
+
+                <div class="flex flex-col px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Low</p>
+                    <h3 id="stat-low" class="text-2xl font-black text-green-500">0</h3>
+                </div>
+
+            </div>
+
+            <!-- BLUE STATUS (RIGHT SIDE) -->
+            <div class="xl:col-span-1 grid grid-cols-2 gap-4 bg-blue-600 p-5 rounded-2xl shadow-lg shadow-blue-200">
+
+                <div class="flex flex-col px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2">Active</p>
                     <h3 id="stat-active" class="text-2xl font-black text-white">0</h3>
                 </div>
-                <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
-                    <p
-                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-blue-200 opacity-70"></i> Pending
-                    </p>
+
+                <div class="flex flex-col px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2">Pending</p>
                     <h3 id="stat-pending" class="text-2xl font-black text-white">0</h3>
                 </div>
-                <div class="flex flex-col border-r border-blue-500/50 last:border-0 px-2">
-                    <p
-                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-spinner fa-spin-pulse text-blue-200 opacity-70"></i> In-Progress
-                    </p>
+
+                <div class="flex flex-col px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2">In-Progress</p>
                     <h3 id="stat-in-progress" class="text-2xl font-black text-white">0</h3>
                 </div>
+
                 <div class="flex flex-col px-2">
-                    <p
-                        class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check text-blue-200 opacity-70"></i> Resolved Today
-                    </p>
+                    <p class="text-[10px] uppercase tracking-wider text-blue-100 font-bold mb-2">Resolved Today</p>
                     <h3 id="stat-resolved" class="text-2xl font-black text-white">0</h3>
                 </div>
+
             </div>
+
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -241,6 +242,7 @@ $user_role = $userData->role;
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.min.js"></script>
     <script src="js/charts.js"></script>
+    <script src="js/auto_train.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {

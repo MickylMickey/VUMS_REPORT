@@ -19,33 +19,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db_mod_id = ($mod_id === "other") ? null : (int) $mod_id;
     $db_sev_id = (int) $sev_id;
 
-    
-    
-    
+
+
+
     $stmtOldFile = $conn->prepare("SELECT report_img FROM report WHERE report_id = ?");
     $stmtOldFile->bind_param("i", $report_id);
     $stmtOldFile->execute();
     $current_file = $stmtOldFile->get_result()->fetch_assoc()['report_img'];
-    $new_filename = $current_file; 
+    $new_filename = $current_file;
 
-    
+
     if (isset($_FILES['report_file']) && $_FILES['report_file']['error'] === UPLOAD_ERR_OK) {
         $file_tmp = $_FILES['report_file']['tmp_name'];
         $file_original_name = $_FILES['report_file']['name'];
         $file_ext = strtolower(pathinfo($file_original_name, PATHINFO_EXTENSION));
-        
-        
+
+
         $unique_name = time() . '_' . uniqid() . '.' . $file_ext;
 
-       
+
         $video_exts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
         $is_video = in_array($file_ext, $video_exts);
-        
-        
+
+
         $target_dir = $is_video ? "../public/Videos/" : "../public/uploads/";
-        
+
         if (move_uploaded_file($file_tmp, __DIR__ . "/" . $target_dir . $unique_name)) {
-           
+
             if (!empty($current_file)) {
                 $old_ext = strtolower(pathinfo($current_file, PATHINFO_EXTENSION));
                 $old_dir = in_array($old_ext, $video_exts) ? "../public/Videos/" : "../public/uploads/";
@@ -56,8 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $new_filename = $unique_name;
         }
     }
-    
-    $catName = "xxx"; $modName = "xxx"; $sevChar = "x";
+
+    $catName = "xxx";
+    $modName = "xxx";
+    $sevChar = "x";
     $queryNames = "
         SELECT 
             (SELECT category FROM category WHERE cat_id <=> ?) as cat_name,
@@ -69,9 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmtNames->execute();
     $resNames = $stmtNames->get_result()->fetch_assoc();
 
-    if ($db_cat_id && !empty($resNames['cat_name'])) $catName = str_replace(' ', '-', strtolower($resNames['cat_name']));
-    if ($db_mod_id && !empty($resNames['mod_name'])) $modName = str_replace(' ', '-', strtolower($resNames['mod_name']));
-    if (!empty($resNames['sev_char'])) $sevChar = strtolower($resNames['sev_char']);
+    if ($db_cat_id && !empty($resNames['cat_name']))
+        $catName = str_replace(' ', '-', strtolower($resNames['cat_name']));
+    if ($db_mod_id && !empty($resNames['mod_name']))
+        $modName = str_replace(' ', '-', strtolower($resNames['mod_name']));
+    if (!empty($resNames['sev_char']))
+        $sevChar = strtolower($resNames['sev_char']);
 
 
     $stmtOld = $conn->prepare("SELECT ref_num FROM report WHERE report_id = ?");
@@ -83,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $new_ref_num = "{$catName}-{$modName}-{$sevChar}-{$sequence}";
 
-  
+
     $sql = "UPDATE report SET 
                 cat_id = ?, 
                 mod_id = ?, 
@@ -96,10 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE report_id = ?";
 
     $stmt = $conn->prepare($sql);
-    
-    
+
+
     $stmt->bind_param(
-        "iiissssi", 
+        "iiissssi",
         $db_cat_id,
         $db_mod_id,
         $db_sev_id,
