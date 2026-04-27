@@ -112,5 +112,4 @@ $recentNotifications = fetchNotification($conn, $user_id, $role, 5, 0);
 </nav>
 
 <script src="/public/js/navbar.js"></script>
-<script src="/public/js/secret-key.js"></script>
 <script src="/public/js/notifications.js"></script>
