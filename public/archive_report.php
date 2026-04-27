@@ -66,7 +66,7 @@ $s_totalRecords = $s_pagination['totalRecords'];
 $s_page = $s_pagination['page'];
 
 
-$sql = "SELECT sa.*, st.status_desc, updater.username AS updater_name, UPPER(u.username) AS username 
+$sql = "SELECT sa.*, sa.suggestion_img, st.status_desc, updater.username AS updater_name, UPPER(u.username) AS username 
         FROM suggestion_archive sa
         LEFT JOIN status st ON sa.status_id = st.status_id
         LEFT JOIN users updater ON sa.suggestion_updated_by = updater.user_id
@@ -289,7 +289,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="flex gap-2">
-                    <div class="relative min-w-[280px]">
+                    <div class="relative min-w-[300px]">
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="sugSearchInput" name="sug_q" placeholder="Search users or suggestion..."
@@ -305,44 +305,69 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             <div id="suggestionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php if (!empty($suggestions)):
-                    foreach ($suggestions as $sug): ?>
-                        <div class="suggestion-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all"
-                            data-user="<?= htmlspecialchars(strtolower($sug['username'])) ?>"
-                            data-text="<?= htmlspecialchars(strtolower($sug['suggestion_desc'])) ?>">
+                   foreach ($suggestions as $sug): ?>
+    <div class="suggestion-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col"
+        data-user="<?= htmlspecialchars(strtolower($sug['username'])) ?>"
+        data-text="<?= htmlspecialchars(strtolower($sug['suggestion_desc'])) ?>">
 
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="text-[15px] font-bold text-slate-400 uppercase tracking-widest">
-                                    <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
-                                </span>
-                                <?php
-                                $sColor = (stripos($sug['status_desc'], 'Completed') !== false) ? 'text-green-600 bg-green-50' : 'text-slate-400 bg-slate-50';
-                                ?>
-                                <span class="px-2 py-0.5 rounded text-[15px] font-bold <?= $sColor ?>">
-                                    <?= $sug['status_desc'] ?>
-                                </span>
-                            </div>
+        <div class="flex items-center justify-between mb-4">
+            <span class="text-[15px] font-bold text-slate-400 uppercase tracking-widest">
+                <?= date('M d, Y', strtotime($sug['suggestion_created_at'])) ?>
+            </span>
+            <?php $sColor = (stripos($sug['status_desc'], 'Completed') !== false) ? 'text-green-600 bg-green-50' : 'text-slate-400 bg-slate-50'; ?>
+            <span class="px-2 py-0.5 rounded text-[15px] font-bold <?= $sColor ?>">
+                <?= htmlspecialchars($sug['status_desc']) ?>
+            </span>
+        </div>
 
-                            <p class="text-slate-600 text-sm italic mb-4 line-clamp-3">
-                                "<?= htmlspecialchars($sug['suggestion_desc']) ?>"
-                            </p>
+        <p class="text-slate-600 text-sm italic mb-4 line-clamp-3">
+            "<?= htmlspecialchars($sug['suggestion_desc']) ?>"
+        </p>
 
-                            <div class="pt-4 border-t border-slate-50 flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold uppercase text-slate-500">
-                                        <?= substr($sug['username'], 0, 1) ?>
-                                    </div>
-                                    <span class="text-[13px] font-bold text-slate-700">
-                                        <?= htmlspecialchars($sug['username']) ?>
-                                    </span>
-                                </div>
-                                <span class="text-[15px] text-slate-300">
-                                    Archived by: <?= htmlspecialchars($sug['updater_name'] ?? 'System') ?>
-                                </span>
-                            </div>
-                        </div>
-
-                    <?php endforeach; ?>
+        <?php if (!empty($sug['suggestion_img'])): ?>
+            <?php
+            $mediaFile = trim($sug['suggestion_img']);
+            $fileExt = strtolower(pathinfo($mediaFile, PATHINFO_EXTENSION));
+            $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+            $isVideo = in_array($fileExt, $videoExtensions);
+            $finalPath = "uploads/suggestions/" . $mediaFile;
+            ?>
+            <div class="mb-4 overflow-hidden rounded-2xl border border-slate-100 relative group/img bg-black h-32">
+                <?php if ($isVideo): ?>
+                    <video src="<?= htmlspecialchars($finalPath) ?>" muted loop
+                        class="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 transition-opacity"
+                        onmouseover="this.play()" onmouseout="this.pause(); this.currentTime = 0;">
+                    </video>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/img:opacity-0 transition-opacity">
+                        <i class="fa-solid fa-play text-white text-xl"></i>
+                    </div>
+                <?php else: ?>
+                    <img src="<?= htmlspecialchars($finalPath) ?>"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
+                        alt="Archive Attachment">
+                <?php endif; ?>
+                
+                <a href="<?= htmlspecialchars($finalPath) ?>" target="_blank"
+                    class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold backdrop-blur-[2px]">
+                    VIEW FULL
+                </a>
+            </div>
+        <?php endif; ?>
+        <div class="pt-4 border-t border-slate-50 flex items-center justify-between mt-auto">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold uppercase text-slate-500">
+                    <?= substr($sug['username'], 0, 1) ?>
+                </div>
+                <span class="text-[13px] font-bold text-slate-700">
+                    <?= htmlspecialchars($sug['username']) ?>
+                </span>
+            </div>
+            <span class="text-[11px] text-slate-300">
+                By: <?= htmlspecialchars($sug['updater_name'] ?? 'System') ?>
+            </span>
+        </div>
+    </div>
+<?php endforeach; ?>
                 <?php endif; ?>
                 <div id="noSugResults"
                     class="hidden col-span-full py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400">

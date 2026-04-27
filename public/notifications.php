@@ -15,15 +15,15 @@ $pagination = getPaginationData(
     $_GET['limit'] ?? 10,
     $_GET['page'] ?? 1,
     null,
-    null, // Parameter for WHERE condition (selected barangay)
+    null,
     null
 );
 
-// Extract pagination values from the result array
-$offset = $pagination['offset'];           // Starting point for SQL LIMIT query
-$limit = $pagination['limit'];             // Number of records per page
-$totalPages = $pagination['totalPages'];   // Total number of pages available
-$totalRecords = $pagination['totalRecords']; // Total number of matching records
+
+$offset = $pagination['offset'];           
+$limit = $pagination['limit'];             
+$totalPages = $pagination['totalPages'];   
+$totalRecords = $pagination['totalRecords']; 
 $page = $pagination['page'];
 
 $notifications = fetchNotification($conn, $user_id, $role, $limit, $offset);
