@@ -20,6 +20,7 @@ class reportArchiveVisibility
 
     $sql = "SELECT 
             ra.*, 
+            
             ra.Report_created_at, -- Idinagdag para sa tamang Case Sensitivity
             u.username AS reporter_name, 
             updater.username AS updater_name, 
