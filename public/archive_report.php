@@ -1,5 +1,6 @@
-<?php require_once __DIR__ . "/../init.php"; 
-ob_start(); $userData = checkAuth();
+<?php require_once __DIR__ . "/../init.php";
+ob_start();
+$userData = checkAuth();
 
 
 $current_user_id = $userData->user_id;
@@ -88,6 +89,7 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/public/dist/output.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Archive Management</title>
 </head>
@@ -164,76 +166,86 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     Status
                                 </th>
                                 <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest">
-                                Archived On
+                                    Archived On
                                 </th>
-                                <th class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest text-center">
-                                Action
+                                <th
+                                    class="px-6 py-4 text-[13px] font-bold text-white uppercase tracking-widest text-center">
+                                    Action
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-    <?php foreach ($reportArchive as $archive): ?>
-        <tr class="report-row hover:bg-blue-50/30 transition-colors group"
-            data-ref="<?= htmlspecialchars($archive['ref_num']) ?>"
-            data-desc="<?= htmlspecialchars($archive['report_desc']) ?>"
-            data-reporter="<?= htmlspecialchars($archive['reporter_name']) ?>"
-            data-severity="<?= htmlspecialchars($archive['sev_id']) ?>">
-            
-            <td class="px-6 py-4">
-                <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-medium uppercase">
-                    <?= htmlspecialchars($archive['ref_num']) ?>
-                </span>
-            </td>
-            <td class="px-6 py-4 font-semibold text-sm text-slate-700"><?= htmlspecialchars($archive['reporter_name']) ?></td>
-            <td class="px-6 py-4">
-                <div class="text-xs text-slate-400 font-bold uppercase"><?= htmlspecialchars($archive['cat_desc'] ?? 'Other') ?></div>
-                <div class="text-sm text-slate-600"><?= htmlspecialchars($archive['mod_desc'] ?? 'Other') ?></div>
-            </td>
-            <td class="px-6 py-4">
-                <p class="text-medium text-slate-500 max-w-[200px] truncate" title="<?= htmlspecialchars($archive['report_desc']) ?>">
-                    <?= htmlspecialchars($archive['report_desc']) ?>
-                </p>
-            </td>
-            <td class="px-6 py-4 text-center">
-                <?php $sevClass = (stripos($archive['severity'], 'Critical') !== false) ? 'bg-red-50 text-red-600 border-red-100' : 'bg-amber-50 text-amber-600 border-amber-100'; ?>
-                <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border <?= $sevClass ?>">
-                    <?= strtoupper($archive['severity']) ?>
-                </span>
-            </td>
-            <td class="px-6 py-4">
-                <span class="text-m font-medium text-slate-500 italic"><?= htmlspecialchars($archive['status_desc']) ?></span>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-400">
-                <?= date('M d, Y', strtotime($archive['report_updated_at'])) ?>
-            </td>
+                            <?php foreach ($reportArchive as $archive): ?>
+                                <tr class="report-row hover:bg-blue-50/30 transition-colors group"
+                                    data-ref="<?= htmlspecialchars($archive['ref_num']) ?>"
+                                    data-desc="<?= htmlspecialchars($archive['report_desc']) ?>"
+                                    data-reporter="<?= htmlspecialchars($archive['reporter_name']) ?>"
+                                    data-severity="<?= htmlspecialchars($archive['sev_id']) ?>">
 
-            <td class="px-6 py-4 text-center">
-                <div style="display: flex; align-items: center; justify-content: center;">
-                  <button type="button" class="view-report-btn" 
-    onclick='openViewModal(<?= htmlspecialchars(json_encode([
-        "category" => $archive["cat_desc"] ?? "Other",
-        "module" => $archive["mod_desc"] ?? "Other",
-        "severity" => $archive["severity"] ?? "N/A",
-        "description" => $archive["report_desc"] ?? "",
-        "image" => $archive["report_img"] ?? "",
-        "date_created" => $archive["Report_created_at"] ?? "N/A"
-    ]), ENT_QUOTES, "UTF-8") ?>)'
-    style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
-    data-tooltip="View Details">
-    <i class="fa-solid fa-file-lines"></i>
-</button>
-                </div>
-            </td>
-        </tr>
-    <?php endforeach; ?>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-medium uppercase">
+                                            <?= htmlspecialchars($archive['ref_num']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-sm text-slate-700">
+                                        <?= htmlspecialchars($archive['reporter_name']) ?>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-xs text-slate-400 font-bold uppercase">
+                                            <?= htmlspecialchars($archive['cat_desc'] ?? 'Other') ?>
+                                        </div>
+                                        <div class="text-sm text-slate-600">
+                                            <?= htmlspecialchars($archive['mod_desc'] ?? 'Other') ?>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <p class="text-medium text-slate-500 max-w-[200px] truncate"
+                                            title="<?= htmlspecialchars($archive['report_desc']) ?>">
+                                            <?= htmlspecialchars($archive['report_desc']) ?>
+                                        </p>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <?php $sevClass = (stripos($archive['severity'], 'Critical') !== false) ? 'bg-red-50 text-red-600 border-red-100' : 'bg-amber-50 text-amber-600 border-amber-100'; ?>
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border <?= $sevClass ?>">
+                                            <?= strtoupper($archive['severity']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="text-m font-medium text-slate-500 italic"><?= htmlspecialchars($archive['status_desc']) ?></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-400">
+                                        <?= date('M d, Y', strtotime($archive['report_updated_at'])) ?>
+                                    </td>
 
-    <tr id="noResultsRow" class="hidden">
-        <td colspan="8" class="px-6 py-12 text-center text-slate-400">
-            <i class="fa-solid fa-magnifying-glass text-3xl mb-2 block opacity-20"></i>
-            No archived reports match your search criteria.
-        </td>
-    </tr>
-</tbody>
+                                    <td class="px-6 py-4 text-center">
+                                        <div style="display: flex; align-items: center; justify-content: center;">
+                                            <button type="button" class="view-report-btn" onclick='openViewModal(<?= htmlspecialchars(json_encode([
+                                                "category" => $archive["cat_desc"] ?? "Other",
+                                                "module" => $archive["mod_desc"] ?? "Other",
+                                                "severity" => $archive["severity"] ?? "N/A",
+                                                "description" => $archive["report_desc"] ?? "",
+                                                "image" => $archive["report_img"] ?? "",
+                                                "date_created" => $archive["Report_created_at"] ?? "N/A"
+                                            ]), ENT_QUOTES, "UTF-8") ?>)'
+                                                style="display: inline-flex; align-items: center; justify-content: center; background-color: #2563eb; color: #ffffff; width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s; flex-shrink: 0;"
+                                                data-tooltip="View Details">
+                                                <i class="fa-solid fa-file-lines"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+
+                            <tr id="noResultsRow" class="hidden">
+                                <td colspan="8" class="px-6 py-12 text-center text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-3xl mb-2 block opacity-20"></i>
+                                    No archived reports match your search criteria.
+                                </td>
+                            </tr>
+                        </tbody>
                         </tbody>
                     </table>
                 </div>
@@ -282,8 +294,8 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                     <i class="fa-solid fa-lightbulb"></i>
+                        class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <i class="fa-solid fa-lightbulb"></i>
                     </div>
                     <h2 class="text-xl font-bold">Suggestions Archive</h2>
                 </div>
@@ -398,39 +410,47 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <?php include "templates/footer.php"; ?>
     </div>
 
-     <div id="viewModal" 
-     style="position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.3s;">
-    
-    <div id="viewModalBackdrop" onclick="closeViewModal()" 
-         style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.6); opacity: 0; transition: opacity 0.3s;"></div>
-    
-    <div id="viewModalContainer" 
-         style="background-color: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 32rem; max-height: 90vh; overflow: hidden; z-index: 10; display: flex; flex-direction: column; transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-        
-        <div style="background-color: #2563eb; padding: 1.25rem 1.5rem; color: #ffffff; flex-shrink: 0;">
-            <h2 style="font-size: 20px; font-weight: 700; margin: 0;">Report Details</h2>
-            <p style="color: #dbeafe; font-size: 15px; margin-top: 2px;">Reviewing submitted evidence and information.</p>
+    <div id="viewModal"
+        style="position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.3s;">
+
+        <div id="viewModalBackdrop" onclick="closeViewModal()"
+            style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.6); opacity: 0; transition: opacity 0.3s;">
         </div>
 
-        <div style="padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem;">
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Category</label>
-                    <div id="view_category" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;"></div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Module</label>
-                    <div id="view_module" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;"></div>
-                </div>
+        <div id="viewModalContainer"
+            style="background-color: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 32rem; max-height: 90vh; overflow: hidden; z-index: 10; display: flex; flex-direction: column; transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+
+            <div style="background-color: #2563eb; padding: 1.25rem 1.5rem; color: #ffffff; flex-shrink: 0;">
+                <h2 style="font-size: 20px; font-weight: 700; margin: 0;">Report Details</h2>
+                <p style="color: #dbeafe; font-size: 15px; margin-top: 2px;">Reviewing submitted evidence and
+                    information.</p>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">
-        Date Submitted
-    </label>
+            <div style="padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem;">
 
-            <div id="view_date" style="
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label
+                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Category</label>
+                        <div id="view_category"
+                            style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;">
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label
+                            style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Module</label>
+                        <div id="view_module"
+                            style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: #1e293b;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">
+                        Date Submitted
+                    </label>
+
+                    <div id="view_date" style="
                 background: #f1f5f9;
                 border: 1px solid #cbd5e1;
                 border-radius: 12px;
@@ -439,46 +459,76 @@ $suggestions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 color: #1e293b;
                 font-weight: 600;
                 ">
-        </div>
-    </div>
+                    </div>
+                </div>
 
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Severity Level</label>
-                <div id="view_severity" style="display: inline-flex; width: fit-content; padding: 6px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #e2e8f0;"></div>
-            </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label
+                        style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Severity
+                        Level</label>
+                    <div id="view_severity"
+                        style="display: inline-flex; width: fit-content; padding: 6px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #e2e8f0;">
+                    </div>
+                </div>
 
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Description</label>
-                <div id="view_desc" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; font-size: 14px; color: #475569; line-height: 1.6; white-space: pre-wrap;"></div>
-            </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label
+                        style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Description</label>
+                    <div id="view_desc"
+                        style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; font-size: 14px; color: #475569; line-height: 1.6; white-space: pre-wrap;">
+                    </div>
+                </div>
 
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report Attachment</label>
-                <div id="view_img_container" style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
-                    <img id="view_attachment" src="" style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
-                    
-                    <video id="view_attachment_video" controls style="max-width: 100%; border-radius: 10px; display: none;"></video>
-                    
-                    <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
-                        <i class="fa-regular fa-image" style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
-                        <span style="font-size: 12px;">No evidence uploaded</span>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 15px; font-weight: 700; color: #64748b; text-transform: uppercase;">Report
+                        Attachment</label>
+                    <div id="view_img_container"
+                        style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 8px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
+                        <img id="view_attachment" src=""
+                            style="max-width: 100%; border-radius: 10px; display: none; cursor: zoom-in;"
+                            onclick="window.open(this.src, '_blank')">
+
+                        <video id="view_attachment_video" controls
+                            style="max-width: 100%; border-radius: 10px; display: none;"></video>
+
+                        <div id="no_img_placeholder" style="text-align: center; color: #94a3b8;">
+                            <i class="fa-regular fa-image"
+                                style="font-size: 2rem; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 12px;">No evidence uploaded</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center;">
-            <button type="button" onclick="closeViewModal()"
-                style="width: 50%; padding: 12px; font-size: 14px; font-weight: 700; color: #2563eb; border-radius: 12px; background-color: #eff6ff; border: 1px solid #dbeafe; cursor: pointer; transition: all 0.2s;"
-                onmouseover="this.style.backgroundColor='#dbeafe'"
-                onmouseout="this.style.backgroundColor='#eff6ff'">
-                Close 
+            <div
+                style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center;">
+                <button type="button" onclick="closeViewModal()"
+                    style="width: 50%; padding: 12px; font-size: 14px; font-weight: 700; color: #2563eb; border-radius: 12px; background-color: #eff6ff; border: 1px solid #dbeafe; cursor: pointer; transition: all 0.2s;"
+                    onmouseover="this.style.backgroundColor='#dbeafe'"
+                    onmouseout="this.style.backgroundColor='#eff6ff'">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="overlay" class="fixed inset-0 bg-black/40 hidden items-end justify-center">
+        <div id="modal" class="w-full max-w-md bg-white rounded-t-2xl p-6 shadow-xl
+              transform translate-y-full scale-95 opacity-0
+              transition-all duration-500 ease-out">
+
+            <h2 class="text-xl font-bold mb-2">Secret Unlocked!</h2>
+            <p class="text-gray-600 mb-4">From the Developer</p>
+
+            <img src="img/developers.jpg" alt="Congrats!!" class="w-full h-auto mt-4 rounded-lg" />
+
+            <button onclick="closeModal()" class="mt-4 px-4 py-2 bg-gray-200 rounded-lg">
+                Close
             </button>
         </div>
     </div>
-</div>
 </body>
 <script src="js/archive_module.js"></script>
+<script src="js/secret-key.js"></script>
 <script src="js/tooltip.js"></script>
 
 
